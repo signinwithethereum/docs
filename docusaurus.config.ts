@@ -116,7 +116,7 @@ const config: Config = {
 						},
 						{
 							label: 'Security Best Practices',
-							to: '/advanced/security-best-practices',
+							to: '/security-considerations',
 						},
 					],
 				},

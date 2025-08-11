@@ -67,4 +67,4 @@ bundle exec rails server
 ## Recommended Resources
 
 -   [SIWE Overview](/general-information/overview)
--   [Security Considerations](/advanced/security-best-practices)
+-   [Security Considerations](/security-considerations)
