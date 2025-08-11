@@ -1,0 +1,229 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
+# 🛡️ NextAuth.js
+
+## Overview
+
+NextAuth.js is "a complete open source authentication solution" designed for Next.js and serverless applications. This integration allows authentication using Ethereum wallets via Sign-In with Ethereum ([EIP-4361](../general-information/eip-4361-specification.md)).
+
+<FullWidthLink
+	href='https://github.com/nextauthjs/next-auth-example'
+	logo='/img/authjs.webp'
+	text='NextAuth.js Example Project'
+/>
+
+## Requirements
+
+<FullWidthLink
+	href='https://nodejs.org/en/'
+	logo='/img/nodejs.svg'
+	text='Node.js'
+/>
+
+<FullWidthLink
+	href='https://classic.yarnpkg.com/en/docs/install#mac-stable'
+	logo='/img/yarn.svg'
+	text='Yarn Package Manager'
+/>
+
+<FullWidthLink
+	href='https://metamask.io'
+	logo='/img/metamask.svg'
+	text='MetaMask Browser Extension'
+	themeAware={true}
+/>
+-   An Ethereum account in MetaMask
+
+## Setup Steps
+
+### 1. Clone Example Project
+
+```bash
+git clone https://github.com/nextauthjs/next-auth-example
+cd next-auth-example
+```
+
+### 2. Configure Environment
+
+Modify `.env.local.example`:
+
+```
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=somereallysecretsecret
+```
+
+Rename to `.env.local`
+
+### 3. Install Dependencies
+
+```bash
+yarn add siwe@beta ethers wagmi
+```
+
+### 4. Update App Configuration
+
+In `pages/_app.tsx`, add WagmiProvider:
+
+```typescript
+import { WagmiConfig, createClient, configureChains, chain } from 'wagmi'
+import { publicProvider } from 'wagmi/providers/public'
+
+export const { chains, provider } = configureChains(
+	[chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
+	[publicProvider()]
+)
+
+const client = createClient({
+	autoConnect: true,
+	provider,
+})
+
+export default function App({ Component, pageProps }) {
+	return (
+		<WagmiConfig client={client}>
+			<SessionProvider session={pageProps.session}>
+				<Component {...pageProps} />
+			</SessionProvider>
+		</WagmiConfig>
+	)
+}
+```
+
+### 5. Configure NextAuth Provider
+
+Update `pages/api/auth/[...nextauth].ts`:
+
+```typescript
+import NextAuth from 'next-auth'
+import CredentialsProvider from 'next-auth/providers/credentials'
+import { SiweMessage } from 'siwe'
+
+export default NextAuth({
+	providers: [
+		CredentialsProvider({
+			name: 'Ethereum',
+			credentials: {
+				message: {
+					label: 'Message',
+					type: 'text',
+					placeholder: '0x0',
+				},
+				signature: {
+					label: 'Signature',
+					type: 'text',
+					placeholder: '0x0',
+				},
+			},
+			async authorize(credentials) {
+				try {
+					const siwe = new SiweMessage(
+						JSON.parse(credentials?.message || '{}')
+					)
+
+					const nextAuthUrl = new URL(process.env.NEXTAUTH_URL)
+					if (siwe.domain !== nextAuthUrl.host) {
+						return null
+					}
+
+					await siwe.validate(credentials?.signature || '')
+					return {
+						id: siwe.address,
+						name: siwe.address,
+						email: `${siwe.address}@ethereum.local`,
+					}
+				} catch (e) {
+					return null
+				}
+			},
+		}),
+	],
+	session: { strategy: 'jwt' },
+	debug: process.env.NODE_ENV === 'development',
+	secret: process.env.NEXTAUTH_SECRET,
+	callbacks: {
+		async session({ session, token }) {
+			session.address = token.sub
+			session.user.name = token.sub
+			return session
+		},
+	},
+})
+```
+
+## Frontend Integration
+
+Create a sign-in component that uses SIWE with NextAuth.js:
+
+```typescript
+import { useAccount, useConnect, useSignMessage, useDisconnect } from 'wagmi'
+import { SiweMessage } from 'siwe'
+import { signIn, useSession } from 'next-auth/react'
+
+export function SiweLogin() {
+	const { signMessageAsync } = useSignMessage()
+	const { address, isConnected } = useAccount()
+	const { connect, connectors } = useConnect()
+	const { disconnect } = useDisconnect()
+	const { data: session } = useSession()
+
+	const handleLogin = async () => {
+		try {
+			const callbackUrl = '/protected'
+			const message = new SiweMessage({
+				domain: window.location.host,
+				address: address,
+				statement: 'Sign in with Ethereum to the app.',
+				uri: window.location.origin,
+				version: '1',
+				chainId: 1,
+				nonce: await getCsrfToken(),
+			})
+
+			const signature = await signMessageAsync({
+				message: message.prepareMessage(),
+			})
+
+			signIn('credentials', {
+				message: JSON.stringify(message),
+				redirect: false,
+				signature,
+				callbackUrl,
+			})
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	if (isConnected) {
+		return (
+			<div>
+				<p>Connected to {address}</p>
+				<button onClick={handleLogin}>Sign in with Ethereum</button>
+				<button onClick={() => disconnect()}>Disconnect</button>
+			</div>
+		)
+	}
+
+	return (
+		<div>
+			{connectors.map(connector => (
+				<button
+					disabled={!connector.ready}
+					key={connector.id}
+					onClick={() => connect({ connector })}
+				>
+					Connect {connector.name}
+				</button>
+			))}
+		</div>
+	)
+}
+```
+
+## Key Features
+
+-   Seamless integration with NextAuth.js authentication flow
+-   Support for multiple wallet connectors via Wagmi
+-   Session management through NextAuth.js
+-   Customizable authentication callbacks
+-   TypeScript support

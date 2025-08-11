@@ -56,25 +56,25 @@ Create an Express.js server that verifies SIWE signatures and manages nonces. In
 **Estimated Time**: 20 minutes  
 **What You'll Learn**: Signature verification, API design, nonce management
 
-### 4. [Connecting Frontend & Backend](4-connecting-frontend-backend.md)
+### 4. [Connecting Frontend & Backend](connect-the-frontend.md)
 Connect your frontend and backend to create a complete authentication flow. Implement proper error handling and user feedback.
 
 **Estimated Time**: 15 minutes  
 **What You'll Learn**: API integration, error handling, user experience
 
-### 5. [Session Management](5-session-management.md)
+### 5. [Session Management](implement-sessions.md)
 Add session management to maintain user authentication state across requests. Implement login/logout functionality and protected routes.
 
 **Estimated Time**: 20 minutes  
 **What You'll Learn**: Session handling, authentication middleware, security
 
-### 6. [ENS Profile Resolution](6-ens-resolution.md)
+### 6. [ENS Profile Resolution](resolve-ens-profiles.md)
 Enhance your application by resolving user ENS names and avatar images. Learn to display rich user profiles from Ethereum Name Service.
 
 **Estimated Time**: 25 minutes  
 **What You'll Learn**: ENS integration, profile resolution, metadata handling
 
-### 7. [NFT Integration](7-nft-integration.md)
+### 7. [NFT Integration](resolve-nft-holdings.md)
 Implement NFT-based access control by verifying user token ownership. Learn to query NFT balances and create gated content.
 
 **Estimated Time**: 30 minutes  
@@ -102,7 +102,7 @@ All tutorial code is available in our GitHub repository:
 
 ```bash
 # Clone the tutorial repository
-git clone https://github.com/spruceid/siwe-quickstart
+git clone https://github.com/signinwithethereum/siwe-quickstart
 cd siwe-quickstart
 
 # Install dependencies
@@ -118,10 +118,10 @@ Each tutorial part has its own branch with the completed code for that section.
 
 If you run into issues during the tutorial:
 
-- **Documentation**: Check our comprehensive [Library Documentation](../libraries/README.md)
+- **Documentation**: Check our comprehensive [Library Documentation](../libraries/index.md)
 - **Community**: Join our Discord server for real-time help
-- **Issues**: Report bugs or request clarifications on GitHub
-- **Examples**: Browse working implementations in our [Community Showcase](../community/showcase.md)
+- **Issues**: Report bugs or request clarifications on [GitHub](https://github.com/signinwithethereum/siwe)
+- **Examples**: Browse working implementations in our [Integrations](../integrations/index.md)
 
 ## Next Steps
 
@@ -130,8 +130,8 @@ Ready to start building? Begin with [Part 1: Creating a SIWE Message](1-creating
 After completing this tutorial, explore:
 
 - [Security Best Practices](../advanced/security-best-practices.md) for production deployment
-- [Integration Guides](../integrations/README.md) for popular frameworks  
-- [Advanced Topics](../advanced/oidc-provider.md) for enterprise features
+- [Integration Guides](../integrations/index.md) for popular frameworks  
+- [Advanced Topics](../advanced/security-best-practices.md) for enterprise features
 
 ---
 

@@ -1,0 +1,86 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
+# 💬 Discourse
+
+## Overview
+
+**Discourse** is an open-source discussion platform used for crypto governance and project discussions. This guide explains how to add Sign-In with Ethereum (SIWE) authentication to your Discourse instance.
+
+<FullWidthLink
+	href='https://github.com/signinwithethereum/discourse-siwe-auth'
+	logo='/img/discourse.svg'
+	text='signinwithethereum/discourse-siwe-auth'
+/>
+
+## Requirements
+
+-   A self-hosted Discourse server
+-   Discourse's official distribution
+
+## Key Notes
+
+-   Users must enter an email after first authentication
+-   If the user owns an ENS address, it will be the default username
+-   After email association, users can sign in using SIWE
+
+## Installation Steps
+
+### 1. Enabling the Plugin
+
+Access your container's `app.yml` file:
+
+```bash
+cd /var/discourse
+nano containers/app.yml
+```
+
+Add the plugin repository URL:
+
+```yaml
+hooks:
+    before_code:
+        - exec:
+              cmd:
+                  - gem install rubyzip
+    after_code:
+        - exec:
+              cd: $home/plugins
+              cmd:
+                  - sudo -E -u discourse git clone https://github.com/discourse/docker_manager.git
+                  - sudo -E -u discourse git clone https://github.com/signinwithethereum/discourse-siwe-auth.git
+```
+
+Rebuild the container:
+
+```bash
+cd /var/discourse
+./launcher rebuild app
+```
+
+### 2. Create a Project ID
+
+<FullWidthLink
+	href='https://cloud.walletconnect.com/sign-in'
+	logo='/img/walletconnect.svg'
+	text='Create Project ID at WalletConnect Cloud'
+/>
+
+-   Configure the project ID in the plugin settings
+
+### 3. Configure Message Statement
+
+By default, the statement is "Sign-in to Discourse via Ethereum". You can customize this in the plugin settings.
+
+## Plugin Management
+
+-   To disable: Remove the plugin or uncheck `discourse siwe enabled` in Admin Settings
+
+## Additional Configuration
+
+Access plugin settings at:
+`Admin Settings -> Plugins -> discourse-siwe -> discourse siwe enabled`
+
+## Compatibility
+
+-   Compatible with Discourse's official distribution
+-   Ongoing discussion about compatibility with other builds

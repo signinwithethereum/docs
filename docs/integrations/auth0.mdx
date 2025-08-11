@@ -1,0 +1,81 @@
+# 🔰 Auth0
+
+## Overview
+
+Auth0 has integrated Sign-In with Ethereum (SIWE) through a collaboration between Spruce, Auth0, and the Auth0 Lab team. This integration provides authentication and authorization for web2 applications across various sectors including retail, publishing, and B2B SaaS.
+
+import FullWidthLink from '@site/src/components/full-width-link'
+
+<FullWidthLink 
+	href='https://auth0.com/blog/sign-in-with-ethereum-siwe-now-available-on-auth0/'
+	logo='/img/auth0.svg'
+	text='Sign In With Ethereum (SIWE), Now Available on Auth0'
+	themeAware={true}
+/>
+
+## Key Components
+
+-   **Identity Provider**: Open-source OpenID Connect Identity Provider
+-   **Implementation**: Hosted at oidc.login.xyz
+-   **Language**: Rust-based implementation
+
+## Workflow
+
+The integration follows a comprehensive authentication workflow that demonstrates the complete authentication process from wallet connection to application access.
+
+### Authentication Flow
+
+1. User clicks login button
+2. Redirected to Auth0 SIWE interface
+3. Wallet authentication process
+4. Redirected back to application
+5. Optional ENS name resolution
+
+## Example Application
+
+A demo application showcases the authentication flow:
+
+-   Features a mock NFT gallery website
+-   Enables Sign-In with Ethereum
+-   Resolves NFT holdings via OpenSea API after authentication
+-   Available at: [auth0-demo.login.xyz](https://auth0-demo.login.xyz/#/)
+
+## Technical Details
+
+-   Supports Ethereum-based authentication
+-   Integrates with existing Auth0 authentication systems
+-   Provides flexible authentication options for web applications
+-   Uses OpenID Connect standard for interoperability
+
+## Implementation Benefits
+
+-   **Seamless Integration**: Works with existing Auth0 infrastructure
+-   **Enterprise Ready**: Built for production web2 applications
+-   **Multi-Sector Support**: Suitable for retail, publishing, and B2B SaaS
+-   **Standards Compliance**: Uses OpenID Connect for standardization
+
+## Getting Started
+
+1. **Set up Auth0 Account**: Configure your Auth0 tenant
+2. **Enable SIWE Provider**: Add SIWE as an identity provider
+3. **Configure Application**: Update your application settings
+4. **Test Integration**: Use the demo application as reference
+
+## Configuration
+
+The integration requires proper configuration of:
+
+-   Auth0 tenant settings
+-   Application callback URLs
+-   SIWE provider settings
+-   Session management
+
+## Resources
+
+-   [Demo Application](https://auth0-demo.login.xyz/#/)
+-   [OIDC Provider Documentation](/servers/oidc-provider)
+-   Auth0 Documentation (official Auth0 docs)
+
+## Support
+
+This integration is part of the broader SIWE ecosystem and leverages Auth0's enterprise-grade authentication infrastructure while providing decentralized identity capabilities.

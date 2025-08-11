@@ -1,0 +1,127 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+	--ifm-color-primary: #00becc;
+	--ifm-color-primary-dark: #00aab8;
+	--ifm-color-primary-darker: #009eaa;
+	--ifm-color-primary-darkest: #00828c;
+	--ifm-color-primary-light: #00d2e0;
+	--ifm-color-primary-lighter: #1adae8;
+	--ifm-color-primary-lightest: #4de4f0;
+	--ifm-code-font-size: 95%;
+	--docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+	--ifm-color-primary: #00d2e0;
+	--ifm-color-primary-dark: #00becc;
+	--ifm-color-primary-darker: #00b2bf;
+	--ifm-color-primary-darkest: #00969e;
+	--ifm-color-primary-light: #1adae8;
+	--ifm-color-primary-lighter: #33e0ed;
+	--ifm-color-primary-lightest: #66e9f3;
+	--docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Custom styles for SIWE documentation */
+.hero--primary {
+	background: linear-gradient(135deg, #00becc 0%, #00aab8 100%);
+}
+
+[data-theme='dark'] .hero--primary {
+	background: linear-gradient(135deg, #009eaa 0%, #00828c 100%);
+}
+
+/* Better code block styling */
+pre code {
+	border-radius: 8px;
+}
+
+/* Improve button styling */
+.button--secondary {
+	color: var(--ifm-color-primary);
+	background-color: white;
+	border: 2px solid var(--ifm-color-primary);
+}
+
+.button--secondary:hover {
+	background-color: var(--ifm-color-primary-lightest);
+}
+
+/* Navbar improvements */
+.navbar__title {
+	font-weight: 700;
+}
+
+/* Documentation specific styles */
+.markdown h1:first-child {
+	font-size: 2.5rem;
+}
+
+.markdown h2 {
+	margin-top: 2rem;
+}
+
+/* Sidebar improvements */
+.menu__link--active {
+	font-weight: 600;
+}
+
+.full-size-url {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	justify-content: space-between;
+	text-decoration: none;
+	color: inherit;
+	width: 100%;
+	border: 1px solid var(--ifm-color-content);
+	border-radius: 0.5rem;
+	padding: 0.5rem 1rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.full-size-url:hover {
+	border-color: var(--ifm-color-primary);
+	color: var(--ifm-color-primary);
+}
+
+.full-size-url-content {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.full-size-url p {
+	margin: 0;
+	padding: 0;
+}
+
+.full-size-url-arrow {
+	font-size: 1.5rem;
+}
+
+.full-size-url img {
+	height: 1.5rem;
+	width: 1.5rem;
+}
+
+/* Universal logo mask styling for theme-aware SVGs */
+.logo-mask {
+	width: 24px;
+	height: 24px;
+	background-color: var(--ifm-font-color-base);
+	transition: background-color 0.2s ease;
+}
+
+/* Hover state for logos */
+.full-size-url:hover .logo-mask {
+	background-color: var(--ifm-color-primary);
+}

@@ -1,0 +1,71 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
+# 🍷 Elixir
+
+The Elixir implementation of Sign-In with Ethereum can be found here:
+
+<FullWidthLink
+	href='https://github.com/signinwithethereum/siwe-ex'
+	logo='/img/github.svg'
+	text='signinwithethereum/siwe-ex'
+	themeAware={true}
+/>
+
+## Installation
+
+Add the library to your `mix.exs` dependencies:
+
+```elixir
+def deps do
+  [
+    {:siwe, "~> 0.3"}
+  ]
+end
+```
+
+## Example Usage
+
+To test the library, clone the repository and run:
+
+```bash
+$ mix deps.get
+```
+
+Create two files:
+
+`message.txt`:
+
+```
+login.xyz wants you to sign in with your Ethereum account:
+0xfA151B5453CE69ABf60f0dbdE71F6C9C5868800E
+
+Sign-In With Ethereum Example Statement
+
+URI: https://login.xyz
+Version: 1
+Chain ID: 1
+Nonce: ToTaLLyRanDOM
+Issued At: 2021-12-17T00:38:39.834Z
+```
+
+`signature.txt`:
+
+```
+0x8d1327a1abbdf172875e5be41706c50fc3bede8af363b67aefbb543d6d082fb76a22057d7cb6d668ceba883f7d70ab7f1dc015b76b51d226af9d610fa20360ad1c
+```
+
+Then in `iex`:
+
+```elixir
+iex> {:ok, msg} = File.read("./message.txt")
+iex> {:ok, sig} = File.read("./signature.txt")
+iex> Siwe.parse_if_valid(String.trim(msg), String.trim(sig))
+```
+
+This will return a parsed SIWE message with details like address, chain ID, domain, and other metadata.
+
+## Key Features
+
+-   Implements [EIP-4361](../general-information/eip-4361-specification.md) Sign-In with Ethereum specification
+-   Supports parsing and validating Ethereum signed messages
+-   Provides detailed message parsing and validation

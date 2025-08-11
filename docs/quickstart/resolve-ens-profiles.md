@@ -1,0 +1,130 @@
+# Resolve ENS Profiles
+
+This section of the Sign-In with Ethereum quickstart guide demonstrates how to resolve a user's ENS (Ethereum Name Service) profile data.
+
+## Prerequisites
+- A completed frontend from previous quickstart steps
+- Ethers library installed
+- Basic understanding of ENS
+
+## Implementation Steps
+
+### 1. Update HTML (frontend/src/index.html)
+
+Add a new section for displaying ENS metadata:
+
+```html
+<div class="hidden" id="profile">
+  <h3>ENS Metadata:</h3>
+  <div id="ensLoader"></div>
+  <div id="ensContainer" class="hidden">
+    <table id="ensTable"></table>
+  </div> 
+</div>
+<div class="hidden" id="noProfile">
+  No ENS Profile detected.
+</div>
+```
+
+### 2. Update JavaScript (frontend/src/index.js)
+
+Add element references and the `displayENSProfile()` function:
+
+```javascript
+const profileElm = document.getElementById('profile');
+const noProfileElm = document.getElementById('noProfile');
+const ensTableElm = document.getElementById('ensTable');
+const welcomeElm = document.getElementById('welcome');
+
+async function displayENSProfile() {
+    const ensName = await provider.lookupAddress(address);
+
+    if (ensName) {
+        profileElm.classList = '';
+        welcomeElm.innerHTML = `Hello, ${ensName}`;
+        
+        let avatar = await provider.getAvatar(ensName);
+        if (avatar) {
+            welcomeElm.innerHTML += ` <img class="avatar" src=${avatar}/>`;
+        }
+
+        const resolver = await provider.getResolver(ensName);
+        const keys = ["email", "url", "description", "com.twitter"];
+        
+        // Populate ENS metadata table
+        ensTableElm.innerHTML += `<tr><td>name:</td><td>${ensName}</td></tr>`;
+        for (const key of keys) {
+            const value = await resolver.getText(key);
+            if (value) {
+                ensTableElm.innerHTML += `<tr><td>${key}:</td><td>${value}</td></tr>`;
+            }
+        }
+        
+        document.getElementById('ensContainer').classList = '';
+    } else {
+        welcomeElm.innerHTML = `Hello, ${address}`;
+        noProfileElm.classList = '';
+    }
+
+    welcomeElm.classList = '';
+}
+```
+
+### 3. CSS for Avatar Display
+
+Add some basic styling for the avatar:
+
+```css
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.hidden {
+    display: none;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+td:first-child {
+    font-weight: bold;
+    background-color: #f2f2f2;
+}
+```
+
+## Key Features
+
+- **ENS Name Lookup**: Resolves the ENS name associated with an address
+- **Avatar Display**: Shows the user's ENS avatar if available
+- **Profile Metadata**: Displays common ENS text records like email, URL, and social media
+- **Fallback Handling**: Gracefully handles addresses without ENS profiles
+
+## ENS Text Records
+
+The implementation checks for these common text records:
+- `email`: Contact email address
+- `url`: Personal or professional website
+- `description`: Bio or description
+- `com.twitter`: Twitter handle
+
+## Error Handling
+
+The code includes proper error handling for:
+- Addresses without ENS names
+- Missing or empty text records
+- Network connectivity issues
+
+## Next Steps
+
+Continue to learn about resolving NFT holdings to further enhance user profiles.

@@ -1,0 +1,88 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
+# 🏃 Go
+
+The Go implementation of Sign-In with Ethereum can be found here:
+
+<FullWidthLink
+	href='https://github.com/signinwithethereum/siwe-go'
+	logo='/img/github.svg'
+	text='signinwithethereum/siwe-go'
+	themeAware={true}
+/>
+
+## Getting Started
+
+A Go implementation of [EIP-4361](../general-information/eip-4361-specification.md): Sign In With Ethereum.
+
+## Installation
+
+Install the library using Go get:
+
+```bash
+go get -u github.com/signinwithethereum/siwe-go
+```
+
+## Usage
+
+### Parsing a SIWE Message
+
+```go
+var message *siwe.Message
+var err error
+
+message, err = siwe.ParseMessage(messageStr)
+```
+
+### Verifying and Authenticating a SIWE Message
+
+```go
+// Verify using EIP-191, returns the Ethereum public key
+var publicKey *ecdsa.PublicKey
+var err error
+
+publicKey, err = message.VerifyEIP191(signature)
+
+// Check time constraints
+if message.ValidNow() {
+    // Message is valid
+}
+
+// Combined verification with optional nonce and timestamp
+publicKey, err = message.Verify(signature, optionalNonce, optionalTimestamp)
+```
+
+### Serializing a SIWE Message
+
+```go
+fmt.Printf("%s", message.String())
+```
+
+### Signing Messages from Go Code
+
+```go
+func signHash(data []byte) common.Hash {
+    msg := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(data), data)
+    return crypto.Keccak256Hash([]byte(msg))
+}
+
+func signMessage(message string, privateKey *ecdsa.PrivateKey) ([]byte, error) {
+    sign := signHash([]byte(message))
+    signature, err := crypto.Sign(sign.Bytes(), privateKey)
+
+    if err != nil {
+        return nil, err
+    }
+
+    signature[64] += 27
+    return signature, nil
+}
+```
+
+## Key Features
+
+-   Message parsing and validation
+-   EIP-191 signature verification
+-   Time-based validation
+-   Support for custom nonce and timestamp verification
+-   Message serialization

@@ -1,0 +1,100 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
+# 💎 Ruby
+
+The Ruby implementation of Sign-In with Ethereum can be found here:
+
+<FullWidthLink
+	href='https://github.com/signinwithethereum/siwe-rb'
+	logo='/img/github.svg'
+	text='signinwithethereum/siwe-rb'
+	themeAware={true}
+/>
+
+## Getting Started
+
+A Ruby implementation of [EIP-4361](../general-information/eip-4361-specification.md): Sign In With Ethereum.
+
+## Installation
+
+### Dependencies
+
+For macOS:
+
+```bash
+brew install automake openssl libtool pkg-config gmp libffi
+```
+
+For Linux:
+
+```bash
+sudo apt-get install build-essential automake pkg-config libtool \
+                     libffi-dev libssl-dev libgmp-dev python-dev
+```
+
+Install the gem:
+
+```bash
+gem install siwe
+```
+
+## Usage
+
+### Creating a SIWE Message
+
+```ruby
+require 'siwe'
+require 'time'
+
+# Only mandatory arguments
+Siwe::Message.new("domain.example", "0x9D85ca56217D2bb651b00f15e694EB7E713637D4", "some.uri", "1")
+
+# Complete SIWE message with default values
+Siwe::Message.new("domain.example", "0x9D85ca56217D2bb651b00f15e694EB7E713637D4", "some.uri", "1", {
+  issued_at: Time.now.utc.iso8601,
+  statement: "Example statement for SIWE",
+  nonce: Siwe::Util.generate_nonce,
+  chain_id: "1",
+  expiration_time: "",
+  not_before: "",
+  request_id: "",
+  resources: []
+})
+```
+
+### Parsing a SIWE Message
+
+```ruby
+# From EIP-4361 format
+Siwe::Message.from_message "domain.example wants you to sign in with your Ethereum account:..."
+
+# From JSON string
+Siwe::Message.from_json_string "{\"domain\":\"domain.example\",\"address\":\"0x9D85ca56217D2bb651b00f15e694EB7E713637D4\",...}"
+```
+
+### Verifying and Authenticating a SIWE Message
+
+```ruby
+begin
+  message.validate(signature) # returns true if valid, throws otherwise
+rescue Siwe::ExpiredMessage
+  # Handle expired message
+rescue Siwe::InvalidSignature
+  # Handle invalid signature
+end
+```
+
+## Error Handling
+
+The library provides specific exception types for different validation failures:
+
+-   `Siwe::ExpiredMessage`: When the message has expired
+-   `Siwe::InvalidSignature`: When the signature is invalid
+-   Other validation errors as appropriate
+
+## Additional Features
+
+-   Nonce generation utilities
+-   Time-based validation
+-   Comprehensive error handling
+-   Support for all [EIP-4361](../general-information/eip-4361-specification.md) fields

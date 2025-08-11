@@ -1,72 +1,54 @@
-# TypeScript/JavaScript Library
+import FullWidthLink from '@site/src/components/full-width-link'
 
-The official TypeScript/JavaScript SIWE library is the most comprehensive and feature-complete implementation, supporting both Node.js backends and browser frontends with full TypeScript definitions and extensive testing.
+# ⌨️ TypeScript
 
-## Installation
+The TypeScript implementation of Sign-In with Ethereum can be found here:
 
-### npm
-```bash
-npm install siwe ethers
-```
+<FullWidthLink
+	href='https://github.com/signinwithethereum/siwe'
+	logo='/img/github.svg'
+	text='signinwithethereum/siwe'
+	themeAware={true}
+/>
 
-### yarn
-```bash
-yarn add siwe ethers
-```
+## Getting Started
 
-### Browser CDN
-```html
-<script src="https://unpkg.com/siwe@latest/dist/siwe.min.js"></script>
-<script src="https://unpkg.com/ethers@5/dist/ethers.umd.min.js"></script>
-```
+The TypeScript implementation is available on npm and provides comprehensive [EIP-4361](../general-information/eip-4361-specification.md) support.
 
-## Basic Usage
+### Installation
 
-### Creating a SIWE Message
+You can install the Sign-In with Ethereum library as an npm package.
 
-```typescript
-import { SiweMessage, generateNonce } from 'siwe';
+### Key Features
 
-const message = new SiweMessage({
-    domain: 'example.com',
-    address: '0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890',
-    statement: 'Sign in with Ethereum to the app.',
-    uri: 'https://example.com/login',
-    version: '1',
-    chainId: 1,
-    nonce: generateNonce(),
-    issuedAt: new Date().toISOString(),
-    expirationTime: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 minutes
-});
+- Implements [EIP-4361](../general-information/eip-4361-specification.md): Sign In With Ethereum
+- Provides TypeScript library for SIWE functionality
+- Supports frontend and backend integration
 
-// Generate the message string for signing
-const messageString = message.prepareMessage();
-console.log(messageString);
-```
+### Additional Resources
 
-### Verifying a Signature
+- [Quickstart Guide](/quickstart)
+- [Migrating to v2](/libraries/typescript/migrating-to-v2)
+- [TypeScript Quickstart](/libraries/typescript/typescript-quickstart)
 
-```typescript
-import { SiweMessage } from 'siwe';
+### Supported Platforms
 
-async function verifySignature(message: string, signature: string) {
-    try {
-        const siweMessage = new SiweMessage(message);
-        const result = await siweMessage.verify({ signature });
-        
-        if (result.success) {
-            console.log('✅ Valid signature from:', result.data.address);
-            return result.data;
-        } else {
-            console.log('❌ Invalid signature:', result.error);
-            return null;
-        }
-    } catch (error) {
-        console.error('Verification error:', error);
-        return null;
-    }
-}
-```
+The library offers implementations for multiple languages and frameworks:
+- TypeScript
+- Rust
+- Elixir
+- Python
+- Ruby (including Rails)
+- Go
+
+### Integrations
+
+The library supports various integrations:
+- Discourse
+- NextAuth.js
+- Auth0
+
+For detailed implementation instructions and examples, refer to the specific documentation sections in the sidebar.
 
 ## API Reference
 
@@ -87,7 +69,7 @@ new SiweMessage(params: SiweMessageParams)
 | `domain` | `string` | ✅ | RFC 3986 authority requesting the signing |
 | `address` | `string` | ✅ | Ethereum address (EIP-55 checksum format) |
 | `uri` | `string` | ✅ | RFC 3986 URI referring to the resource |
-| `version` | `string` | ✅ | Must be `"1"` for EIP-4361 compliance |
+| `version` | `string` | ✅ | Must be `"1"` for [EIP-4361](../general-information/eip-4361-specification.md) compliance |
 | `chainId` | `number` | ✅ | EIP-155 Chain ID |
 | `statement` | `string` | ❌ | Human-readable ASCII assertion |
 | `nonce` | `string` | ❌ | Randomized token (auto-generated if not provided) |
@@ -101,7 +83,7 @@ new SiweMessage(params: SiweMessageParams)
 
 ##### `prepareMessage(): string`
 
-Formats the SIWE message according to EIP-4361 specification.
+Formats the SIWE message according to [EIP-4361](../general-information/eip-4361-specification.md) specification.
 
 ```typescript
 const message = new SiweMessage({ /* params */ });
@@ -597,11 +579,16 @@ async function cachedVerify(message: string, signature: string) {
 
 ## Resources
 
-- **GitHub**: [https://github.com/spruceid/siwe](https://github.com/spruceid/siwe)
-- **npm Package**: [https://www.npmjs.com/package/siwe](https://www.npmjs.com/package/siwe)
+- **GitHub**: [https://github.com/signinwithethereum/siwe](https://github.com/signinwithethereum/siwe)
+
+<FullWidthLink
+	href='https://www.npmjs.com/package/siwe'
+	logo='/img/npm.svg'
+	text='siwe on npm'
+/>
 - **TypeScript Playground**: [https://siwe-demo.vercel.app](https://siwe-demo.vercel.app)
-- **Examples**: [https://github.com/spruceid/siwe-examples](https://github.com/spruceid/siwe-examples)
+- **Examples**: [https://github.com/signinwithethereum/siwe-examples](https://github.com/signinwithethereum/siwe-examples)
 
 ---
 
-*Need help with integration? Check out our [Quickstart Guide](../quickstart/README.md) or [Integration Examples](../integrations/README.md).*
+*Need help with integration? Check out our [Quickstart Guide](../quickstart/index.md) or [Integration Examples](../integrations/index.md).*
