@@ -11,11 +11,11 @@ const config: Config = {
 		v4: true,
 	},
 
-	url: 'https://siwe-docs.example.com',
+	url: 'https://docs.siwe.xyz',
 	baseUrl: '/',
 
 	organizationName: 'siwe',
-	projectName: 'siwe-docs',
+	projectName: 'docs',
 
 	onBrokenLinks: 'throw',
 	onBrokenMarkdownLinks: 'warn',
@@ -32,7 +32,8 @@ const config: Config = {
 				docs: {
 					sidebarPath: './sidebars.ts',
 					routeBasePath: '/',
-					editUrl: 'https://github.com/siwe/siwe-docs/tree/main/',
+					editUrl:
+						'https://github.com/signinwithethereum/docs/tree/main/',
 				},
 				blog: false,
 				theme: {

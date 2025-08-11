@@ -27,10 +27,10 @@ const PageActions: React.FC<PageActionsProps> = () => {
     }
 
     // Check if we're on a documentation page
-    const docPageCheck = document.querySelector('main') && 
-                        (document.querySelector('article') || 
-                         document.querySelector('.markdown') ||
-                         document.querySelector('[class*="docMainContainer"]'))
+    const docPageCheck = document.querySelector('main') &&
+      (document.querySelector('article') ||
+        document.querySelector('.markdown') ||
+        document.querySelector('[class*="docMainContainer"]'))
     setIsDocPage(!!docPageCheck)
 
     // Get the page title
@@ -77,10 +77,10 @@ const PageActions: React.FC<PageActionsProps> = () => {
         setPageTitle(title)
 
         // Check if we're on a documentation page
-        const docPageCheck = document.querySelector('main') && 
-                            (document.querySelector('article') || 
-                             document.querySelector('.markdown') ||
-                             document.querySelector('[class*="docMainContainer"]'))
+        const docPageCheck = document.querySelector('main') &&
+          (document.querySelector('article') ||
+            document.querySelector('.markdown') ||
+            document.querySelector('[class*="docMainContainer"]'))
         setIsDocPage(!!docPageCheck)
 
         // Update content
@@ -152,8 +152,8 @@ const PageActions: React.FC<PageActionsProps> = () => {
     // Get the raw markdown URL (assuming GitHub structure)
     let pathToUse = currentPath
 
-    // Remove /siwe-docs prefix if present
-    pathToUse = pathToUse.replace(/^\/siwe-docs/, '')
+    // Remove /docs prefix if present
+    pathToUse = pathToUse.replace(/^\/docs/, '')
 
     // Handle different path patterns
     let markdownPath = ''
@@ -187,7 +187,7 @@ const PageActions: React.FC<PageActionsProps> = () => {
       markdownPath = markdownPath.replace('.md', '.mdx')
     }
 
-    const githubUrl = `https://raw.githubusercontent.com/signinwithethereum/siwe-docs/main${markdownPath}`
+    const githubUrl = `https://raw.githubusercontent.com/signinwithethereum/docs/main${markdownPath}`
     console.log('PageActions: Opening markdown URL:', githubUrl)
     window.open(githubUrl, '_blank')
     setIsOpen(false)
