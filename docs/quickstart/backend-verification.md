@@ -845,8 +845,8 @@ In [Part 4: Connecting Frontend & Backend](connect-the-frontend.md), you'll lear
 ## Resources
 
 -   [Express.js Security Best Practices](https://expressjs.com/en/advanced/best-practice-security.html)
--   [SIWE Library Documentation](../libraries/typescript.md)
--   [Authentication Security Guide](../advanced/security-best-practices.md)
+-   [SIWE Library Documentation](../libraries/typescript)
+-   [Authentication Security Guide](/security-considerations)
 
 ---
 

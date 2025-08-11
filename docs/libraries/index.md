@@ -4,7 +4,7 @@ SIWE provides official libraries in multiple programming languages, making it ea
 
 ## Supported Languages
 
-### [TypeScript/JavaScript](typescript.md)
+### [TypeScript/JavaScript](typescript)
 
 The original and most feature-complete SIWE implementation.
 
@@ -13,7 +13,7 @@ The original and most feature-complete SIWE implementation.
 -   **Features**: Complete [EIP-4361](../general-information/eip-4361-specification.md) support, TypeScript definitions, extensive testing
 -   **Best for**: Web applications, React/Vue/Angular apps, Node.js backends
 
-### [Rust](rust.md)
+### [Rust](rust)
 
 High-performance implementation for Rust applications.
 
@@ -22,7 +22,7 @@ High-performance implementation for Rust applications.
 -   **Features**: Memory-safe, fast verification, serde serialization
 -   **Best for**: High-performance backends, blockchain infrastructure, CLI tools
 
-### [Python](python.md)
+### [Python](python)
 
 Pythonic implementation for Python developers.
 
@@ -31,7 +31,7 @@ Pythonic implementation for Python developers.
 -   **Features**: Async/await support, dataclass integration, type hints
 -   **Best for**: Django/Flask apps, data analysis tools, ML/AI applications
 
-### [Ruby](ruby.md)
+### [Ruby](ruby)
 
 Ruby gem with Rails integration support.
 
@@ -40,7 +40,7 @@ Ruby gem with Rails integration support.
 -   **Features**: ActiveSupport integration, Rails middleware, comprehensive docs
 -   **Best for**: Ruby on Rails applications, API backends
 
-### [Go](go.md)
+### [Go](go)
 
 Go implementation for Go developers.
 
@@ -49,7 +49,7 @@ Go implementation for Go developers.
 -   **Features**: Standard library compatibility, efficient verification, minimal dependencies
 -   **Best for**: Microservices, Go web applications, infrastructure tools
 
-### [Elixir](elixir.md)
+### [Elixir](elixir)
 
 Functional implementation for Elixir/Phoenix applications.
 
@@ -213,18 +213,18 @@ message = %Siwe.Message{
 
 Each library has specific installation and setup instructions:
 
--   **[TypeScript/JavaScript Setup](typescript.md#installation)**: npm, yarn, browser CDN
--   **[Rust Setup](rust.md)**: Cargo dependencies and features
--   **[Python Setup](python.md)**: pip, conda, virtual environments
--   **[Ruby Setup](ruby.md)**: gem, bundler, Rails integration
--   **[Go Setup](go.md)**: go mod, dependency management
--   **[Elixir Setup](elixir.md)**: mix deps, Phoenix integration
+-   **[TypeScript/JavaScript Setup](typescript#installation)**: npm, yarn, browser CDN
+-   **[Rust Setup](rust)**: Cargo dependencies and features
+-   **[Python Setup](python)**: pip, conda, virtual environments
+-   **[Ruby Setup](ruby)**: gem, bundler, Rails integration
+-   **[Go Setup](go)**: go mod, dependency management
+-   **[Elixir Setup](elixir)**: mix deps, Phoenix integration
 
 ## Migration Guides
 
 If you need to switch between libraries or upgrade versions:
 
--   [TypeScript v1 to v2 Migration](typescript.md#migration-guide)
+-   [TypeScript v1 to v2 Migration](typescript#migration-guide)
 -   [Cross-language Migration Tips](#cross-language-migration)
 -   [Version Compatibility Matrix](#version-compatibility)
 

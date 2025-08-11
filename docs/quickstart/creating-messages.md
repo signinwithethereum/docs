@@ -379,14 +379,14 @@ Congratulations! You've learned how to create SIWE messages. Key takeaways:
 -   **Server-side creation is critical** for security in production applications
 -   **Proper validation prevents common errors** and security vulnerabilities
 
-In the next tutorial, [Part 2: Frontend Setup](2-frontend-setup.md), you'll learn how to integrate SIWE messages with a React frontend and connect to user wallets for signature requests.
+In the next tutorial, [Part 2: Frontend Setup](frontend-setup), you'll learn how to integrate SIWE messages with a React frontend and connect to user wallets for signature requests.
 
 ## Resources
 
--   [SIWE TypeScript Library Documentation](../libraries/typescript.md)
+-   [SIWE TypeScript Library Documentation](../libraries/typescript)
 -   [EIP-4361 Specification](../general-information/eip-4361-specification.md)
--   [Security Best Practices](../advanced/security-best-practices.md)
+-   [Security Best Practices](/security-considerations)
 
 ---
 
-_Ready to connect to user wallets? Continue to [Part 2: Frontend Setup](2-frontend-setup.md) to build the frontend integration._
+_Ready to connect to user wallets? Continue to [Part 2: Frontend Setup](frontend-setup) to build the frontend integration._

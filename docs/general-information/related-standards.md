@@ -444,4 +444,4 @@ describe('SIWE Standards Compliance', () => {
 
 ---
 
-_Understanding these standards provides the foundation for secure and interoperable SIWE implementations. For practical implementation guidance, see our [Quickstart Guide](../quickstart/index.md) and [Security Best Practices](../advanced/security-best-practices.md)._
+_Understanding these standards provides the foundation for secure and interoperable SIWE implementations. For practical implementation guidance, see our [Quickstart Guide](../quickstart/index.md) and [Security Best Practices](/security-considerations)._

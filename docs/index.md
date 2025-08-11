@@ -61,12 +61,12 @@ Follow our [Quickstart Guide](quickstart/index.md) for a step-by-step tutorial o
 
 We provide official libraries for multiple programming languages:
 
--   [TypeScript/JavaScript](libraries/typescript.md)
--   [Rust](libraries/rust.md)
--   [Python](libraries/python.md)
--   [Ruby](libraries/ruby.md)
--   [Go](libraries/go.md)
--   [Elixir](libraries/elixir.md)
+-   [TypeScript/JavaScript](libraries/typescript)
+-   [Rust](libraries/rust)
+-   [Python](libraries/python)
+-   [Ruby](libraries/ruby)
+-   [Go](libraries/go)
+-   [Elixir](libraries/elixir)
 
 ### 🔌 **Pre-built Integrations**
 
@@ -74,7 +74,7 @@ Get started quickly with existing integrations:
 
 -   [NextAuth.js](./integrations/nextauth.js.mdx)
 -   [Auth0](./integrations/auth0.mdx)
--   [Discourse](./integrations/discourse.md)
+-   [Discourse](./integrations/discourse)
 
 ## Security First
 
@@ -85,7 +85,7 @@ SIWE prioritizes security through:
 -   **Expiration timestamps** for time-limited authentication
 -   **Best practices guidance** for secure implementation
 
-Learn more about [Security Best Practices](advanced/security-best-practices.md).
+Learn more about [Security Best Practices](/security-considerations).
 
 ## Enterprise Ready
 

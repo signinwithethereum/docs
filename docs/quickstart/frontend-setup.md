@@ -843,7 +843,7 @@ Great work! You've built a complete frontend that can:
 -   Request user signatures
 -   Handle wallet events and errors
 
-In [Part 3: Backend Verification](3-backend-verification.md), you'll learn how to create a secure backend server that validates SIWE signatures and manages user authentication.
+In [Part 3: Backend Verification](backend-verification), you'll learn how to create a secure backend server that validates SIWE signatures and manages user authentication.
 
 ## Resources
 
@@ -853,4 +853,4 @@ In [Part 3: Backend Verification](3-backend-verification.md), you'll learn how t
 
 ---
 
-_Ready to build the backend? Continue to [Part 3: Backend Verification](3-backend-verification.md) to learn secure signature validation._
+_Ready to build the backend? Continue to [Part 3: Backend Verification](backend-verification) to learn secure signature validation._

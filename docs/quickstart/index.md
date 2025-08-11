@@ -38,19 +38,19 @@ Before starting this tutorial, you should have:
 
 This quickstart is divided into 7 progressive lessons:
 
-### 1. [Creating a SIWE Message](1-creating-messages.md)
+### 1. [Creating a SIWE Message](creating-messages)
 Learn the fundamentals of SIWE message creation using the official library. You'll understand the message format, required fields, and security considerations.
 
 **Estimated Time**: 15 minutes  
 **What You'll Learn**: Message formatting, nonce generation, security best practices
 
-### 2. [Frontend Setup](2-frontend-setup.md)  
+### 2. [Frontend Setup](frontend-setup)  
 Build a React frontend that connects to user wallets and requests message signatures. Covers wallet connection, address detection, and signature requests.
 
 **Estimated Time**: 25 minutes  
 **What You'll Learn**: Wallet integration, ethers.js usage, React implementation
 
-### 3. [Backend Verification](3-backend-verification.md)
+### 3. [Backend Verification](backend-verification)
 Create an Express.js server that verifies SIWE signatures and manages nonces. Includes API endpoints for nonce generation and signature verification.
 
 **Estimated Time**: 20 minutes  
@@ -125,14 +125,14 @@ If you run into issues during the tutorial:
 
 ## Next Steps
 
-Ready to start building? Begin with [Part 1: Creating a SIWE Message](1-creating-messages.md) to learn the fundamentals of SIWE message creation.
+Ready to start building? Begin with [Part 1: Creating a SIWE Message](creating-messages) to learn the fundamentals of SIWE message creation.
 
 After completing this tutorial, explore:
 
-- [Security Best Practices](../advanced/security-best-practices.md) for production deployment
+- [Security Best Practices](/security-considerations) for production deployment
 - [Integration Guides](../integrations/index.md) for popular frameworks  
-- [Advanced Topics](../advanced/security-best-practices.md) for enterprise features
+- [Advanced Topics](/security-considerations) for enterprise features
 
 ---
 
-*Let's build the future of Web3 authentication together! Start with [Creating a SIWE Message](1-creating-messages.md).*
+*Let's build the future of Web3 authentication together! Start with [Creating a SIWE Message](creating-messages).*
