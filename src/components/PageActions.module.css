@@ -39,8 +39,8 @@
 @media (max-width: 996px) {
 	:global(.page-actions-root) {
 		position: fixed !important;
-		top: auto !important;
-		bottom: 24px !important;
+		top: 80px !important;
+		bottom: auto !important;
 		right: 16px !important;
 		left: auto !important;
 		transition: none !important;
@@ -56,13 +56,13 @@
 
 	.dropdown {
 		position: fixed;
-		bottom: 70px;
-		right: 16px;
+		top: calc(100% + 8px);
+		right: 0;
 		left: auto;
 		transform: none;
 		min-width: 280px;
 		max-width: calc(100vw - 32px);
-		max-height: 70vh;
+		max-height: calc(100vh - 160px);
 		overflow-y: auto;
 		z-index: 10000;
 	}
