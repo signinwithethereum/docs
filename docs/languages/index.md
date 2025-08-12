@@ -226,7 +226,7 @@ If you need to switch between libraries or upgrade versions:
 
 -   [TypeScript v1 to v2 Migration](typescript#migration-guide)
 -   [Cross-language Migration Tips](#cross-language-migration)
--   [Version Compatibility Matrix](#version-compatibility)
+-   Version Compatibility Matrix (see below)
 
 ## Cross-Language Migration
 
@@ -288,6 +288,36 @@ Beyond official libraries, the community has created additional implementations:
 -   **PHP**: Laravel and Symfony integrations
 
 Visit our [GitHub repository](https://github.com/signinwithethereum/siwe) for links to community libraries.
+
+## Version Compatibility
+
+### Library Version Matrix
+
+| Library | Current Version | EIP-4361 Spec | Node.js/Runtime | Notes |
+|---------|----------------|---------------|-----------------|-------|
+| TypeScript | 2.x | Full support | Node 16+ | Breaking changes from v1 |
+| Rust | 0.6.x | Full support | N/A | Stable API |
+| Python | 3.x | Full support | Python 3.7+ | Async support added |
+| Ruby | 2.x | Full support | Ruby 2.7+ | Rails 6+ recommended |
+| Go | 1.x | Full support | Go 1.18+ | Generics support |
+| Elixir | 0.3.x | Full support | Elixir 1.12+ | Phoenix 1.6+ |
+
+### Breaking Changes
+
+When upgrading between major versions:
+
+- **TypeScript v1 → v2**: Constructor API changes, see [migration guide](typescript/migrating-to-v2)
+- **Python v2 → v3**: Async/await support, dataclass changes
+- **Ruby v1 → v2**: Rails integration improvements
+
+### Specification Compliance
+
+All libraries implement:
+- EIP-4361 (Sign-In with Ethereum)
+- EIP-191 (Signed Data Standard)
+- EIP-1271 (Contract Signatures)
+- RFC 3986 (URI Specification)
+- RFC 3339 (Timestamp Format)
 
 ## Contributing
 

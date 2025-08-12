@@ -68,7 +68,7 @@ These fields **must** be present in every SIWE message:
 
 -   **Type**: String
 -   **Description**: The Ethereum address performing the signing
--   **Format**: Ethereum address in EIP-55 mixed-case checksum format
+-   **Format**: Ethereum address in [EIP-55](https://eips.ethereum.org/EIPS/eip-55) mixed-case checksum format
 -   **Example**: `0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890`
 
 ### `uri`
@@ -88,7 +88,7 @@ These fields **must** be present in every SIWE message:
 ### `chain-id`
 
 -   **Type**: String
--   **Description**: EIP-155 Chain ID to which the session is bound
+-   **Description**: [EIP-155](https://eips.ethereum.org/EIPS/eip-155) Chain ID to which the session is bound
 -   **Format**: Decimal string representation
 -   **Example**: `1` (Ethereum Mainnet), `5` (Goerli), `137` (Polygon)
 
@@ -201,10 +201,10 @@ When validating SIWE messages:
 
 EIP-4361 is designed to work with existing Ethereum standards:
 
--   **EIP-191**: Signed Data Standard for message signing
--   **EIP-712**: Ethereum typed structured data hashing and signing
--   **EIP-1271**: Standard Signature Validation Method for Contracts
--   **EIP-155**: Simple replay attack protection for chain ID binding
+-   **[EIP-191](https://eips.ethereum.org/EIPS/eip-191)**: Signed Data Standard for message signing
+-   **[EIP-712](https://eips.ethereum.org/EIPS/eip-712)**: Ethereum typed structured data hashing and signing
+-   **[EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)**: Standard Signature Validation Method for Smart Contracts
+-   **[EIP-155](https://eips.ethereum.org/EIPS/eip-155)**: Simple replay attack protection for chain ID binding
 
 ## Implementation Notes
 
@@ -216,7 +216,7 @@ EIP-4361 is designed to work with existing Ethereum standards:
 
 ### Address Format
 
--   Use EIP-55 mixed-case checksum format for addresses
+-   Use [EIP-55](https://eips.ethereum.org/EIPS/eip-55) mixed-case checksum format for addresses
 -   Validate address checksum during message validation
 -   Support both externally owned accounts (EOA) and contract accounts
 
@@ -228,4 +228,4 @@ EIP-4361 is designed to work with existing Ethereum standards:
 
 ---
 
-_For implementation examples and code samples, see our [Library Implementations](../libraries/index.md) or [Quickstart Guide](../quickstart/index.md)._
+_For implementation examples and code samples, see our [Library Implementations](../languages/index.md) or [Quickstart Guide](../quickstart/index.md)._

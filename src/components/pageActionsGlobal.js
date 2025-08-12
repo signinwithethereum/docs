@@ -42,8 +42,10 @@ function updatePosition() {
   const container = document.getElementById('page-actions-container')
   if (!container) return
 
-  // Skip position updates on mobile
+  // On mobile, ensure visibility but skip content-relative positioning
   if (window.innerWidth <= 996) {
+    container.style.display = 'block'
+    container.style.visibility = 'visible'
     return
   }
 

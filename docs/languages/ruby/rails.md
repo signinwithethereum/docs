@@ -2,7 +2,7 @@
 
 ## Overview
 
-Sign-In with Ethereum (SIWE) provides authentication for Rails applications through multiple integration approaches. This documentation covers three primary methods of implementation:
+Sign in with Ethereum (SIWE) provides authentication for Rails applications through multiple integration approaches. This documentation covers three primary methods of implementation:
 
 ### Requirements
 

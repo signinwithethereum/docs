@@ -2,7 +2,7 @@
 
 ## Overview
 
-When using Sign-In with Ethereum (SIWE), implementers should aim to mitigate security issues on both the client and server. This is a growing collection of best practices for implementers, but no security checklist can ever be truly complete.
+When using Sign In with Ethereum (SIWE), implementers should aim to mitigate security issues on both the client and server. This is a growing collection of best practices for implementers, but no security checklist can ever be truly complete.
 
 ## Message Generation and Validation
 

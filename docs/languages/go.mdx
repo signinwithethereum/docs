@@ -2,7 +2,7 @@ import FullWidthLink from '@site/src/components/full-width-link'
 
 # 🏃 Go
 
-The Go implementation of Sign-In with Ethereum can be found here:
+The Go implementation of Sign in with Ethereum can be found here:
 
 <FullWidthLink
 	href='https://github.com/signinwithethereum/siwe-go'
@@ -10,10 +10,6 @@ The Go implementation of Sign-In with Ethereum can be found here:
 	text='signinwithethereum/siwe-go'
 	themeAware={true}
 />
-
-## Getting Started
-
-A Go implementation of [EIP-4361](../general-information/eip-4361-specification.md): Sign In With Ethereum.
 
 ## Installation
 
@@ -82,7 +78,7 @@ func signMessage(message string, privateKey *ecdsa.PrivateKey) ([]byte, error) {
 ## Key Features
 
 -   Message parsing and validation
--   EIP-191 signature verification
+-   [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signature verification
 -   Time-based validation
 -   Support for custom nonce and timestamp verification
 -   Message serialization

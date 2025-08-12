@@ -1,8 +1,10 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 import FullWidthLink from '@site/src/components/full-width-link'
 
 # 💎 Ruby
 
-The Ruby implementation of Sign-In with Ethereum can be found here:
+The Ruby implementation of Sign in with Ethereum can be found here:
 
 <FullWidthLink
 	href='https://github.com/signinwithethereum/siwe-rb'
@@ -11,26 +13,23 @@ The Ruby implementation of Sign-In with Ethereum can be found here:
 	themeAware={true}
 />
 
-## Getting Started
-
-A Ruby implementation of [EIP-4361](../general-information/eip-4361-specification.md): Sign In With Ethereum.
-
 ## Installation
 
 ### Dependencies
 
-For macOS:
-
-```bash
-brew install automake openssl libtool pkg-config gmp libffi
-```
-
-For Linux:
-
-```bash
-sudo apt-get install build-essential automake pkg-config libtool \
-                     libffi-dev libssl-dev libgmp-dev python-dev
-```
+<Tabs groupId='operating-systems'>
+	<TabItem value='mac' label='macOS'>
+		```bash
+    brew install automake openssl libtool pkg-config gmp libffi
+    ```
+	</TabItem>
+	<TabItem value='linux' label='Linux'>
+		```bash
+    sudo apt-get install build-essential automake pkg-config libtool \
+    libffi-dev libssl-dev libgmp-dev python-dev
+    ```
+	</TabItem>
+</Tabs>
 
 Install the gem:
 

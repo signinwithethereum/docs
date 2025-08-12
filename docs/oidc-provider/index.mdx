@@ -1,0 +1,26 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
+# OIDC Provider
+
+## Rationale
+
+Many organizations want to consolidate the Sign in with Ethereum workflow to a single identity service (Identity Provider or IdP) that could be used to access all their federated services (Relying Parties or RPs) using [OpenID Connect](https://openid.net/connect/) to forward the user's session. This reduces overhead and mitigates security risks by consolidating authentication to one protected site instead of several, especially in complex IT systems that have many services for their users to access.
+
+## Getting Started
+
+The OIDC Provider implementation of Sign in with Ethereum can be found here:
+
+<FullWidthLink
+	href='https://github.com/signinwithethereum/siwe-oidc'
+	logo='/img/github.svg'
+	text='signinwithethereum/siwe-oidc'
+	themeAware={true}
+/>
+<br />
+
+Currently, two runtime modes are supported: (1) a standalone executable (using
+Axum and Redis) and (2) a WASM module within a Cloudflare Worker. Both are built
+from the same codebase, specializing at build time. Compilation with a `cargo` target
+of `wasm32` will build for Cloudflare Worker deployments.
+
+For convenience, a fully deployed and hosted version of the OpenID Connect Provider (OP) is available under [https://oidc.signinwithethereum.org](https://oidc.signinwithethereum.org). See[hosted-oidc-provider](./hosted-oidc-provider 'mention') for more information.&#x20;

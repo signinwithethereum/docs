@@ -150,10 +150,10 @@ This format ensures users understand exactly what they're signing while providin
 SIWE is built on established Ethereum Improvement Proposals (EIPs):
 
 -   **[EIP-4361](eip-4361-specification.md)**: Core SIWE specification defining message format and verification process
--   **EIP-191**: Signed Data Standard for message signing with Ethereum private keys
--   **EIP-712**: Typed structured data hashing and signing for improved user experience
--   **EIP-1271**: Standard for signature validation by smart contracts
-
+-   **[EIP-191](https://eips.ethereum.org/EIPS/eip-191)**: Signed Data Standard for message signing
+-   **[EIP-712](https://eips.ethereum.org/EIPS/eip-712)**: Ethereum typed structured data hashing and signing
+-   **[EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)**: Standard Signature Validation Method for Smart Contracts
+-   
 ### Cryptographic Security
 
 SIWE leverages proven cryptographic primitives:
@@ -168,7 +168,7 @@ While authentication happens off-chain, SIWE benefits from blockchain properties
 
 -   **Public Key Infrastructure**: Ethereum provides a global, decentralized PKI
 -   **Address Verification**: On-chain activity can verify address legitimacy
--   **Smart Contract Integration**: Contract wallets and multisig support through EIP-1271
+-   **Smart Contract Integration**: Contract wallets and multisig support through [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)
 -   **Token-based Access Control**: Applications can verify user ownership of specific tokens or NFTs
 
 ## Use Cases

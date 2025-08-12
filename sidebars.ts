@@ -49,27 +49,27 @@ const sidebars: SidebarsConfig = {
 			type: 'category',
 			label: '💻 Languages',
 			collapsed: false,
-			link: { type: 'doc', id: 'libraries/index' },
+			link: { type: 'doc', id: 'languages/index' },
 			items: [
 				{
 					type: 'category',
 					label: '⌨️ TypeScript',
-					link: { type: 'doc', id: 'libraries/typescript' },
+					link: { type: 'doc', id: 'languages/typescript' },
 					items: [
-						'libraries/typescript/migrating-to-v2',
-						'libraries/typescript/typescript-quickstart',
+						'languages/typescript/migrating-to-v2',
+						'languages/typescript/typescript-quickstart',
 					],
 				},
-				'libraries/rust',
-				'libraries/elixir',
-				'libraries/python',
+				'languages/rust',
+				'languages/elixir',
+				'languages/python',
 				{
 					type: 'category',
 					label: '💎 Ruby',
-					link: { type: 'doc', id: 'libraries/ruby' },
-					items: ['libraries/ruby/rails'],
+					link: { type: 'doc', id: 'languages/ruby' },
+					items: ['languages/ruby/rails'],
 				},
-				'libraries/go',
+				'languages/go',
 			],
 		},
 		{
@@ -82,6 +82,16 @@ const sidebars: SidebarsConfig = {
 				'integrations/auth0',
 			],
 		},
+		{
+			type: 'category',
+			label: '🔐 OIDC Provider',
+			link: { type: 'doc', id: 'oidc-provider/index' },
+			items: [
+				'oidc-provider/deployment-guide',
+				'oidc-provider/hosted-oidc-provider',
+			],
+		},
+
 		'security-considerations',
 		{
 			type: 'category',

@@ -38,12 +38,12 @@ Expiration Time: 2023-10-31T17:25:24Z
 -   Establishes security best practices for implementation
 -   Enables interoperability between different SIWE implementations
 
-### EIP-191: Signed Data Standard
+### [EIP-191](https://eips.ethereum.org/EIPS/eip-191): Signed Data Standard
 
 **Status**: Final  
 **Purpose**: Standard for signing arbitrary data with Ethereum private keys
 
-EIP-191 defines how arbitrary data can be signed using Ethereum private keys, providing the cryptographic foundation for SIWE message signing.
+[EIP-191](https://eips.ethereum.org/EIPS/eip-191) defines how arbitrary data can be signed using Ethereum private keys, providing the cryptographic foundation for SIWE message signing.
 
 **Message Prefixing**:
 
@@ -71,12 +71,12 @@ const messageHash = ethers.utils.hashMessage(siweMessage.prepareMessage())
 const signature = await signer.signMessage(siweMessage.prepareMessage())
 ```
 
-### EIP-712: Ethereum Typed Structured Data Hashing and Signing
+### [EIP-712](https://eips.ethereum.org/EIPS/eip-712): Ethereum Typed Structured Data Hashing and Signing
 
 **Status**: Final  
 **Purpose**: Standard for hashing and signing typed structured data
 
-While SIWE uses EIP-191 by default, EIP-712 provides enhanced user experience through structured data presentation in wallets.
+While SIWE uses [EIP-191](https://eips.ethereum.org/EIPS/eip-191) by default, [EIP-712](https://eips.ethereum.org/EIPS/eip-712) provides enhanced user experience through structured data presentation in wallets.
 
 **Structured Data Format**:
 
@@ -117,15 +117,15 @@ const value = {
 
 -   **Better UX**: Wallets can display structured data fields clearly
 -   **Type Safety**: Strong typing prevents field interpretation errors
--   **Domain Binding**: EIP-712 domain provides additional security context
+-   **Domain Binding**: [EIP-712](https://eips.ethereum.org/EIPS/eip-712) domain provides additional security context
 -   **Future Compatibility**: Enables advanced wallet features and integrations
 
-### EIP-1271: Standard Signature Validation Method for Contracts
+### [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271): Standard Signature Validation Method for Contracts
 
 **Status**: Final  
 **Purpose**: Standard interface for smart contracts to validate signatures
 
-EIP-1271 enables smart contract wallets (like Gnosis Safe, Argent, etc.) to validate signatures, extending SIWE compatibility beyond externally owned accounts (EOAs).
+[EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) enables smart contract wallets (like Gnosis Safe, Argent, etc.) to validate signatures, extending SIWE compatibility beyond externally owned accounts (EOAs).
 
 **Interface Definition**:
 
@@ -163,17 +163,17 @@ if (isContract) {
 
 -   **Gnosis Safe**: Multi-signature smart contract wallets
 -   **Argent**: Social recovery smart contract wallets
--   **Custom Contract Wallets**: Any contract implementing EIP-1271
--   **Account Abstraction Wallets**: ERC-4337 compatible wallets
+-   **Custom Contract Wallets**: Any contract implementing [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)
+-   **Account Abstraction Wallets**: [EIP-4337](https://eips.ethereum.org/EIPS/eip-4337) compatible wallets
 
 ## Supporting Standards
 
-### EIP-155: Simple Replay Attack Protection
+### [EIP-155](https://eips.ethereum.org/EIPS/eip-155): Simple Replay Attack Protection
 
 **Status**: Final  
 **Purpose**: Prevents transaction replay attacks across different networks
 
-EIP-155 introduces chain ID to prevent transactions from being replayed on different networks. SIWE incorporates this concept for authentication security.
+[EIP-155](https://eips.ethereum.org/EIPS/eip-155) introduces chain ID to prevent transactions from being replayed on different networks. SIWE incorporates this concept for authentication security.
 
 **Chain ID Binding**:
 
@@ -188,12 +188,12 @@ EIP-155 introduces chain ID to prevent transactions from being replayed on diffe
 -   **Replay Prevention**: Messages cannot be replayed across different chains
 -   **Multi-chain Support**: Applications can support multiple networks securely
 
-### EIP-2098: Compact Signature Representation
+### [EIP-2098](https://eips.ethereum.org/EIPS/eip-2098): Compact Signature Representation
 
 **Status**: Final  
 **Purpose**: More efficient signature encoding format
 
-EIP-2098 defines a compact signature format that reduces signature size from 65 to 64 bytes, beneficial for applications with signature storage constraints.
+[EIP-2098](https://eips.ethereum.org/EIPS/eip-2098) defines a compact signature format that reduces signature size from 65 to 64 bytes, beneficial for applications with signature storage constraints.
 
 **Standard Format** (65 bytes):
 
@@ -219,7 +219,7 @@ const result1 = await message.verify({ signature: signature65 })
 const result2 = await message.verify({ signature: signature64 })
 ```
 
-### EIP-3085: Wallet Add Ethereum Chain RPC Method
+### [EIP-3085](https://eips.ethereum.org/EIPS/eip-3085): Wallet Add Ethereum Chain RPC Method
 
 **Status**: Final  
 **Purpose**: Standard method for wallets to add new Ethereum chains
@@ -248,9 +248,9 @@ await window.ethereum.request({
 
 ## Web Standards Integration
 
-### RFC 3986: Uniform Resource Identifier (URI)
+### [RFC 3986](https://www.rfc-editor.org/rfc/rfc3968.html): Uniform Resource Identifier (URI)
 
-SIWE uses RFC 3986 compliant URIs for the `uri` and `resources` fields.
+SIWE uses [RFC 3986](https://www.rfc-editor.org/rfc/rfc3968.html) compliant URIs for the `uri` and `resources` fields.
 
 **Valid URI Examples**:
 
@@ -267,9 +267,9 @@ did:key:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH
 -   Domain must match RFC 3986 authority format
 -   Path and query parameters are optional but must be valid if present
 
-### RFC 3339: Date and Time Format
+### [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339.html): Date and Time Format
 
-SIWE timestamps use RFC 3339 / ISO 8601 format for consistency and parseability.
+SIWE timestamps use [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339.html) / ISO 8601 format for consistency and parseability.
 
 **Required Format**:
 
@@ -286,7 +286,7 @@ YYYY-MM-DDTHH:mm:ssZ
 
 ### OpenID Connect Integration
 
-SIWE can integrate with OpenID Connect (OIDC) for enterprise authentication workflows.
+SIWE can integrate with [OpenID Connect](/oidc-provider) (OIDC) for enterprise authentication workflows.
 
 **OIDC Claims Mapping**:
 
@@ -382,13 +382,13 @@ SIWE aligns with NIST guidelines through:
 
 ### Emerging Developments
 
-**EIP-6963**: Multi Injected Provider Discovery  
+**[EIP-6963](https://eips.ethereum.org/EIPS/eip-6963)**: Multi Injected Provider Discovery  
 Enables applications to discover and connect to multiple wallet providers simultaneously.
 
-**ERC-4337**: Account Abstraction  
+**[EIP-4337](https://eips.ethereum.org/EIPS/eip-4337)**: Account Abstraction  
 Enables smart contract wallets with advanced features like social recovery and gasless transactions.
 
-**EIP-5792**: Wallet Call API  
+**[EIP-5792](https://eips.ethereum.org/EIPS/eip-5792)**: Wallet Call API  
 Standardizes how applications can request wallets to execute transactions and operations.
 
 ### Cross-Chain Standards
@@ -409,12 +409,12 @@ Infrastructure for cross-chain applications that could support multi-chain SIWE 
 When implementing SIWE, ensure compliance with:
 
 -   ✅ **[EIP-4361](eip-4361-specification.md)**: Message format and verification process
--   ✅ **EIP-191**: Proper message signing with personal message prefix
--   ✅ **EIP-155**: Chain ID validation and binding
--   ✅ **EIP-1271**: Smart contract signature validation support
--   ✅ **RFC 3986**: Valid URI format for domain and resources
--   ✅ **RFC 3339**: ISO 8601 timestamp format
--   ✅ **EIP-55**: Checksum address format validation
+-   ✅ **[EIP-191](https://eips.ethereum.org/EIPS/eip-191)**: Proper message signing with personal message prefix
+-   ✅ **[EIP-155](https://eips.ethereum.org/EIPS/eip-155)**: Chain ID validation and binding
+-   ✅ **[EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)**: Smart contract signature validation support
+-   ✅ **[RFC 3986](https://www.rfc-editor.org/rfc/rfc3968.html)**: Valid URI format for domain and resources
+-   ✅ **[RFC 3339](https://www.rfc-editor.org/rfc/rfc3339.html)**: ISO 8601 timestamp format
+-   ✅ **[EIP-55](https://eips.ethereum.org/EIPS/eip-55)**: Checksum address format validation
 
 ### Testing Standards Compliance
 

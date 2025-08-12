@@ -45,9 +45,9 @@ SIWE follows a simple authentication flow:
 SIWE is built on established Ethereum standards:
 
 -   **[EIP-4361](general-information/eip-4361-specification.md)**: Core specification for Sign in with Ethereum messages
--   **EIP-191**: Signed Data Standard for message formatting
--   **EIP-712**: Ethereum typed structured data hashing and signing
--   **EIP-1271**: Standard Signature Validation Method for Contracts
+-   **[EIP-191](https://eips.ethereum.org/EIPS/eip-191)**: Signed Data Standard for message formatting
+-   **[EIP-712](https://eips.ethereum.org/EIPS/eip-721)**: Ethereum typed structured data hashing and signing
+-   **[EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)**: Standard Signature Validation Method for Contracts
 
 ## Getting Started
 
@@ -61,12 +61,12 @@ Follow our [Quickstart Guide](quickstart/index.md) for a step-by-step tutorial o
 
 We provide official libraries for multiple programming languages:
 
--   [TypeScript/JavaScript](libraries/typescript)
--   [Rust](libraries/rust)
--   [Python](libraries/python)
--   [Ruby](libraries/ruby)
--   [Go](libraries/go)
--   [Elixir](libraries/elixir)
+-   [TypeScript](languages/typescript)
+-   [Rust](languages/rust)
+-   [Python](languages/python)
+-   [Ruby](languages/ruby)
+-   [Go](languages/go)
+-   [Elixir](languages/elixir)
 
 ### 🔌 **Pre-built Integrations**
 
@@ -91,7 +91,7 @@ Learn more about [Security Best Practices](/security-considerations).
 
 For enterprise applications, SIWE provides:
 
--   **OpenID Connect (OIDC) Provider** for standards-compliant integration
+-   **[OpenID Connect (OIDC) Provider](./oidc-provider/index.mdx)** for standards-compliant integration
 -   **Scalable authentication** supporting millions of users
 -   **Compliance-friendly** audit trails and security controls
 -   **Professional support** and deployment guidance
@@ -114,8 +114,8 @@ Explore the [Integrations](integrations/index.md) section to see SIWE implementa
 SIWE fully complies with:
 
 -   [EIP-4361](general-information/eip-4361-specification.md): Sign in with Ethereum specification
--   OpenID Connect 1.0 for enterprise integration
--   OAuth 2.0 for authorization flows
+-   [OpenID Connect](oidc-provider/index.mdx) 1.0 for enterprise integration
+-   [OAuth 2.0](integrations/auth0.mdx) for authorization flows
 -   Web3 wallet standards for broad compatibility
 
 ---
