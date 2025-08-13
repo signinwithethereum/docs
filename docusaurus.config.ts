@@ -83,24 +83,20 @@ const config: Config = {
 						},
 						{
 							label: 'EIP-4361 Specification',
-							to: '/general-information/eip-4361-specification',
+							href: 'https://eips.ethereum.org/EIPS/eip-4361',
 						},
 					],
 				},
 				{
 					title: 'Community',
 					items: [
-						{
-							label: 'Discord',
-							href: 'https://discord.gg/siwe',
-						},
+						// {
+						// 	label: 'Discord',
+						// 	href: 'https://discord.gg/siwe',
+						// },
 						{
 							label: 'Twitter',
-							href: 'https://twitter.com/signinwithethereum',
-						},
-						{
-							label: 'Stack Overflow',
-							href: 'https://stackoverflow.com/questions/tagged/sign-in-with-ethereum',
+							href: 'https://twitter.com/signinethereum',
 						},
 					],
 				},
@@ -109,7 +105,7 @@ const config: Config = {
 					items: [
 						{
 							label: 'GitHub',
-							href: 'https://github.com/signinwithethereum/siwe',
+							href: 'https://github.com/signinwithethereum',
 						},
 						{
 							label: 'npm Package',
