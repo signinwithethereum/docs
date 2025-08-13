@@ -37,22 +37,7 @@ const sidebars: SidebarsConfig = {
 					id: 'quickstart/implement-sessions',
 					label: 'Implement Sessions',
 				},
-				{
-					type: 'doc',
-					id: 'quickstart/resolve-ens-profiles',
-					label: 'Retrieve ENS Profiles',
-				},
-				{
-					type: 'doc',
-					id: 'quickstart/resolve-efp-data',
-					label: 'Retrieve EFP Data',
-				},
-				{
-					type: 'doc',
-					id: 'quickstart/resolve-onchain-holdings',
-					label: 'Retrieve Onchain Holdings',
-				},
-			],
+					],
 		},
 		{
 			type: 'category',
@@ -91,6 +76,17 @@ const sidebars: SidebarsConfig = {
 				'integrations/nextauth.js',
 				'integrations/auth0',
 			],
+		},
+		{
+			type: 'category',
+			label: '⛓️ Onchain Data',
+			collapsed: false,
+			link: { type: 'doc', id: 'quickstart/retrieve-onchain-data' },
+			items: [
+					'quickstart/resolve-ens-profiles',
+					'quickstart/resolve-efp-data',
+					'quickstart/resolve-onchain-holdings',
+					],
 		},
 		{
 			type: 'category',

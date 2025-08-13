@@ -830,24 +830,3 @@ logger.info('Authentication attempt', {
 	timestamp: new Date().toISOString(),
 })
 ```
-
-## Next Steps
-
-Excellent work! You now have a secure backend that can:
-
--   Generate cryptographically secure nonces
--   Verify SIWE signatures with comprehensive validation
--   Handle errors gracefully with proper HTTP status codes
--   Prevent common attacks (replay, domain spoofing, etc.)
-
-In [Part 4: Connecting Frontend & Backend](connect-the-frontend.md), you'll learn how to integrate your frontend with this backend to create a complete authentication flow.
-
-## Resources
-
--   [Express.js Security Best Practices](https://expressjs.com/en/advanced/best-practice-security.html)
--   [SIWE Library Documentation](../libraries/typescript)
--   [Authentication Security Guide](/security-considerations)
-
----
-
-_Ready to connect everything together? Continue to [Part 4: Connecting Frontend & Backend](connect-the-frontend.md) for the complete integration._

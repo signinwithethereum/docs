@@ -369,24 +369,3 @@ function testMessageCreation() {
 
 testMessageCreation()
 ```
-
-## Next Steps
-
-Congratulations! You've learned how to create SIWE messages. Key takeaways:
-
--   **Messages follow EIP-4361 specification** with required and optional fields
--   **Nonces provide replay protection** and should be cryptographically secure
--   **Server-side creation is critical** for security in production applications
--   **Proper validation prevents common errors** and security vulnerabilities
-
-In the next tutorial, [Part 2: Frontend Setup](frontend-setup), you'll learn how to integrate SIWE messages with a React frontend and connect to user wallets for signature requests.
-
-## Resources
-
--   [SIWE TypeScript Documentation](../libraries/typescript)
--   [EIP-4361 Specification](../general-information/eip-4361-specification.md)
--   [Security Best Practices](/security-considerations)
-
----
-
-_Ready to connect to user wallets? Continue to [Part 2: Frontend Setup](frontend-setup) to build the frontend integration._
