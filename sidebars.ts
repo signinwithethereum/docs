@@ -37,7 +37,7 @@ const sidebars: SidebarsConfig = {
 					id: 'quickstart/implement-sessions',
 					label: 'Implement Sessions',
 				},
-			],
+					],
 		},
 		{
 			type: 'category',
@@ -83,23 +83,11 @@ const sidebars: SidebarsConfig = {
 			collapsed: false,
 			link: { type: 'doc', id: 'quickstart/retrieve-onchain-data' },
 			items: [
-						{
-							type: 'doc',
-							id: 'quickstart/resolve-ens-profiles',
-							label: 'ENS Profiles',
-						},
-						{
-							type: 'doc',
-							id: 'quickstart/resolve-efp-data',
-							label: 'EFP Social Graph',
-						},
-						{
-							type: 'doc',
-							id: 'quickstart/resolve-onchain-holdings',
-							label: 'Other Onchain Assets',
-						},
-						],
-				},
+					'quickstart/resolve-ens-profiles',
+					'quickstart/resolve-efp-data',
+					'quickstart/resolve-onchain-holdings',
+					],
+		},
 		{
 			type: 'category',
 			label: '🔐 OIDC Provider',
