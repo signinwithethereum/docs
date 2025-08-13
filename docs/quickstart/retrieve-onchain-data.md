@@ -30,6 +30,6 @@ You may also want to retrieve the user's NFTs, token balances, and other onchain
 
 <FullWidthLink
 	href='https://docs.efp.app'
-	logo=''
+	logo='/img/cargo.png'
 	text='Other Onchain Assets'
 />
