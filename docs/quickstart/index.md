@@ -74,7 +74,10 @@ Enhance your application by resolving user ENS names and avatar images. Learn to
 **Estimated Time**: 25 minutes  
 **What You'll Learn**: ENS integration, profile resolution, metadata handling
 
-### 7. [Onchain Holdings Integration](resolve-onchain-holdings.md)
+### 7. [EFP Data Integration](resolve-onchain-holdings.md)
+Improve your application by enriching it with EFP social graph data. Show relations between ethereum accounts and provide additional layer of trust.
+
+### 8. [Onchain Holdings Integration](resolve-onchain-holdings.md)
 Implement NFT-based access control by verifying user token ownership. Learn to query NFT balances and create gated content.
 
 **Estimated Time**: 30 minutes  

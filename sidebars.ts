@@ -2,7 +2,11 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs'
 
 const sidebars: SidebarsConfig = {
 	tutorialSidebar: [
-		'index',
+		{
+			type: 'doc',
+			id: 'index',
+			label: '👋 Introduction',
+		},
 		{
 			type: 'category',
 			label: '⭐ Quickstart Guide',
@@ -36,17 +40,17 @@ const sidebars: SidebarsConfig = {
 				{
 					type: 'doc',
 					id: 'quickstart/resolve-ens-profiles',
-					label: 'Resolve ENS Profiles',
+					label: 'Retrieve ENS Profiles',
 				},
 				{
 					type: 'doc',
 					id: 'quickstart/resolve-efp-data',
-					label: 'Resolve EFP Data',
+					label: 'Retrieve EFP Data',
 				},
 				{
 					type: 'doc',
 					id: 'quickstart/resolve-onchain-holdings',
-					label: 'Resolve Onchain Holdings',
+					label: 'Retrieve Onchain Holdings',
 				},
 			],
 		},

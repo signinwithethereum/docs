@@ -1,4 +1,4 @@
-# Resolve Onchain Holdings
+# Retrieve Onchain Holdings
 
 This guide demonstrates how to pull information about a user's onchain holdings including NFTs and crypto assets using the Sign in with Ethereum (SIWE) quickstart.
 

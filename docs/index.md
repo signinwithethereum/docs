@@ -1,4 +1,4 @@
-# 🔑 Sign in with Ethereum
+# Sign in with Ethereum
 
 **Sign in with Ethereum** (SIWE) is an authentication method for Ethereum accounts.
 
