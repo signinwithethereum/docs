@@ -38,20 +38,28 @@ const sidebars: SidebarsConfig = {
 					label: 'Implement Sessions',
 				},
 				{
+					type: 'category',
+					label: 'Retrieve Onchain Data',
+					link: { type: 'doc', id: 'quickstart/retrieve-onchain-data' },
+					items: [
+						{
 					type: 'doc',
-					id: 'quickstart/resolve-ens-profiles',
-					label: 'Retrieve ENS Profiles',
+					id: 'quickstart/ens-profiles',
+					label: 'ENS Profiles',
 				},
 				{
 					type: 'doc',
-					id: 'quickstart/resolve-efp-data',
-					label: 'Retrieve EFP Data',
+					id: 'quickstart/efp-social-graph',
+					label: 'EFP Social Graph',
 				},
 				{
 					type: 'doc',
-					id: 'quickstart/resolve-onchain-holdings',
-					label: 'Retrieve Onchain Holdings',
+					id: 'quickstart/retrieve-onchain-data',
+					label: 'Other Onchain Assets',
 				},
+					],
+				},
+
 			],
 		},
 		{
