@@ -1,6 +1,6 @@
 # Quickstart Guide
 
-This comprehensive quickstart guide will walk you through implementing Sign in with Ethereum (SIWE) authentication from scratch. By the end of this tutorial, you'll have a complete authentication system that allows users to sign in using their Ethereum wallets.
+This guide will walk you through implementing Sign in with Ethereum (SIWE) authentication from scratch. By the end of this tutorial, you'll have a complete authentication system that allows users to sign in using their Ethereum wallets.
 
 ## What You'll Build
 
@@ -26,10 +26,10 @@ Before starting this tutorial, you should have:
 - **Node.js**: Version 16 or higher
 - **Package Manager**: npm or yarn installed
 - **Code Editor**: VS Code or similar IDE
-- **Web Browser**: Chrome, Firefox, or Edge with Web3 wallet extension
+- **Web Browser**: Chrome, Firefox, or Edge with Ethereum wallet extension
 
 ### Optional Wallet Setup
-- **MetaMask**: Browser extension for testing (or any Web3 wallet)
+- **MetaMask**: Browser extension for testing (or any Ethereum wallet)
 - **Test ETH**: Small amount on testnets for transaction fees (not required for authentication)
 
 ## Tutorial Structure
