@@ -91,9 +91,8 @@ Learn more about [OpenID Connect Integration](/integrations/auth0).
 
 SIWE is an open-source project with an active community:
 
--   **GitHub**: [Contribute to the project and report issues](https://github.com/signinwithethereum/siwe)
+-   **GitHub**: [Contribute to the project and report issues](https://github.com/signinwithethereum/)
 -   **Twitter**: Follow [@signinethereum](https://twitter.com/signinethereum) for updates
--   **Documentation**: Comprehensive guides and references
 
 Explore the [Integrations](integrations/index.md) section to see SIWE implementations in production.
 
