@@ -1,13 +1,7 @@
-# Retrieve Onchain Holdings
+# Other Onchain Assets
 
-This guide demonstrates how to pull information about a user's onchain holdings including NFTs and crypto assets using the Sign in with Ethereum (SIWE) quickstart.
+This guide demonstrates how to pull information about a user's onchain holdings including NFTs, tokens, and other crypto assets.
 
-## Prerequisites
-
--   Completed previous SIWE quickstart steps
--   API access for NFT data (OpenSea, Alchemy, etc.)
--   API access for token data (CoinGecko, Moralis, etc.)
--   Basic understanding of NFT standards and ERC-20 tokens
 
 ## Implementation Steps
 
@@ -380,16 +374,6 @@ Add styles for better presentation of holdings:
 }
 ```
 
-## Key Features
-
--   **Comprehensive Holdings**: Display both ERC-20 tokens and NFTs
--   **Native ETH Support**: Shows native Ethereum balance
--   **Multiple API Support**: Works with various data providers (Moralis, Alchemy, OpenSea)
--   **Price Integration**: Optional token price data from CoinGecko
--   **Error Handling**: Graceful handling of API failures and empty results
--   **Responsive Display**: Clean table layouts for different asset types
--   **Loading States**: User-friendly loading indicators
-
 ## Rate Limiting Considerations
 
 -   Implement proper rate limiting for API calls
@@ -448,14 +432,3 @@ async function calculatePortfolioValue() {
 	return totalValue
 }
 ```
-
-## Next Steps
-
-You've now completed the SIWE quickstart guide! You can enhance this further by:
-
--   **Asset Management**: Add more detailed token metadata and price tracking
--   **NFT Galleries**: Display NFT images and rich metadata
--   **Portfolio Analytics**: Track portfolio value over time
--   **Token-Gated Features**: Implement access control based on token/NFT ownership
--   **DeFi Integration**: Show DeFi positions and yield farming data
--   **Multi-Chain Support**: Extend to other blockchains beyond Ethereum
