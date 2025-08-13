@@ -90,7 +90,7 @@ const sidebars: SidebarsConfig = {
 						},
 						{
 							type: 'doc',
-							id: 'quickstart/retrieve-efp-data',
+							id: 'quickstart/resolve-efp-data',
 							label: 'EFP Social Graph',
 						},
 						{
