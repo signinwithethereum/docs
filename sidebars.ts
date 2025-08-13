@@ -43,21 +43,21 @@ const sidebars: SidebarsConfig = {
 					link: { type: 'doc', id: 'quickstart/retrieve-onchain-data' },
 					items: [
 						{
-					type: 'doc',
-					id: 'quickstart/ens-profiles',
-					label: 'ENS Profiles',
-				},
-				{
-					type: 'doc',
-					id: 'quickstart/efp-social-graph',
-					label: 'EFP Social Graph',
-				},
-				{
-					type: 'doc',
-					id: 'quickstart/retrieve-onchain-data',
-					label: 'Other Onchain Assets',
-				},
-					],
+							type: 'doc',
+							id: 'quickstart/ens-profiles',
+							label: 'ENS Profiles',
+						},
+						{
+							type: 'doc',
+							id: 'quickstart/efp-social-graph',
+							label: 'EFP Social Graph',
+						},
+						{
+							type: 'doc',
+							id: 'quickstart/retrieve-onchain-data',
+							label: 'Other Onchain Assets',
+						},
+						],
 				},
 
 			],
