@@ -11,7 +11,8 @@ ENS enables onchain usernames and profiles.
 <FullWidthLink
 	href='quickstart/resolve-ens-profiles'
 	logo='/img/ens.svg'
-	text='Ethereum Name Service'
+	text='ENS Profiles'
+	themeAware={true}
 />
 
 ## Ethereum Follow Protocol (EFP)
@@ -21,7 +22,7 @@ EFP enables an onchain social graph for Ethereum accounts.
 <FullWidthLink
 	href='quickstart/resolve-efp-data'
 	logo='/img/efp.svg'
-	text='Ethereum Follow Protocol'
+	text='EFP Social Graph'
 />
 
 ## Other Onchain Assets
