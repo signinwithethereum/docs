@@ -383,7 +383,7 @@ In the next tutorial, [Part 2: Frontend Setup](frontend-setup), you'll learn how
 
 ## Resources
 
--   [SIWE TypeScript Documentation](../languages/typescript)
+-   [SIWE TypeScript Documentation](../libraries/typescript)
 -   [EIP-4361 Specification](../general-information/eip-4361-specification.md)
 -   [Security Best Practices](/security-considerations)
 

@@ -61,12 +61,12 @@ Follow our [Quickstart Guide](quickstart/README.md) for a step-by-step tutorial 
 
 We provide official libraries for multiple programming languages:
 
--   [TypeScript/JavaScript](languages/typescript.md)
--   [Rust](languages/rust.md)
--   [Python](languages/python.md)
--   [Ruby](languages/ruby.md)
--   [Go](languages/go.md)
--   [Elixir](languages/elixir.md)
+-   [TypeScript/JavaScript](libraries/typescript.md)
+-   [Rust](libraries/rust.md)
+-   [Python](libraries/python.md)
+-   [Ruby](libraries/ruby.md)
+-   [Go](libraries/go.md)
+-   [Elixir](libraries/elixir.md)
 
 ### 🔌 **Pre-built Integrations**
 

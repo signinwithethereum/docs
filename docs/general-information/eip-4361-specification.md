@@ -228,4 +228,4 @@ EIP-4361 is designed to work with existing Ethereum standards:
 
 ---
 
-_For implementation examples and code samples, see our [Library Implementations](../languages/index.md) or [Quickstart Guide](../quickstart/index.md)._
+_For implementation examples and code samples, see our [Library Implementations](../libraries/index.md) or [Quickstart Guide](../quickstart/index.md)._

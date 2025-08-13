@@ -53,12 +53,12 @@ Choose the integration that best fits your technology stack:
 
 If you don't see your platform listed, you can build custom integrations using the SIWE libraries:
 
--   [TypeScript/JavaScript](/languages/typescript)
--   [Python](/languages/python)
--   [Ruby](/languages/ruby)
--   [Go](/languages/go)
--   [Rust](/languages/rust)
--   [Elixir](/languages/elixir)
+-   [TypeScript/JavaScript](/libraries/typescript)
+-   [Python](/libraries/python)
+-   [Ruby](/libraries/ruby)
+-   [Go](/libraries/go)
+-   [Rust](/libraries/rust)
+-   [Elixir](/libraries/elixir)
 
 ## Community Contributions
 

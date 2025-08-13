@@ -118,7 +118,7 @@ Each tutorial part has its own branch with the completed code for that section.
 
 If you run into issues during the tutorial:
 
-- **Documentation**: Check our comprehensive [Library Documentation](../languages/index.md)
+- **Documentation**: Check our comprehensive [Library Documentation](../libraries/index.md)
 - **Community**: Join our Discord server for real-time help
 - **Issues**: Report bugs or request clarifications on [GitHub](https://github.com/signinwithethereum/siwe)
 - **Examples**: Browse working implementations in our [Integrations](../integrations/index.md)

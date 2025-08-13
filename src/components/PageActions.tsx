@@ -168,12 +168,12 @@ const PageActions: React.FC<PageActionsProps> = () => {
     // Check which files use .mdx extension based on the actual file structure
     const mdxPaths = [
       // Library files
-      '/languages/typescript',
-      '/languages/rust',
-      '/languages/python',
-      '/languages/ruby',
-      '/languages/go',
-      '/languages/elixir',
+      '/libraries/typescript',
+      '/libraries/rust',
+      '/libraries/python',
+      '/libraries/ruby',
+      '/libraries/go',
+      '/libraries/elixir',
       // Integration files
       '/integrations/discourse',
       '/integrations/nextauth.js',

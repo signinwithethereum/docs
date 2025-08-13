@@ -47,29 +47,30 @@ const sidebars: SidebarsConfig = {
 		},
 		{
 			type: 'category',
-			label: '💻 Languages',
+			label: '💻 Libraries',
 			collapsed: false,
-			link: { type: 'doc', id: 'languages/index' },
+			link: { type: 'doc', id: 'libraries/index' },
 			items: [
 				{
 					type: 'category',
 					label: '⌨️ TypeScript',
-					link: { type: 'doc', id: 'languages/typescript' },
+					link: { type: 'doc', id: 'libraries/typescript' },
 					items: [
-						'languages/typescript/migrating-to-v2',
-						'languages/typescript/typescript-quickstart',
+						'libraries/typescript/migrating-to-v2',
+						'libraries/typescript/typescript-quickstart',
 					],
 				},
-				'languages/rust',
-				'languages/elixir',
-				'languages/python',
+				'libraries/rust',
+				'libraries/elixir',
+				'libraries/python',
 				{
 					type: 'category',
 					label: '💎 Ruby',
-					link: { type: 'doc', id: 'languages/ruby' },
-					items: ['languages/ruby/rails'],
+					link: { type: 'doc', id: 'libraries/ruby' },
+					items: ['libraries/ruby/rails'],
 				},
-				'languages/go',
+				'libraries/go',
+				'libraries/ethereum-idetntiy-kit',
 			],
 		},
 		{
@@ -93,17 +94,23 @@ const sidebars: SidebarsConfig = {
 		},
 
 		'security-considerations',
+		// {
+		// 	type: 'category',
+		// 	collapsed: false,
+		// 	label: '📘 General Information',
+		// 	link: { type: 'doc', id: 'general-information/overview' },
+		// 	items: [
+		// 		'general-information/overview',
+		// 		'general-information/eip-4361-specification',
+		// 		'general-information/related-standards',
+		// 	],
+		// },
 		{
-			type: 'category',
-			collapsed: false,
-			label: '📘 General Information',
-			link: { type: 'doc', id: 'general-information/overview' },
-			items: [
-				'general-information/overview',
-				'general-information/eip-4361-specification',
-				'general-information/related-standards',
-			],
-		},
+			type: 'link',
+			label: '📄 EIP-4361 Specification',
+			href: 'https://eips.ethereum.org/EIPS/eip-4361',
+			className: 'text-accent hover:text-white transition-colors font-medium group',
+		}
 	],
 }
 
