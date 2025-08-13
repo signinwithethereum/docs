@@ -1,0 +1,396 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
+# Resolve EFP Data
+
+This section of the Sign in with Ethereum quickstart guide demonstrates how to resolve a user's EFP (Ethereum Follow Protocol) social graph data, including followers, following counts, and social connections.
+
+<FullWidthLink
+	href='https://docs.efp.app'
+	logo='/img/efp.svg'
+	text='Ethereum Follow Protocol (EFP) Documentation'
+/>
+
+## Prerequisites
+
+-   A completed frontend from previous quickstart steps
+-   Basic understanding of social graphs and onchain data
+-   Familiarity with API integration
+
+## What is EFP?
+
+Ethereum Follow Protocol (EFP) is an onchain social graph protocol for Ethereum accounts. It enables users to follow other Ethereum addresses, creating a decentralized social network layer. Unlike traditional social networks, EFP stores all relationship data onchain, making it composable and censorship-resistant.
+
+Key features:
+-   **Decentralized Social Graph**: All follow relationships stored onchain
+-   **Composable**: Can be integrated into any application
+-   **Tag System**: Support for custom tags like "top8", "mute", "block"
+-   **No Vendor Lock-in**: Open protocol accessible by anyone
+
+## Component Library (React)
+
+You can use the Ethereum Identity Kit to integrate EFP into your application:
+
+<FullWidthLink
+	href='https://ethidentitykit.com'
+	logo='/img/eik-logo.svg'
+	text='Ethereum Identity Kit (EIK) - Comprehensive EFP Integration'
+/>
+
+## API Integration
+
+### Basic User Stats
+
+Get followers and following counts for any Ethereum address:
+
+```javascript
+async function getEFPStats(address) {
+	try {
+		const response = await fetch(`https://api.ethfollow.xyz/api/v1/users/${address}/stats`)
+		const stats = await response.json()
+		
+		return {
+			followers: stats.followers_count,
+			following: stats.following_count,
+		}
+	} catch (error) {
+		console.error('Error fetching EFP stats:', error)
+		return null
+	}
+}
+```
+
+### Get User's Following List
+
+Retrieve the complete list of accounts a user follows:
+
+```javascript
+async function getUserFollowing(address, limit = 100) {
+	try {
+		const response = await fetch(
+			`https://api.ethfollow.xyz/api/v1/users/${address}/following?limit=${limit}`
+		)
+		const data = await response.json()
+		
+		return data.following.map(follow => ({
+			address: follow.address,
+			ens: follow.ens,
+			avatar: follow.avatar,
+			tags: follow.tags || []
+		}))
+	} catch (error) {
+		console.error('Error fetching following list:', error)
+		return []
+	}
+}
+```
+
+### Get User's Followers
+
+Retrieve the list of accounts following a user:
+
+```javascript
+async function getUserFollowers(address, limit = 100) {
+	try {
+		const response = await fetch(
+			`https://api.ethfollow.xyz/api/v1/users/${address}/followers?limit=${limit}`
+		)
+		const data = await response.json()
+		
+		return data.followers.map(follower => ({
+			address: follower.address,
+			ens: follower.ens,
+			avatar: follower.avatar
+		}))
+	} catch (error) {
+		console.error('Error fetching followers list:', error)
+		return []
+	}
+}
+```
+
+## Implementation Steps
+
+### 1. Update HTML (frontend/src/index.html)
+
+Add a section for displaying EFP social graph data:
+
+```html
+<div class="hidden" id="efpProfile">
+	<h3>EFP Social Graph:</h3>
+	<div id="efpLoader">Loading EFP data...</div>
+	<div id="efpContainer" class="hidden">
+		<div id="efpStats"></div>
+		<div id="efpConnections"></div>
+	</div>
+</div>
+<div class="hidden" id="noEFPProfile">No EFP Profile detected.</div>
+```
+
+### 2. Update JavaScript (frontend/src/index.js)
+
+Add EFP profile resolution functionality:
+
+```javascript
+const efpProfileElm = document.getElementById('efpProfile')
+const noEFPProfileElm = document.getElementById('noEFPProfile')
+const efpStatsElm = document.getElementById('efpStats')
+const efpConnectionsElm = document.getElementById('efpConnections')
+
+async function displayEFPProfile() {
+	try {
+		// Get basic EFP stats
+		const stats = await getEFPStats(address)
+		
+		if (stats && (stats.followers > 0 || stats.following > 0)) {
+			efpProfileElm.classList = ''
+			
+			// Display stats
+			efpStatsElm.innerHTML = `
+				<div class="efp-stats">
+					<div class="stat-item">
+						<span class="stat-number">${stats.followers}</span>
+						<span class="stat-label">Followers</span>
+					</div>
+					<div class="stat-item">
+						<span class="stat-number">${stats.following}</span>
+						<span class="stat-label">Following</span>
+					</div>
+				</div>
+			`
+			
+			// Get and display some recent follows
+			if (stats.following > 0) {
+				const following = await getUserFollowing(address, 5)
+				let connectionsHTML = '<h4>Recent Follows:</h4><div class="connections-list">'
+				
+				following.forEach(follow => {
+					connectionsHTML += `
+						<div class="connection-item">
+							${follow.avatar ? `<img src="${follow.avatar}" class="avatar-small" />` : ''}
+							<span class="connection-name">${follow.ens || formatAddress(follow.address)}</span>
+							${follow.tags.length > 0 ? `<span class="tags">${follow.tags.join(', ')}</span>` : ''}
+						</div>
+					`
+				})
+				
+				connectionsHTML += '</div>'
+				efpConnectionsElm.innerHTML = connectionsHTML
+			}
+			
+			document.getElementById('efpContainer').classList = ''
+		} else {
+			noEFPProfileElm.classList = ''
+		}
+		
+		document.getElementById('efpLoader').style.display = 'none'
+	} catch (error) {
+		console.error('Error displaying EFP profile:', error)
+		noEFPProfileElm.classList = ''
+		document.getElementById('efpLoader').style.display = 'none'
+	}
+}
+
+function formatAddress(address) {
+	return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
+}
+```
+
+### 3. CSS Styling
+
+Add styles for the EFP profile display:
+
+```css
+.efp-stats {
+	display: flex;
+	gap: 20px;
+	margin: 15px 0;
+	padding: 15px;
+	background-color: #f8f9fa;
+	border-radius: 8px;
+}
+
+.stat-item {
+	text-align: center;
+}
+
+.stat-number {
+	display: block;
+	font-size: 24px;
+	font-weight: bold;
+	color: #333;
+}
+
+.stat-label {
+	display: block;
+	font-size: 12px;
+	color: #666;
+	text-transform: uppercase;
+}
+
+.connections-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 10px;
+}
+
+.connection-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px;
+	background-color: #fff;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
+}
+
+.avatar-small {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+}
+
+.connection-name {
+	font-weight: 500;
+}
+
+.tags {
+	font-size: 11px;
+	color: #666;
+	background-color: #f0f0f0;
+	padding: 2px 6px;
+	border-radius: 3px;
+	margin-left: auto;
+}
+
+.hidden {
+	display: none;
+}
+```
+
+## Advanced Features
+
+### Leaderboard Integration
+
+Get top users by followers or mutual connections:
+
+```javascript
+async function getEFPLeaderboard(sort = 'followers', limit = 10) {
+	try {
+		const response = await fetch(
+			`https://api.ethfollow.xyz/api/v1/leaderboard/ranked?sort=${sort}&limit=${limit}`
+		)
+		const data = await response.json()
+		return data.results
+	} catch (error) {
+		console.error('Error fetching leaderboard:', error)
+		return []
+	}
+}
+```
+
+### Search EFP Users
+
+Search for users by ENS name or address:
+
+```javascript
+async function searchEFPUsers(searchTerm) {
+	try {
+		const response = await fetch(
+			`https://api.ethfollow.xyz/api/v1/leaderboard/search?term=${encodeURIComponent(searchTerm)}`
+		)
+		const data = await response.json()
+		return data.results
+	} catch (error) {
+		console.error('Error searching EFP users:', error)
+		return []
+	}
+}
+```
+
+### Check Mutual Connections
+
+Find mutual follows between two addresses:
+
+```javascript
+async function getMutualConnections(address1, address2) {
+	try {
+		// Get following lists for both addresses
+		const [following1, following2] = await Promise.all([
+			getUserFollowing(address1),
+			getUserFollowing(address2)
+		])
+		
+		// Find mutual connections
+		const mutuals = following1.filter(f1 => 
+			following2.some(f2 => f2.address.toLowerCase() === f1.address.toLowerCase())
+		)
+		
+		return mutuals
+	} catch (error) {
+		console.error('Error getting mutual connections:', error)
+		return []
+	}
+}
+```
+
+## Key Features
+
+-   **Social Stats**: Display follower, following, and mutual connection counts
+-   **Connection Lists**: Show recent follows and followers with ENS resolution
+-   **Tag Support**: Display custom tags like "top8" for special connections
+-   **Search Integration**: Find and explore other EFP users
+-   **Leaderboard Access**: Discover popular users in the EFP ecosystem
+
+## API Endpoints Reference
+
+| Endpoint | Description |
+|----------|-------------|
+| `/users/{address}/stats` | Get follower/following counts |
+| `/users/{address}/following` | Get list of addresses user follows |
+| `/users/{address}/followers` | Get list of user's followers |
+| `/leaderboard/ranked` | Get ranked users by various metrics |
+| `/leaderboard/search` | Search users by name or address |
+
+## Error Handling
+
+The implementation includes proper error handling for:
+
+-   Network connectivity issues
+-   Invalid or non-existent addresses
+-   API rate limiting
+-   Missing or empty social graph data
+
+## React Integration
+
+For React applications, consider using the Ethereum Identity Kit:
+
+```jsx
+import { useEFPProfile } from '@ethereum-identity-kit/core'
+
+function UserProfile({ address }) {
+	const { data: efpData, loading, error } = useEFPProfile(address)
+	
+	if (loading) return <div>Loading EFP data...</div>
+	if (error) return <div>Error loading social graph</div>
+	
+	return (
+		<div>
+			<h3>Social Graph</h3>
+			<div>Followers: {efpData.followers}</div>
+			<div>Following: {efpData.following}</div>
+		</div>
+	)
+}
+```
+
+## Next Steps
+
+Continue to learn about resolving onchain holdings to create token-gated experiences and comprehensive user profiles.
+
+## Resources
+
+-   [EFP Documentation](https://docs.efp.app) - Complete protocol documentation
+-   [EFP API Reference](https://docs.efp.app/api) - Full API specification
+-   [Ethereum Identity Kit](https://ethidentitykit.com) - React components for EFP integration
+-   [EFP App](https://ethfollow.xyz) - Reference implementation

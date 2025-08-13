@@ -20,7 +20,7 @@ const FullWidthLink: React.FC<FullWidthLinkProps> = ({
 	const maskClassName = `${logoFileName}-mask`
 
 	return (
-		<a href={href} className={`full-size-url ${className}`}>
+		<a href={href} className={`full-size-url ${className}`} target="_blank">
 			<div className='full-size-url-content'>
 				{themeAware ? (
 					<div

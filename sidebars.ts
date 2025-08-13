@@ -40,8 +40,13 @@ const sidebars: SidebarsConfig = {
 				},
 				{
 					type: 'doc',
-					id: 'quickstart/resolve-nft-holdings',
-					label: 'Resolve NFT Holdings',
+					id: 'quickstart/resolve-efp-data',
+					label: 'Resolve EFP Data',
+				},
+				{
+					type: 'doc',
+					id: 'quickstart/resolve-onchain-holdings',
+					label: 'Resolve Onchain Holdings',
 				},
 			],
 		},
