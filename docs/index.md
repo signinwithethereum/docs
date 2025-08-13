@@ -1,6 +1,6 @@
 # Sign in with Ethereum
 
-**Sign in with Ethereum** (SIWE) is an authentication method for Ethereum accounts.
+**Sign in with Ethereum** (SIWE) is an authentication method for Ethereum accounts. It can be used by any kind of app, whether crypto-related or not.
 
 ## Key Benefits
 
