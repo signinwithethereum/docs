@@ -9,7 +9,7 @@ Once the user has authenticated with their Ethereum account, you may want to con
 ENS enables onchain usernames and profiles.
 
 <FullWidthLink
-	href='quickstart/resolve-ens-profiles'
+	href='resolve-ens-profiles'
 	logo='/img/ens.svg'
 	text='ENS Profiles'
 	themeAware={true}
@@ -20,7 +20,7 @@ ENS enables onchain usernames and profiles.
 EFP enables an onchain social graph for Ethereum accounts.
 
 <FullWidthLink
-	href='quickstart/resolve-efp-data'
+	href='resolve-efp-data'
 	logo='/img/efp.svg'
 	text='EFP Social Graph'
 />
@@ -30,7 +30,7 @@ EFP enables an onchain social graph for Ethereum accounts.
 You may also want to retrieve the user's NFTs, token balances, and other onchain assets.
 
 <FullWidthLink
-	href='quickstart/resolve-onchain-holdings'
+	href='resolve-onchain-holdings'
 	logo='/img/cargo.png'
 	text='Other Onchain Assets'
 />
