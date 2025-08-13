@@ -80,6 +80,7 @@ const sidebars: SidebarsConfig = {
 		{
 			type: 'category',
 			label: '⛓️ Onchain Data',
+			collapsed: false,
 			link: { type: 'doc', id: 'quickstart/retrieve-onchain-data' },
 			items: [
 						{
