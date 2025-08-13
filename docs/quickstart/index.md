@@ -11,8 +11,6 @@ In this tutorial series, you'll create:
 - **Backend Verification Server**: Validate signatures and manage user sessions
 - **Complete Auth Flow**: Connect frontend and backend for seamless authentication
 - **Session Management**: Maintain user sessions across requests
-- **ENS Integration**: Resolve Ethereum Name Service profiles
-- **NFT Verification**: Check user NFT ownership for access control
 
 ## Prerequisites
 
@@ -74,30 +72,9 @@ Enhance your application by resolving user ENS names and avatar images. Learn to
 **Estimated Time**: 25 minutes  
 **What You'll Learn**: ENS integration, profile resolution, metadata handling
 
-### 7. [EFP Data Integration](resolve-onchain-holdings.md)
-Improve your application by enriching it with EFP social graph data. Show relations between ethereum accounts and provide additional layer of trust.
-
-### 8. [Onchain Holdings Integration](resolve-onchain-holdings.md)
-Implement NFT-based access control by verifying user token ownership. Learn to query NFT balances and create gated content.
-
-**Estimated Time**: 30 minutes  
-**What You'll Learn**: NFT verification, OpenSea API, access control
-
 ## Alternative Paths
 
 Depending on your needs, you can follow different paths through this tutorial:
-
-### 🚀 **Basic Authentication** (Parts 1-4)
-Perfect for simple Web3 authentication needs. Covers core SIWE implementation with message signing and verification.
-
-### 🔐 **Production Ready** (Parts 1-5)  
-Adds session management for production applications. Recommended for most real-world use cases.
-
-### 🎨 **Enhanced Experience** (Parts 1-6)
-Includes ENS integration for rich user profiles. Great for social and identity-focused applications.
-
-### 🎯 **Token Gated** (Full Series)
-Complete implementation with NFT-based access control. Ideal for exclusive communities and premium content.
 
 ## Code Repository
 
@@ -122,7 +99,6 @@ Each tutorial part has its own branch with the completed code for that section.
 If you run into issues during the tutorial:
 
 - **Documentation**: Check our comprehensive [Library Documentation](../libraries/index.md)
-- **Community**: Join our Discord server for real-time help
 - **Issues**: Report bugs or request clarifications on [GitHub](https://github.com/signinwithethereum/siwe)
 - **Examples**: Browse working implementations in our [Integrations](../integrations/index.md)
 
@@ -134,8 +110,4 @@ After completing this tutorial, explore:
 
 - [Security Best Practices](/security-considerations) for production deployment
 - [Integration Guides](../integrations/index.md) for popular frameworks  
-- [Advanced Topics](/security-considerations) for enterprise features
-
 ---
-
-*Let's build the future of Web3 authentication together! Start with [Creating a SIWE Message](creating-messages).*
