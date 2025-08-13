@@ -1,53 +1,38 @@
 # 🔑 Sign in with Ethereum
 
-Welcome to the comprehensive documentation for **Sign in with Ethereum** (SIWE), a revolutionary authentication method that enables users to sign in to Web3 applications using their Ethereum accounts instead of traditional centralized identity providers.
-
-## What is Sign in with Ethereum?
-
-Sign in with Ethereum is a standardized authentication protocol that allows users to:
-
--   **Self-custody their identity** using Ethereum accounts
--   **Prove ownership** of blockchain identities through cryptographic signatures
--   **Authenticate securely** without relying on centralized providers
--   **Maintain privacy** while accessing decentralized applications
-
-SIWE is built on the foundation of **[EIP-4361](general-information/eip-4361-specification.md)**, which standardizes how Ethereum accounts can be used as first-class identities for authentication and authorization in Web3 applications.
+**Sign in with Ethereum** (SIWE) is an authentication method for Ethereum accounts.
 
 ## Key Benefits
 
-### 🔒 **Self-Sovereign Identity**
+### 🤝 **Complements other elements of the Ethereum Identity Stack**
 
-Users maintain complete control over their identity using Ethereum accounts, eliminating dependency on centralized identity providers like Google, Facebook, or Twitter.
+After the user authenticates, apps may use their onchain ENS username and profile and EFP social graph.
 
-### 🛡️ **Cryptographic Security**
-
-Authentication relies on cryptographic signatures that prove ownership of Ethereum addresses, providing stronger security guarantees than traditional password-based systems.
-
-### 🌐 **Universal Compatibility**
-
-Works across any application that implements the SIWE standard, creating a unified authentication experience across the Web3 ecosystem.
-
-### 🔗 **Blockchain Integration**
+### ⛓️ **Enrich your app's UX with onchain data**
 
 Seamlessly connects user identity with on-chain activities, enabling applications to verify user ownership of NFTs, tokens, and other blockchain assets.
+
+### 🛡️ **Self-Sovereign Identity**
+
+Users maintain control over their identity credentials, eliminating dependency on centralized identity providers like Google or Facebook.
+
+### 🖊️ **Single Sign-On**
+
+Works across any application that implements the SIWE standard, creating a unified authentication and account experience.
+
 
 ## How It Works
 
 SIWE follows a simple authentication flow:
 
-1. **Message Creation**: Application generates a human-readable sign-in message containing domain, address, and security parameters
-2. **User Signing**: User signs the message with their Ethereum wallet (MetaMask, WalletConnect, etc.)
-3. **Signature Verification**: Application verifies the signature cryptographically to authenticate the user
-4. **Session Establishment**: Upon successful verification, a secure session is created for the authenticated user
+1. **Message Creation**: Application generates a human-readable sign-in message containing domain, address, and security parameters, following the EIP-4361 standard.
+2. **User Signing**: User signs the message with the Ethereum wallet of their choice.
+3. **Signature Verification**: Application verifies the signature cryptographically to authenticate the user.
+4. **Session Establishment**: Upon successful verification, a secure session is created for the authenticated user.
 
-## Technical Foundation
+## Open EIP standard
 
-SIWE is built on established Ethereum standards:
-
--   **[EIP-4361](general-information/eip-4361-specification.md)**: Core specification for Sign in with Ethereum messages
--   **[EIP-191](https://eips.ethereum.org/EIPS/eip-191)**: Signed Data Standard for message formatting
--   **[EIP-712](https://eips.ethereum.org/EIPS/eip-721)**: Ethereum typed structured data hashing and signing
--   **[EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)**: Standard Signature Validation Method for Contracts
+SIWE is defined by **[EIP-4361](general-information/eip-4361-specification.md)**
 
 ## Getting Started
 
@@ -67,6 +52,10 @@ We provide official libraries for multiple programming languages:
 -   [Ruby](libraries/ruby)
 -   [Go](libraries/go)
 -   [Elixir](libraries/elixir)
+
+### 🪪 **Ethereum Identity Kit component library and API**
+
+We offer the [Ethereum Identity Kit](https://ethidentitykit.com/) component library and API to help you integrate SIWE and the rest of the Ethereum identity stack.
 
 ### 🔌 **Pre-built Integrations**
 
@@ -103,8 +92,7 @@ Learn more about [OpenID Connect Integration](/integrations/auth0).
 SIWE is an open-source project with an active community:
 
 -   **GitHub**: [Contribute to the project and report issues](https://github.com/signinwithethereum/siwe)
--   **Discord**: Join discussions with developers and users
--   **Twitter**: Follow [@Signinwithethereum](https://twitter.com/signinwithethereum) for updates
+-   **Twitter**: Follow [@signinethereum](https://twitter.com/signinethereum) for updates
 -   **Documentation**: Comprehensive guides and references
 
 Explore the [Integrations](integrations/index.md) section to see SIWE implementations in production.
@@ -117,7 +105,3 @@ SIWE fully complies with:
 -   [OpenID Connect](oidc-provider/index.mdx) 1.0 for enterprise integration
 -   [OAuth 2.0](integrations/auth0.mdx) for authorization flows
 -   Web3 wallet standards for broad compatibility
-
----
-
-_Ready to implement decentralized authentication in your application? Start with our [Quickstart Guide](quickstart/index.md) or explore the [EIP-4361 Specification](general-information/eip-4361-specification.md) for technical details._
