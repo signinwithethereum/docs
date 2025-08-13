@@ -102,12 +102,3 @@ If you run into issues during the tutorial:
 - **Issues**: Report bugs or request clarifications on [GitHub](https://github.com/signinwithethereum/siwe)
 - **Examples**: Browse working implementations in our [Integrations](../integrations/index.md)
 
-## Next Steps
-
-Ready to start building? Begin with [Part 1: Creating a SIWE Message](creating-messages) to learn the fundamentals of SIWE message creation.
-
-After completing this tutorial, explore:
-
-- [Security Best Practices](/security-considerations) for production deployment
-- [Integration Guides](../integrations/index.md) for popular frameworks  
----
