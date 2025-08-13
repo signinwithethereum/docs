@@ -85,17 +85,17 @@ const sidebars: SidebarsConfig = {
 			items: [
 						{
 							type: 'doc',
-							id: 'quickstart/ens-profiles',
+							id: 'quickstart/resolve-ens-profiles',
 							label: 'ENS Profiles',
 						},
 						{
 							type: 'doc',
-							id: 'quickstart/efp-social-graph',
+							id: 'quickstart/retrieve-efp-data',
 							label: 'EFP Social Graph',
 						},
 						{
 							type: 'doc',
-							id: 'quickstart/retrieve-onchain-data',
+							id: 'quickstart/resolve-onchain-holdings',
 							label: 'Other Onchain Assets',
 						},
 						],
