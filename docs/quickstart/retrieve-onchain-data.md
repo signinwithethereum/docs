@@ -1,3 +1,5 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
 # Retrieve Onchain Data
 
 Once the user has authenticated with their Ethereum account, you may want to consider making use of their onchain data to enrich their experience of your app.
