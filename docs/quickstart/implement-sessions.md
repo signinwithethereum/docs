@@ -93,21 +93,3 @@ app.listen(3000, () => {
 	console.log(`Example app listening on port 3000`)
 })
 ```
-
-## Key Features
-
--   **Session Management**: Uses `express-session` to maintain user state
--   **Secure Cookies**: Configures cookie settings for security
--   **Authentication Middleware**: Protects routes that require authentication
--   **Session Persistence**: Maintains user login state across requests
-
-## Security Considerations
-
--   Use a strong, unique session secret in production
--   Enable `secure: true` for HTTPS environments
--   Consider using a session store (like Redis) for production applications
--   Implement proper session cleanup and expiration
-
-## Next Steps
-
-Continue to learn about resolving ENS profiles to enhance user experience.
