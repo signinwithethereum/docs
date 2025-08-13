@@ -6,7 +6,7 @@ Once the user has authenticated with their Ethereum account, you may want to con
 
 ## Ethereum Name Service (ENS)
 
-ENS supports onchain usernames and profiles.
+ENS enables onchain usernames and profiles.
 
 <FullWidthLink
 	href='https://docs.efp.app'
