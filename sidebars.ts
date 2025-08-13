@@ -37,29 +37,6 @@ const sidebars: SidebarsConfig = {
 					id: 'quickstart/implement-sessions',
 					label: 'Implement Sessions',
 				},
-				{
-					type: 'category',
-					label: 'Retrieve Onchain Data',
-					link: { type: 'doc', id: 'quickstart/retrieve-onchain-data' },
-					items: [
-						{
-							type: 'doc',
-							id: 'quickstart/ens-profiles',
-							label: 'ENS Profiles',
-						},
-						{
-							type: 'doc',
-							id: 'quickstart/efp-social-graph',
-							label: 'EFP Social Graph',
-						},
-						{
-							type: 'doc',
-							id: 'quickstart/retrieve-onchain-data',
-							label: 'Other Onchain Assets',
-						},
-						],
-				},
-
 			],
 		},
 		{
@@ -100,6 +77,28 @@ const sidebars: SidebarsConfig = {
 				'integrations/auth0',
 			],
 		},
+		{
+			type: 'category',
+			label: '⛓️ Onchain Data',
+			link: { type: 'doc', id: 'quickstart/retrieve-onchain-data' },
+			items: [
+						{
+							type: 'doc',
+							id: 'quickstart/ens-profiles',
+							label: 'ENS Profiles',
+						},
+						{
+							type: 'doc',
+							id: 'quickstart/efp-social-graph',
+							label: 'EFP Social Graph',
+						},
+						{
+							type: 'doc',
+							id: 'quickstart/retrieve-onchain-data',
+							label: 'Other Onchain Assets',
+						},
+						],
+				},
 		{
 			type: 'category',
 			label: '🔐 OIDC Provider',
