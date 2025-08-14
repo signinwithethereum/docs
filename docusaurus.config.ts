@@ -19,7 +19,7 @@ const config: Config = {
 			tagName: 'meta',
 			attributes: {
 				name: 'algolia-site-verification',
-				content: 'AA606A49BD2DF7DB',
+				content: 'D8806D3B9177E538',
 			},
 		},
 	],
@@ -143,9 +143,10 @@ const config: Config = {
 			additionalLanguages: ['solidity', 'rust', 'ruby', 'elixir'],
 		},
 		algolia: {
-			appId: 'ADMRD6R0DD',
-			apiKey: 'fc7db00f8a1fa7536b88e34ad829daba',
-			indexName: 'docs_siwe_xyz_admrd6r0dd_pages',
+			appId: 'XAFC9HX1ZS',
+			apiKey: 'e369a9df2df2fd28c98f1b56452ff1ba',
+			// apiKey: '0d1815cb49d708f7a6d50960e6f85528',
+			indexName: 'SIWE Docs',
 		},
 	} satisfies Preset.ThemeConfig,
 }
