@@ -2,6 +2,12 @@
 
 In this first tutorial, you'll learn how to create Sign in with Ethereum (SIWE) messages using the official TypeScript library. This is the foundation of SIWE authentication - generating properly formatted messages that users will sign with their wallets.
 
+:::note
+
+Other supported libraries can be found at [here](../libraries/index.md)
+
+:::
+
 ## Learning Objectives
 
 By the end of this tutorial, you'll understand:

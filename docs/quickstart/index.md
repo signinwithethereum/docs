@@ -66,11 +66,11 @@ Add session management to maintain user authentication state across requests. Im
 **Estimated Time**: 20 minutes  
 **What You'll Learn**: Session handling, authentication middleware, security
 
-### 6. [ENS Profile Resolution](resolve-ens-profiles.mdx)
-Enhance your application by resolving user ENS names and avatar images. Learn to display rich user profiles from Ethereum Name Service.
+### 6. [Retrieve Onchain Data](retrieve-onchain-data.mdx)
+Enhance your application by retrieving onchain data like **[ENS](https://ens.domains)** profiles, **[EFP](https://efp.app)** social graph, and [onchain holdings](resolve-onchain-holdings.md) like NFTs and Assets.
 
-**Estimated Time**: 25 minutes  
-**What You'll Learn**: ENS integration, profile resolution, metadata handling
+**Estimated Time**: 25 minutes / Integration
+**What You'll Learn**: ENS, EFP integration, resolving tokens & NFTs
 
 ## Alternative Paths
 

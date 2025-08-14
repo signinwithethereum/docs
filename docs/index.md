@@ -6,9 +6,9 @@
 
 ### 🤝 **Complements other elements of the Ethereum Identity Stack**
 
-After the user authenticates, apps may use their onchain ENS username and profile and EFP social graph.
+After the user authenticates, apps may use their onchain **[ENS](https://ens.domains)** username and profile and **[EFP](https://efp.app)** social graph.
 
-### ⛓️ **Enrich your app's UX with onchain data**
+### [⛓️ **Enrich your app's UX with onchain data**](./quickstart/retrieve-onchain-data.mdx)
 
 Seamlessly connects user identity with on-chain activities, enabling applications to verify user ownership of NFTs, tokens, and other blockchain assets.
 
@@ -25,14 +25,14 @@ Works across any application that implements the SIWE standard, creating a unifi
 
 SIWE follows a simple authentication flow:
 
-1. **Message Creation**: Application generates a human-readable sign-in message containing domain, address, and security parameters, following the EIP-4361 standard.
+1. **Message Creation**: Application generates a human-readable sign-in message containing domain, address, and security parameters, following the [EIP-4361](general-information/eip-4361-specification.md) standard.
 2. **User Signing**: User signs the message with the Ethereum wallet of their choice.
 3. **Signature Verification**: Application verifies the signature cryptographically to authenticate the user.
 4. **Session Establishment**: Upon successful verification, a secure session is created for the authenticated user.
 
 ## Open EIP standard
 
-SIWE is defined by **[EIP-4361](general-information/eip-4361-specification.md)**
+SIWE is defined by **[EIP-4361](general-information/eip-4361-specification.md)** standard.
 
 ## Getting Started
 
