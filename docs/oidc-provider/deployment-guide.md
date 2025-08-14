@@ -407,15 +407,3 @@ RUST_LOG=debug \
 SIWEOIDC_REDIS_URL=redis://localhost:6379 \
 ./siwe-oidc
 ```
-
-## Next Steps
-
-Once deployed, you can:
-
-1. **[Register clients](hosted-oidc-provider#client-registration)** for your applications
-2. **[Implement OIDC flows](../../../integrations)** in your applications
-3. **[Monitor and maintain](#health-monitoring)** your deployment
-
----
-
-_Need help with deployment? Check out the [example configurations](https://github.com/spruceid/siwe-oidc/tree/main/examples) or open an issue in the [GitHub repository](https://github.com/spruceid/siwe-oidc/issues)._
