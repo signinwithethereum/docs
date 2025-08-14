@@ -10,7 +10,7 @@ When using Sign In with Ethereum (SIWE), implementers should aim to mitigate sec
 
 1. **Backend Validation**
 
-    - Process SIWE messages according to [EIP-4361](general-information/eip-4361-specification.md) specifications
+    - Process SIWE messages according to [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) specifications
     - Create the entire SIWE message on the backend
     - Verify that the signed message is identical to the generated message with a valid signature
 
