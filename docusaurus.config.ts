@@ -63,7 +63,7 @@ const config: Config = {
 	clientModules: [require.resolve('./src/components/pageActionsGlobal.js')],
 
 	themeConfig: {
-		image: 'img/siwe-social-card.jpg',
+		image: 'img/og.png',
 		navbar: {
 			title: 'Sign in with Ethereum',
 			logo: {
