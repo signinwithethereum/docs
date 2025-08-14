@@ -94,7 +94,6 @@ const sidebars: SidebarsConfig = {
 			link: { type: 'doc', id: 'oidc-provider/index' },
 			items: [
 				'oidc-provider/deployment-guide',
-				// 'oidc-provider/hosted-oidc-provider',
 			],
 		},
 
