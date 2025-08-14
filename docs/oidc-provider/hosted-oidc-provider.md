@@ -462,11 +462,3 @@ A: The service only stores minimal client registration data. User authentication
 ### Q: Can I customize the authentication UI?
 
 A: Currently, the authentication UI is standardized. For custom UI needs, consider [self-hosting](deployment-guide) the OIDC provider.
-
-### Q: How do I report security issues?
-
-A: Please report security issues privately to [security@spruceid.com](mailto:security@spruceid.com).
-
----
-
-_Ready to integrate SIWE authentication? Start by [registering your client](#2-register-your-client) or explore our [integration examples](../../integrations)._
