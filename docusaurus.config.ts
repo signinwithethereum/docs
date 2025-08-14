@@ -4,8 +4,25 @@ import type * as Preset from '@docusaurus/preset-classic'
 
 const config: Config = {
 	title: 'Sign in with Ethereum',
-	tagline: 'Decentralized authentication for Web3 applications',
+	tagline: 'Open standard for authentication with Ethereum accounts.',
 	favicon: 'img/favicon.ico',
+
+	headTags: [
+		{
+			tagName: 'meta',
+			attributes: {
+				name: 'description',
+				content: 'Open standard for authentication with Ethereum accounts.',
+			},
+		},
+		{
+			tagName: 'meta',
+			attributes: {
+				name: 'algolia-site-verification',
+				content: 'AA606A49BD2DF7DB',
+			},
+		},
+	],
 
 	future: {
 		v4: true,
