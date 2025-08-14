@@ -313,7 +313,7 @@ When upgrading between major versions:
 ### Specification Compliance
 
 All libraries implement:
-- EIP-4361 (Sign-In with Ethereum)
+- EIP-4361 (Sign In with Ethereum)
 - EIP-191 (Signed Data Standard)
 - EIP-1271 (Contract Signatures)
 - RFC 3986 (URI Specification)
