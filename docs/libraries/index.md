@@ -234,7 +234,7 @@ When moving between different SIWE library implementations:
 
 ### Message Format Compatibility
 
-All libraries generate identical [EIP-4361](../general-information/eip-4361-specification.md) compliant messages, ensuring signatures created in one language can be verified in any other.
+All libraries generate identical [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) compliant messages, ensuring signatures created in one language can be verified in any other.
 
 ### Configuration Mapping
 
