@@ -65,7 +65,7 @@ When using Sign In with Ethereum (SIWE), implementers should aim to mitigate sec
 
 -   Should reflect the actual time of message creation
 -   Validate against server time with reasonable tolerance
--   Use ISO 8601 format consistently
+-   Use RFC 3339 (ISO 8601) format consistently
 
 **expirationTime**:
 
