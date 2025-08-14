@@ -32,7 +32,7 @@ SIWE follows a simple authentication flow:
 
 ## Open EIP standard
 
-SIWE is defined by **[EIP-4361](general-information/eip-4361-specification.md)**
+SIWE is defined by **[EIP-4361](https://eips.ethereum.org/EIPS/eip-4361)**
 
 ## Getting Started
 
@@ -101,7 +101,7 @@ Explore the [Integrations](integrations/index.md) section to see SIWE implementa
 
 SIWE fully complies with:
 
--   [EIP-4361](general-information/eip-4361-specification.md): Sign in with Ethereum specification
+-   [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361): Sign in with Ethereum specification
 -   [OpenID Connect](oidc-provider/index.mdx) 1.0 for enterprise integration
 -   [OAuth 2.0](integrations/auth0.mdx) for authorization flows
 -   Web3 wallet standards for broad compatibility
