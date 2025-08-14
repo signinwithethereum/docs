@@ -142,6 +142,11 @@ const config: Config = {
 			darkTheme: prismThemes.dracula,
 			additionalLanguages: ['solidity', 'rust', 'ruby', 'elixir'],
 		},
+		algolia: {
+			appId: 'ADMRD6R0DD',
+			apiKey: 'fc7db00f8a1fa7536b88e34ad829daba',
+			indexName: 'docs_siwe_xyz_admrd6r0dd_pages',
+		},
 	} satisfies Preset.ThemeConfig,
 }
 
