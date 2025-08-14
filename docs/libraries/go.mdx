@@ -74,11 +74,3 @@ func signMessage(message string, privateKey *ecdsa.PrivateKey) ([]byte, error) {
     return signature, nil
 }
 ```
-
-## Key Features
-
--   Message parsing and validation
--   [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signature verification
--   Time-based validation
--   Support for custom nonce and timestamp verification
--   Message serialization

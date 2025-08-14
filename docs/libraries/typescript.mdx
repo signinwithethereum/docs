@@ -13,7 +13,7 @@ The TypeScript implementation of Sign in with Ethereum can be found here:
 
 ## Getting Started
 
-The TypeScript implementation is available on npm and provides comprehensive [EIP-4361](../general-information/eip-4361-specification.md) support.
+The TypeScript implementation is available on npm and provides comprehensive [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) support.
 
 ### Installation
 
@@ -65,7 +65,7 @@ new SiweMessage(params: SiweMessageParams)
 | `domain`         | `string`   | ✅       | RFC 3986 authority requesting the signing                                                 |
 | `address`        | `string`   | ✅       | Ethereum address (EIP-55 checksum format)                                                 |
 | `uri`            | `string`   | ✅       | RFC 3986 URI referring to the resource                                                    |
-| `version`        | `string`   | ✅       | Must be `"1"` for [EIP-4361](../general-information/eip-4361-specification.md) compliance |
+| `version`        | `string`   | ✅       | Must be `"1"` for [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) compliance |
 | `chainId`        | `number`   | ✅       | EIP-155 Chain ID                                                                          |
 | `statement`      | `string`   | ❌       | Human-readable ASCII assertion                                                            |
 | `nonce`          | `string`   | ❌       | Randomized token (auto-generated if not provided)                                         |
@@ -79,7 +79,7 @@ new SiweMessage(params: SiweMessageParams)
 
 ##### `prepareMessage(): string`
 
-Formats the SIWE message according to [EIP-4361](../general-information/eip-4361-specification.md) specification.
+Formats the SIWE message according to [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) specification.
 
 ```typescript
 const message = new SiweMessage({

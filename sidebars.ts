@@ -94,22 +94,10 @@ const sidebars: SidebarsConfig = {
 			link: { type: 'doc', id: 'oidc-provider/index' },
 			items: [
 				'oidc-provider/deployment-guide',
-				// 'oidc-provider/hosted-oidc-provider',
 			],
 		},
 
 		'security-considerations',
-		// {
-		// 	type: 'category',
-		// 	collapsed: false,
-		// 	label: '📘 General Information',
-		// 	link: { type: 'doc', id: 'general-information/overview' },
-		// 	items: [
-		// 		'general-information/overview',
-		// 		'general-information/eip-4361-specification',
-		// 		'general-information/related-standards',
-		// 	],
-		// },
 		{
 			type: 'link',
 			label: '📄 EIP-4361 Specification',

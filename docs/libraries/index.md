@@ -1,6 +1,6 @@
 # Library Implementations
 
-SIWE provides official libraries in multiple programming languages, making it easy to integrate Sign in with Ethereum authentication into applications regardless of your tech stack. Each library implements the [EIP-4361](../general-information/eip-4361-specification.md) specification and provides both message creation and signature verification capabilities.
+SIWE provides official libraries in multiple programming languages, making it easy to integrate Sign in with Ethereum authentication into applications regardless of your tech stack. Each library implements the [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) specification and provides both message creation and signature verification capabilities.
 
 ## Supported Languages
 
@@ -10,7 +10,7 @@ The original and most feature-complete SIWE implementation.
 
 -   **Package**: `siwe` on npm
 -   **Platforms**: Node.js, Browser, React Native
--   **Features**: Complete [EIP-4361](../general-information/eip-4361-specification.md) support, TypeScript definitions, extensive testing
+-   **Features**: Complete [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) support, TypeScript definitions, extensive testing
 -   **Best for**: Web applications, React/Vue/Angular apps, Node.js backends
 
 ### [Rust](rust)
@@ -234,7 +234,7 @@ When moving between different SIWE library implementations:
 
 ### Message Format Compatibility
 
-All libraries generate identical [EIP-4361](../general-information/eip-4361-specification.md) compliant messages, ensuring signatures created in one language can be verified in any other.
+All libraries generate identical [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) compliant messages, ensuring signatures created in one language can be verified in any other.
 
 ### Configuration Mapping
 

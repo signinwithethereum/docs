@@ -6,7 +6,7 @@ In this tutorial, you'll build a React frontend that connects to user wallets an
 
 By the end of this tutorial, you'll understand:
 
--   How to connect to MetaMask and other Web3 wallets
+-   How to connect to MetaMask and other Ethereum wallets
 -   How to detect user address changes and network switches
 -   How to request message signatures from connected wallets
 -   Best practices for wallet integration and user experience
