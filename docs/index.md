@@ -10,7 +10,7 @@ After the user authenticates, apps may use their onchain **[ENS](https://ens.dom
 
 ### [⛓️ **Enrich your app's UX with onchain data**](./quickstart/retrieve-onchain-data.mdx)
 
-Seamlessly connects user identity with on-chain activities, enabling applications to verify user ownership of NFTs, tokens, and other blockchain assets.
+Seamlessly connects user identity with onchain activities, enabling applications to verify user ownership of NFTs, tokens, and other blockchain assets.
 
 ### 🛡️ **Self-Sovereign Identity**
 
