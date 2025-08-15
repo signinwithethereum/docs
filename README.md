@@ -10,7 +10,7 @@ After the user authenticates, apps may use their onchain ENS username and profil
 
 ### ⛓️ **Enrich your app's UX with onchain data**
 
-Seamlessly connects user identity with on-chain activities, enabling applications to verify user ownership of NFTs, tokens, and other blockchain assets.
+Seamlessly connects user identity with onchain activities, enabling applications to verify user ownership of NFTs, tokens, and other blockchain assets.
 
 ### 🛡️ **Self-Sovereign Identity**
 
