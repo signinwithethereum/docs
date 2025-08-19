@@ -1,0 +1,128 @@
+# SIWE Message Validator & Linter
+
+The SIWE Message Validator is an interactive tool that helps you validate, lint, and debug Sign in with Ethereum (SIWE) messages for compliance with the [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) specification.
+
+## Features
+
+- **🔍 Comprehensive Validation**: Check message format, required fields, and EIP-4361 compliance
+- **🔒 Security Analysis**: Identify security vulnerabilities and best practice violations  
+- **🔧 Auto-Fix**: Automatically correct common formatting and security issues
+- **⚡ Real-time Validation**: Optional live validation as you type
+- **📋 Multiple Profiles**: Choose validation strictness for different environments
+- **📝 Diff-style Results**: Clear visualization of issues with line-by-line feedback
+
+## How to Use
+
+1. **Enter your SIWE message** in the left input panel
+2. **Select a validation profile** that matches your needs:
+   - **Strict**: Full EIP-4361 compliance with security best practices
+   - **Development**: Relaxed validation for testing environments
+   - **Security**: Enhanced security checks for production use
+   - **Basic**: Essential validation for format and required fields
+3. **Click "Validate"** to analyze your message
+4. **Review the results** in the right panel with detailed feedback
+5. **Apply fixes** individually or use "Fix All Issues" for automatic corrections
+
+## Validation Categories
+
+### Format Validation
+- Message structure and grammar compliance
+- Required field presence and formatting
+- Timestamp format (RFC 3339/ISO 8601)
+- Ethereum address format validation
+- URI format checking
+
+### Security Validation  
+- Nonce entropy and uniqueness analysis
+- Domain binding verification
+- Time-based security checks
+- Resource access scope validation
+- Common vulnerability detection
+
+### Compliance Validation
+- EIP-4361 specification adherence
+- Version compatibility checking
+- Chain ID validation
+- Standard field requirements
+
+## Interactive Tool
+
+import SiweValidator from '@site/src/components/SiweValidator/SiweValidator';
+
+<SiweValidator />
+
+## Common Issues and Fixes
+
+### Address Format Issues
+```
+❌ 742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+✅ 0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+```
+**Fix**: Add the `0x` prefix to Ethereum addresses.
+
+### Timestamp Format Issues
+```
+❌ 2023-10-31 16:25:24
+✅ 2023-10-31T16:25:24Z
+```
+**Fix**: Use RFC 3339 format with `T` separator and timezone.
+
+### Weak Nonce Security
+```
+❌ test123
+✅ a1B2c3D4e5F6g7H8
+```
+**Fix**: Use cryptographically secure random nonces with mixed characters.
+
+### Missing Expiration Time
+```diff
+  Nonce: a1B2c3D4e5F6g7H8
+  Issued At: 2023-10-31T16:25:24Z
++ Expiration Time: 2023-10-31T16:35:24Z
+```
+**Fix**: Add expiration time for security (5-15 minutes recommended).
+
+## Security Best Practices
+
+When implementing SIWE authentication, always:
+
+1. **Generate messages server-side** to prevent client manipulation
+2. **Use strong nonces** with sufficient entropy (16+ characters)
+3. **Implement expiration times** to limit message lifetime
+4. **Validate domain binding** to prevent phishing attacks
+5. **Check signatures server-side** - never trust client validation alone
+6. **Store used nonces** to prevent replay attacks
+
+## API Reference
+
+The validator is built on a modular validation engine that you can use programmatically:
+
+```javascript
+import { ValidationEngine } from '@site/src/components/SiweValidator';
+
+// Validate a message
+const result = ValidationEngine.validate(message, {
+  profile: ValidationEngine.PROFILES.strict
+});
+
+// Quick validation for real-time feedback  
+const quickCheck = ValidationEngine.quickValidate(message);
+
+// Apply auto-fixes
+const fixed = AutoFixer.fixMessage(parsedMessage, errors);
+```
+
+## Contributing
+
+Found a bug or want to suggest an improvement? The validator is part of the open-source SIWE documentation project. Feel free to:
+
+- Report issues on [GitHub](https://github.com/signinwithethereum/docs/issues)
+- Suggest new validation rules
+- Contribute fixes and enhancements
+
+## Related Resources
+
+- [EIP-4361 Specification](https://eips.ethereum.org/EIPS/eip-4361)
+- [SIWE Security Considerations](./security-considerations.md)
+- [TypeScript Library Documentation](./libraries/typescript.mdx)
+- [Quickstart Guide](./quickstart/index.md)
