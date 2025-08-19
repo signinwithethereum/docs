@@ -242,6 +242,7 @@
 .resultsContent {
   flex: 1;
   padding: 1.5rem;
+  max-height: 750px;
   overflow-y: auto;
 }
 
@@ -375,7 +376,6 @@
 
 .issueSuggestion {
   font-size: 0.875rem;
-  color: var(--ifm-color-secondary);
   font-style: italic;
 }
 

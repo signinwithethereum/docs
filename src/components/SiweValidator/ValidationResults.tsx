@@ -202,14 +202,14 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onApplyFix }) => {
         <span className={`${styles.issueType} ${getTypeClass(issue.severity)}`}>
           {issue.severity}
         </span>
-        <span className={styles.issueType} style={{
+        {/* <span className={styles.issueType} style={{
           background: 'var(--ifm-color-emphasis-200)',
           color: 'white',
           wordBreak: "keep-all",
           wordWrap: "revert"
         }}>
           {getCategoryIcon(issue.type)} {issue.type}
-        </span>
+        </span> */}
         <div style={{ flex: 1 }} />
         <span className={styles.issueLocation}>
           {issue.field} • Line {issue.line}
