@@ -185,6 +185,7 @@
   position: absolute;
   top: 110%;
   left: 0;
+  overflow: hidden;
   background-color: var(--ifm-color-secondary-contrast-background);
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 6px;
@@ -203,10 +204,19 @@
   background: none;
   width: 100%;
   text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+[data-theme='dark'] .dropdownItem {
+  background: var(--ifm-color-emphasis-100);
 }
 
 .dropdownItem:hover {
   background: var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .dropdownItem:hover {
+  background: var(--ifm-color-emphasis-200);
 }
 
 /* Results Panel */
@@ -294,10 +304,6 @@
 }
 
 /* Validation Issues */
-.issuesList {
-  space: 1rem;
-}
-
 .issue {
   padding: 1rem;
   border-radius: 6px;
