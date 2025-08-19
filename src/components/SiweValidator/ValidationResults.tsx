@@ -139,7 +139,7 @@ const ValidationResults: React.FC<ValidationResultsProps> = ({
         {result.isValid && (
           <div className={styles.quickActions}>
             <div className={styles.quickActionsTitle}>✨ Message Analysis</div>
-            <div style={{ fontSize: '0.875rem', color: 'var(--ifm-color-secondary)' }}>
+            <div style={{ fontSize: '0.875rem', color: 'var(--ifm-color-secondary-dark)' }}>
               <div>• Security: {stats.securityIssues === 0 ? '✅ Secure' : `⚠️ ${stats.securityIssues} issues`}</div>
               <div>• Compliance: {stats.complianceIssues === 0 ? '✅ EIP-4361 compliant' : `❌ ${stats.complianceIssues} issues`}</div>
               <div>• Format: {stats.formatIssues === 0 ? '✅ Well-formatted' : `❌ ${stats.formatIssues} issues`}</div>

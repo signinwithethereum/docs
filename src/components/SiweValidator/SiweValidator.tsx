@@ -324,7 +324,7 @@ Issued At: 2023-10-31T16:25:24Z`}
         padding: '1rem', 
         textAlign: 'center', 
         fontSize: '0.875rem', 
-        color: 'var(--ifm-color-secondary)',
+        color: 'var(--ifm-color-secondary-dark)',
         borderTop: '1px solid var(--ifm-color-emphasis-200)'
       }}>
         <p>

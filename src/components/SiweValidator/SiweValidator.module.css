@@ -102,7 +102,7 @@
 }
 
 .textArea::placeholder {
-  color: var(--ifm-color-secondary);
+  color: var(--ifm-color-secondary-dark);
   font-style: italic;
 }
 
@@ -404,7 +404,7 @@
 .empty {
   text-align: center;
   padding: 2rem;
-  color: var(--ifm-color-secondary);
+  color: var(--ifm-color-secondary-dark);
 }
 
 .emptyIcon {
@@ -420,7 +420,7 @@
 
 .emptyHint {
   font-size: 0.875rem;
-  color: var(--ifm-color-secondary-light);
+  color: var(--ifm-color-secondary-dark);
 }
 
 /* Quick Actions */
@@ -436,7 +436,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
-  color: var(--ifm-color-secondary);
+  color: var(--ifm-color-primary-dark);
 }
 
 .quickActionsGrid {
@@ -447,7 +447,7 @@
 
 .quickAction {
   padding: 0.5rem 0.75rem;
-  background: var(--ifm-background-color);
+  background: var(--ifm-background-color-light);
   border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: 4px;
   cursor: pointer;
