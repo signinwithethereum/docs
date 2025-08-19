@@ -174,13 +174,13 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
   return (
     <div className={`${styles.container} ${className}`}>
       {/* Header */}
-      <div className={styles.header}>
+      {/* <div className={styles.header}>
         <h1 className={styles.title}>SIWE Message Validator</h1>
         <p className={styles.subtitle}>
           Validate and lint your Sign in with Ethereum messages for EIP-4361 compliance, 
           security best practices, and proper formatting.
         </p>
-      </div>
+      </div> */}
 
       {/* Main Validator Interface */}
       <div className={styles.validatorWrapper}>

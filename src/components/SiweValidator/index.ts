@@ -9,5 +9,6 @@ export { FieldValidators } from './validators';
 export { SecurityValidators } from './securityValidators';
 export { AutoFixer } from './autoFixer';
 export { FieldReplacer } from './fieldReplacer';
+export { LineBreakValidator } from './lineBreakValidator';
 
 export type * from './types';

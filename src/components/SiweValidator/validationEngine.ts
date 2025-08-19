@@ -5,6 +5,7 @@ import { SiweMessageParser } from './parser';
 import { FieldValidators } from './validators';
 import { SecurityValidators } from './securityValidators';
 import { AutoFixer } from './autoFixer';
+import { LineBreakValidator } from './lineBreakValidator';
 
 export class ValidationEngine {
   
@@ -70,13 +71,19 @@ export class ValidationEngine {
       };
     }
 
+    // Check line break and formatting issues first
+    const lineBreakErrors = LineBreakValidator.validateLineBreaks(message);
+    
     // Parse the message
     const parsedMessage = SiweMessageParser.parse(message);
     
     // Collect all validation errors
     const allErrors: ValidationError[] = [];
     
-    // Add parse errors first
+    // Add line break errors first (they often explain parsing issues)
+    allErrors.push(...lineBreakErrors);
+    
+    // Add parse errors
     allErrors.push(...parsedMessage.parseErrors);
     
     // Run field validations if parsing was successful enough

@@ -98,9 +98,12 @@ const sidebars: SidebarsConfig = {
 		},
 
 		{
-			type: 'doc',
-			id: 'validator',
+			type: 'category',
 			label: '🔍 SIWE Validator',
+            link: { type: 'doc', id: 'validator/index' },
+            items: [
+				'validator/validator-guide',
+			],
 		},
 
 		'security-considerations',

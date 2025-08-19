@@ -1,6 +1,7 @@
 // Targeted field replacement utility for SIWE messages
 
 import { SiweMessageParser } from './parser';
+import { LineBreakValidator } from './lineBreakValidator';
 import type { ValidationError } from './types';
 
 export class FieldReplacer {
@@ -94,6 +95,17 @@ export class FieldReplacer {
         const expiration = new Date(baseTime.getTime() + 10 * 60 * 1000);
         newValue = expiration.toISOString();
         return this.replaceField(originalMessage, 'expirationTime', newValue);
+      
+      // Line break fixes
+      case 'EXTRA_LINE_BREAK_HEADER_ADDRESS':
+      case 'EXTRA_LINE_BREAKS_BEFORE_URI':
+      case 'EXTRA_LINE_BREAKS_BETWEEN_FIELDS':
+      case 'MISSING_LINE_BREAK_ADDRESS_STATEMENT':
+      case 'MISSING_LINE_BREAK_STATEMENT_URI':
+      case 'TRAILING_WHITESPACE':
+      case 'TOO_MANY_CONSECUTIVE_EMPTY_LINES':
+        return LineBreakValidator.fixLineBreaks(originalMessage);
+      
       default:
         return originalMessage;
     }
