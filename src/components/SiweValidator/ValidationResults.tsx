@@ -69,7 +69,7 @@ const ValidationResults: React.FC<ValidationResultsProps> = ({
             {result.isValid ? '✅' : '❌'}
           </span>
           <span className={styles.summaryText}>
-            {result.isValid 
+            {result.isValid
               ? 'Message is valid and compliant with EIP-4361'
               : `Found ${stats.totalIssues} issue${stats.totalIssues !== 1 ? 's' : ''}`
             }
@@ -139,7 +139,7 @@ const ValidationResults: React.FC<ValidationResultsProps> = ({
         {result.isValid && (
           <div className={styles.quickActions}>
             <div className={styles.quickActionsTitle}>✨ Message Analysis</div>
-            <div style={{ fontSize: '0.875rem', color: 'var(--ifm-color-secondary-dark)' }}>
+            <div style={{ fontSize: '0.875rem' }}>
               <div>• Security: {stats.securityIssues === 0 ? '✅ Secure' : `⚠️ ${stats.securityIssues} issues`}</div>
               <div>• Compliance: {stats.complianceIssues === 0 ? '✅ EIP-4361 compliant' : `❌ ${stats.complianceIssues} issues`}</div>
               <div>• Format: {stats.formatIssues === 0 ? '✅ Well-formatted' : `❌ ${stats.formatIssues} issues`}</div>
@@ -202,9 +202,11 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onApplyFix }) => {
         <span className={`${styles.issueType} ${getTypeClass(issue.severity)}`}>
           {issue.severity}
         </span>
-        <span className={styles.issueType} style={{ 
-          background: 'var(--ifm-color-secondary)', 
-          color: 'white' 
+        <span className={styles.issueType} style={{
+          background: 'var(--ifm-color-emphasis-200)',
+          color: 'white',
+          wordBreak: "keep-all",
+          wordWrap: "revert"
         }}>
           {getCategoryIcon(issue.type)} {issue.type}
         </span>
@@ -213,17 +215,17 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, onApplyFix }) => {
           {issue.field} • Line {issue.line}
         </span>
       </div>
-      
+
       <div className={styles.issueMessage}>
         {issue.message}
       </div>
-      
+
       {issue.suggestion && (
         <div className={styles.issueSuggestion}>
           💡 {issue.suggestion}
         </div>
       )}
-      
+
       {issue.fixable && (
         <div className={styles.issueActions}>
           <button

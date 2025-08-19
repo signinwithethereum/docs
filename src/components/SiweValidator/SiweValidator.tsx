@@ -13,9 +13,9 @@ interface SiweValidatorProps {
   className?: string;
 }
 
-const SiweValidator: React.FC<SiweValidatorProps> = ({ 
-  initialMessage = '', 
-  className = '' 
+const SiweValidator: React.FC<SiweValidatorProps> = ({
+  initialMessage = '',
+  className = ''
 }) => {
   const [message, setMessage] = useState(initialMessage);
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
@@ -24,7 +24,7 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
   const [realTimeValidation, setRealTimeValidation] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [shouldRevalidateAfterFix, setShouldRevalidateAfterFix] = useState(false);
-  
+
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const validationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -36,10 +36,10 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
     }
 
     setIsValidating(true);
-    
+
     // Simulate async validation for better UX
     await new Promise(resolve => setTimeout(resolve, 100));
-    
+
     try {
       const profile = ValidationEngine.PROFILES[validationProfile];
       const result = ValidationEngine.validate(message, { profile });
@@ -73,12 +73,12 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
       if (validationTimeoutRef.current) {
         clearTimeout(validationTimeoutRef.current);
       }
-      
+
       validationTimeoutRef.current = setTimeout(() => {
         handleValidate();
       }, 500); // Debounce validation
     }
-    
+
     return () => {
       if (validationTimeoutRef.current) {
         clearTimeout(validationTimeoutRef.current);
@@ -113,10 +113,10 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
 
   const handleApplyFix = useCallback((error: ValidationError) => {
     if (!validationResult) return;
-    
+
     // Use targeted field replacement instead of full message replacement
     const fixedMessage = FieldReplacer.applyFieldFix(message, error);
-    
+
     if (fixedMessage !== message) {
       setMessage(fixedMessage);
       // Show that we're re-validating
@@ -128,14 +128,14 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
 
   const handleApplyAllFixes = useCallback(() => {
     if (!validationResult) return;
-    
+
     const allErrors = [...validationResult.errors, ...validationResult.warnings, ...validationResult.suggestions];
     const fixableErrors = allErrors.filter(error => error.fixable);
-    
+
     // Apply fixes one by one using targeted field replacement
     let currentMessage = message;
     let hasChanges = false;
-    
+
     for (const error of fixableErrors) {
       const fixedMessage = FieldReplacer.applyFieldFix(currentMessage, error);
       if (fixedMessage !== currentMessage) {
@@ -143,7 +143,7 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
         hasChanges = true;
       }
     }
-    
+
     if (hasChanges) {
       setMessage(currentMessage);
       // Show that we're re-validating
@@ -189,7 +189,7 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
           <div className={styles.inputHeader}>
             <h3 className={styles.inputTitle}>SIWE Message Input</h3>
           </div>
-          
+
           <div className={styles.inputContent}>
             <textarea
               ref={textAreaRef}
@@ -199,18 +199,18 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
               placeholder={`Enter your SIWE message here...
 
 Example:
-example.com wants you to sign in with your Ethereum account:
+siwe.xyz wants you to sign in with your Ethereum account:
 0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
 
-Sign in to our Web3 application.
+Sign in to siwe.xyz application.
 
-URI: https://example.com
+URI: https://siwe.xyz
 Version: 1
 Chain ID: 1
 Nonce: 32891756
 Issued At: 2023-10-31T16:25:24Z`}
             />
-            
+
             <div className={styles.inputControls}>
               <button
                 className={`${styles.button} ${styles.buttonPrimary}`}
@@ -219,7 +219,7 @@ Issued At: 2023-10-31T16:25:24Z`}
               >
                 {isValidating ? '⏳ Validating...' : '🔍 Validate'}
               </button>
-              
+
               <button
                 className={`${styles.button} ${styles.buttonSecondary}`}
                 onClick={handleClear}
@@ -227,7 +227,7 @@ Issued At: 2023-10-31T16:25:24Z`}
               >
                 🗑️ Clear
               </button>
-              
+
               <button
                 className={`${styles.button} ${styles.buttonSecondary}`}
                 onClick={handleCopyMessage}
@@ -235,7 +235,7 @@ Issued At: 2023-10-31T16:25:24Z`}
               >
                 📋 Copy
               </button>
-              
+
               {/* Validation Profile Dropdown */}
               <div className={styles.dropdown}>
                 <button
@@ -244,7 +244,7 @@ Issued At: 2023-10-31T16:25:24Z`}
                 >
                   ⚙️ {ValidationEngine.PROFILES[validationProfile]?.name || 'Profile'} ▼
                 </button>
-                
+
                 {showProfileDropdown && (
                   <div className={styles.dropdownContent}>
                     {Object.entries(ValidationEngine.PROFILES).map(([key, profile]) => (
@@ -253,18 +253,16 @@ Issued At: 2023-10-31T16:25:24Z`}
                         className={styles.dropdownItem}
                         onClick={() => handleProfileChange(key)}
                       >
-                        <div>
-                          <div style={{ fontWeight: 600 }}>{profile.name}</div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--ifm-color-secondary)' }}>
-                            {profile.description}
-                          </div>
+                        <div style={{ fontWeight: 600, color: 'var(--ifm-color-primary)' }}>{profile.name}</div>
+                        <div style={{ fontSize: '0.75rem' }}>
+                          {profile.description}
                         </div>
                       </button>
                     ))}
                   </div>
                 )}
               </div>
-              
+
               {/* Real-time validation toggle */}
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem' }}>
                 <input
@@ -275,7 +273,7 @@ Issued At: 2023-10-31T16:25:24Z`}
                 Real-time validation
               </label>
             </div>
-            
+
             {/* Quick Action Templates */}
             <div className={styles.quickActions}>
               <div className={styles.quickActionsTitle}>Quick Templates</div>
@@ -317,13 +315,13 @@ Issued At: 2023-10-31T16:25:24Z`}
           onApplyAllFixes={handleApplyAllFixes}
         />
       </div>
-      
+
       {/* Footer Information */}
-      <div style={{ 
-        marginTop: '2rem', 
-        padding: '1rem', 
-        textAlign: 'center', 
-        fontSize: '0.875rem', 
+      <div style={{
+        marginTop: '2rem',
+        padding: '1rem',
+        textAlign: 'center',
+        fontSize: '0.875rem',
         color: 'var(--ifm-color-secondary-dark)',
         borderTop: '1px solid var(--ifm-color-emphasis-200)'
       }}>
