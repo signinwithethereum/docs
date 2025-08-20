@@ -99,9 +99,10 @@ const sidebars: SidebarsConfig = {
 
 		{
 			type: 'category',
-			label: '🔍 SIWE Validator',
+			label: '🔍 Message Validator',
             link: { type: 'doc', id: 'validator/index' },
             items: [
+				'validator/index',
 				'validator/validator-guide',
 			],
 		},
