@@ -137,6 +137,15 @@ const config: Config = {
 			],
 			copyright: `Copyright © ${new Date().getFullYear()} Sign in with Ethereum. Built with Docusaurus.`,
 		},
+		plugins: [
+			[
+				'vercel-analytics',
+				{
+					debug: false,
+					mode: 'auto',
+				},
+			],
+		],
 		prism: {
 			theme: prismThemes.github,
 			darkTheme: prismThemes.dracula,
