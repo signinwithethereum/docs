@@ -2,15 +2,6 @@
 
 The SIWE Message Validator is an interactive tool that helps you validate, lint, and debug Sign in with Ethereum (SIWE) messages for compliance with the [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) specification.
 
-## Features
-
-- **🔍 Comprehensive Validation**: Check message format, required fields, and EIP-4361 compliance
-- **🔒 Security Analysis**: Identify security vulnerabilities and best practice violations  
-- **🔧 Auto-Fix**: Automatically correct common formatting and security issues
-- **⚡ Real-time Validation**: Optional live validation as you type
-- **📋 Multiple Profiles**: Choose validation strictness for different environments
-- **📝 Diff-style Results**: Clear visualization of issues with line-by-line feedback
-
 ## How to Use
 
 1. **Enter your SIWE message** in the left input panel
@@ -105,18 +96,3 @@ const quickCheck = ValidationEngine.quickValidate(message);
 // Apply auto-fixes
 const fixed = AutoFixer.fixMessage(parsedMessage, errors);
 ```
-
-## Contributing
-
-Found a bug or want to suggest an improvement? The validator is part of the open-source SIWE documentation project. Feel free to:
-
-- Report issues on [GitHub](https://github.com/signinwithethereum/docs/issues)
-- Suggest new validation rules
-- Contribute fixes and enhancements
-
-## Related Resources
-
-- [EIP-4361 Specification](https://eips.ethereum.org/EIPS/eip-4361)
-- [SIWE Security Considerations](../security-considerations.md)
-- [TypeScript Library Documentation](../libraries/typescript.mdx)
-- [Quickstart Guide](../quickstart/index.md)
