@@ -69,14 +69,19 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
 
   // Real-time validation effect (now after handleValidate is defined)
   useEffect(() => {
-    if (realTimeValidation && message.trim()) {
-      if (validationTimeoutRef.current) {
-        clearTimeout(validationTimeoutRef.current);
+    if (realTimeValidation) {
+      if (message.trim()) {
+        if (validationTimeoutRef.current) {
+          clearTimeout(validationTimeoutRef.current);
+        }
+        
+        validationTimeoutRef.current = setTimeout(() => {
+          handleValidate();
+        }, 500); // Debounce validation
+      } else {
+        // Clear validation result when message is empty
+        setValidationResult(null);
       }
-
-      validationTimeoutRef.current = setTimeout(() => {
-        handleValidate();
-      }, 500); // Debounce validation
     }
 
     return () => {
@@ -93,6 +98,13 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
       handleValidate();
     }
   }, [message, shouldRevalidateAfterFix, handleValidate]);
+
+  // Clear validation results when message becomes empty
+  useEffect(() => {
+    if (!message.trim() && validationResult) {
+      setValidationResult(null);
+    }
+  }, [message, validationResult]);
 
   const handleClear = useCallback(() => {
     setMessage('');
