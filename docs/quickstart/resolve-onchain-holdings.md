@@ -268,6 +268,42 @@ async function getTokenPrices(tokenAddresses) {
 	}
 }
 ```
+### Using Blockscout for Coin Balance History
+```Javascript
+
+async function getCoinBalanceHistoryBlockscout(address, maxPages = 10) {
+  const baseURL = 'https://eth.blockscout.com/api/v2'
+  let url = `${baseURL}/addresses/${address}/coin-balance-history`
+  const out = []
+
+  while (url) {
+    const res = await fetch(url, { headers: { accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`)
+    const data = await res.json()
+
+    for (const item of data.items ?? []) {
+      out.push({
+        txHash: item.transaction_hash,
+        blockNumber: item.block_number,
+        timestamp: item.block_timestamp,      // ISO string
+        deltaWei: item.delta,                 // signed string in wei
+        balanceWei: item.value                // resulting balance in wei
+      })
+    }
+
+    const next = data.next_page_params
+    if (next) {
+      const params = new URLSearchParams(next).toString()
+      url = `${baseURL}/addresses/${address}/coin-balance-history?${params}`
+    } else {
+      url = null
+    }
+  }
+  return out
+}
+
+
+```
 
 ## Alternative NFT APIs
 
@@ -322,6 +358,67 @@ async function getNFTsMoralis() {
 		return []
 	}
 }
+```
+### Using Blockscout
+```javascript
+async function getNFTsBlockscout(address, { types = ['ERC-721', 'ERC-404', 'ERC-1155'] } = {}) {
+  const baseURL = 'https://eth.blockscout.com/api/v2'
+  const typeParam = encodeURIComponent(types.join(','))
+  let url = `${baseURL}/addresses/${address}/nft/collections?type=${typeParam}`
+  const out = []
+  
+  while (url) {
+    const res = await fetch(url, { headers: { accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`)
+    const data = await res.json()
+    
+    for (const col of data.items ?? []) {
+      const t = col.token ?? {}
+      const contract = t.address_hash
+      const collectionName = t.name
+      
+      for (const inst of col.token_instances ?? []) {
+        const metadata = inst?.metadata ?? {}
+        
+        out.push({
+          name: metadata.name ?? collectionName ?? null,
+          address: contract,
+          token_id: inst?.id ? String(inst.id) : '',
+          type: inst?.token_type ?? t.type ?? null,
+          quantity: Number(inst?.value ?? 1),      // ERC-1155 may be > 1
+          image: inst?.image_url ?? metadata.image_url ?? metadata.image ?? null
+        })
+      }
+    }
+    
+    const next = data.next_page_params
+    if (next) {
+      const params = new URLSearchParams(next).toString()
+      url = `${baseURL}/addresses/${address}/nft/collections?type=${typeParam}&${params}`
+    } else {
+      url = null
+    }
+  }
+  return out
+}
+
+function groupNFTsByCollection(nfts) {
+  const collections = new Map()
+  
+  for (const nft of nfts) {
+    const key = nft.address
+    if (!collections.has(key)) {
+      collections.set(key, {
+        address: key,
+        tokens: []
+      })
+    }
+    collections.get(key).tokens.push(nft)
+  }
+  
+  return Array.from(collections.values())
+}
+
 ```
 
 ## Enhanced CSS Styling
