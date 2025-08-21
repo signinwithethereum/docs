@@ -26,6 +26,18 @@ The SIWE Message Validator is an interactive tool that helps you validate, lint,
 
 ## Common Issues and Fixes
 
+### Unnecessary Line Breaks
+```
+❌ example.com wants you to sign in with your Ethereum account:
+❌
+❌ 0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+❌
+✅ example.com wants you to sign in with your Ethereum account:
+✅ 0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+✅
+```
+**Fix**: Only add line breaks where specified in ERC-4361.
+
 ### Address Format Issues
 ```
 ❌ 742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
@@ -39,6 +51,8 @@ The SIWE Message Validator is an interactive tool that helps you validate, lint,
 ✅ 2023-10-31T16:25:24Z
 ```
 **Fix**: Use RFC 3339 format with `T` separator and timezone.
+
+## Common Suggestions
 
 ### Weak Nonce Security
 ```

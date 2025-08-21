@@ -127,7 +127,7 @@ const ValidationResults: React.FC<ValidationResultsProps> = ({
           </div>
         ) : (
           <div className={styles.empty}>
-            <div className={styles.emptyIcon}>🎉</div>
+            <div className={styles.emptyIcon}>🔒</div>
             <div className={styles.emptyMessage}>No issues found!</div>
             <div className={styles.emptyHint}>
               Your SIWE message is properly formatted and secure
