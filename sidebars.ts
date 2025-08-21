@@ -97,6 +97,16 @@ const sidebars: SidebarsConfig = {
 			],
 		},
 
+		{
+			type: 'category',
+			label: '🔍 Message Validator',
+            link: { type: 'doc', id: 'validator/index' },
+            items: [
+				'validator/index',
+				'validator/validator-guide',
+			],
+		},
+
 		'security-considerations',
 		{
 			type: 'link',
