@@ -20,9 +20,7 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
   const [message, setMessage] = useState(initialMessage);
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
   const [isValidating, setIsValidating] = useState(false);
-  const [validationProfile, setValidationProfile] = useState('strict');
   const [realTimeValidation, setRealTimeValidation] = useState(false);
-  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [shouldRevalidateAfterFix, setShouldRevalidateAfterFix] = useState(false);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -41,8 +39,7 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
     await new Promise(resolve => setTimeout(resolve, 100));
 
     try {
-      const profile = ValidationEngine.PROFILES[validationProfile];
-      const result = ValidationEngine.validate(message, { profile });
+      const result = ValidationEngine.validate(message);
       setValidationResult(result);
     } catch (error) {
       console.error('Validation error:', error);
@@ -65,7 +62,7 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
     } finally {
       setIsValidating(false);
     }
-  }, [message, validationProfile]);
+  }, [message]);
 
   // Real-time validation effect (now after handleValidate is defined)
   useEffect(() => {
@@ -174,14 +171,6 @@ const SiweValidator: React.FC<SiweValidatorProps> = ({
     }
   }, [message]);
 
-  const handleProfileChange = useCallback((profileName: string) => {
-    setValidationProfile(profileName);
-    setShowProfileDropdown(false);
-    if (validationResult && message.trim()) {
-      // Re-validate with new profile immediately
-      handleValidate();
-    }
-  }, [validationResult, message, handleValidate]);
 
   return (
     <div className={`${styles.container} ${className}`}>
@@ -248,32 +237,6 @@ Issued At: 2023-10-31T16:25:24Z`}
                 📋 Copy
               </button>
 
-              {/* Validation Profile Dropdown */}
-              <div className={styles.dropdown}>
-                <button
-                  className={styles.dropdownButton}
-                  onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                >
-                  ⚙️ {ValidationEngine.PROFILES[validationProfile]?.name || 'Profile'} ▼
-                </button>
-
-                {showProfileDropdown && (
-                  <div className={styles.dropdownContent}>
-                    {Object.entries(ValidationEngine.PROFILES).map(([key, profile]) => (
-                      <button
-                        key={key}
-                        className={styles.dropdownItem}
-                        onClick={() => handleProfileChange(key)}
-                      >
-                        <div style={{ fontWeight: 600, color: 'var(--ifm-color-primary)' }}>{profile.name}</div>
-                        <div style={{ fontSize: '0.75rem' }}>
-                          {profile.description}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
 
               {/* Real-time validation toggle */}
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem' }}>
@@ -290,18 +253,6 @@ Issued At: 2023-10-31T16:25:24Z`}
             <div className={styles.quickActions}>
               <div className={styles.quickActionsTitle}>Quick Templates</div>
               <div className={styles.quickActionsGrid}>
-                <button
-                  className={styles.quickAction}
-                  onClick={() => handleLoadSample('valid')}
-                >
-                  📝 Valid Message
-                </button>
-                <button
-                  className={styles.quickAction}
-                  onClick={() => handleLoadSample('withErrors')}
-                >
-                  ❌ With Errors
-                </button>
                 <button
                   className={styles.quickAction}
                   onClick={() => handleLoadSample('minimal')}

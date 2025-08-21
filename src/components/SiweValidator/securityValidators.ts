@@ -64,7 +64,7 @@ export class SecurityValidators {
           line: SiweMessageParser.getFieldLine(message.rawMessage, 'nonce'),
           column: 1,
           message: 'Nonce appears predictable - security vulnerability',
-          severity: 'error',
+          severity: 'warning',
           fixable: true,
           suggestion: 'Use cryptographically secure random generation',
           code: 'SECURITY_PREDICTABLE_NONCE'
@@ -102,7 +102,7 @@ export class SecurityValidators {
         line: SiweMessageParser.getFieldLine(message.rawMessage, 'domain'),
         column: 1,
         message: 'Missing domain - critical for preventing phishing attacks',
-        severity: 'error',
+        severity: 'warning',
         fixable: false,
         suggestion: 'Specify the domain requesting authentication',
         code: 'SECURITY_NO_DOMAIN'
@@ -138,7 +138,7 @@ export class SecurityValidators {
             line: SiweMessageParser.getFieldLine(message.rawMessage, 'uri'),
             column: 1,
             message: 'URI domain does not match message domain - security risk',
-            severity: 'error',
+            severity: 'warning',
             fixable: false,
             suggestion: 'Ensure URI domain matches or is subdomain of message domain',
             code: 'SECURITY_DOMAIN_MISMATCH'
@@ -187,7 +187,7 @@ export class SecurityValidators {
             line: SiweMessageParser.getFieldLine(message.rawMessage, 'issuedAt'),
             column: 1,
             message: 'Message issued in the future - clock skew or tampering risk',
-            severity: 'error',
+            severity: 'warning',
             fixable: false,
             suggestion: 'Ensure server clock is accurate',
             code: 'SECURITY_FUTURE_ISSUED_AT'
@@ -316,7 +316,7 @@ export class SecurityValidators {
           line,
           column: 1,
           message: 'Nonce contains weak patterns - security vulnerability',
-          severity: 'error',
+          severity: 'warning',
           fixable: true,
           suggestion: 'Use cryptographically secure random generation',
           code: 'SECURITY_WEAK_NONCE_PATTERN'
@@ -417,7 +417,7 @@ export class SecurityValidators {
           line,
           column: 1,
           message: `Resource ${index + 1} is not a valid URI`,
-          severity: 'error',
+          severity: 'warning',
           fixable: false,
           suggestion: 'Ensure resource is a valid URI',
           code: 'SECURITY_INVALID_RESOURCE_URI'

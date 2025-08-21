@@ -272,25 +272,6 @@ export class ValidationEngine {
   // Generate sample messages for testing
   public static generateSamples(): { [key: string]: string } {
     return {
-      valid: AutoFixer.generateTemplate({
-        domain: 'example.com',
-        address: '0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890',
-        statement: 'Sign in to our Web3 application.',
-        uri: 'https://example.com',
-        chainId: '1'
-      }),
-      
-      withErrors: `example.com wants you to sign in with your Ethereum account:
-742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
-
-Sign in to our application.
-
-URI: http://example.com
-Version: 2
-Chain ID: 0
-Nonce: test123
-Issued At: invalid-date`,
-      
       minimal: `example.com wants you to sign in with your Ethereum account:
 0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
 
@@ -303,7 +284,7 @@ Issued At: ${new Date().toISOString()}`,
       withResources: AutoFixer.generateTemplate({
         domain: 'app.example.com',
         address: '0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890',
-        statement: 'Access your account and manage your data.',
+        statement: 'Sign in to our Web3 application.',
         uri: 'https://app.example.com/auth',
         chainId: '137', // Polygon
         resources: [
