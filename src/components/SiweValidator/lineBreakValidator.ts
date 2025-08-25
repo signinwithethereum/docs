@@ -101,6 +101,49 @@ export class LineBreakValidator {
       }
     }
 
+    // Check for extra empty lines before optional fields
+    // Optional fields should immediately follow the last required field (Issued At)
+    // or the previous optional field with no empty lines between them
+    const optionalFields = [
+      { name: 'Expiration Time', index: structure.expirationTimeIndex },
+      { name: 'Not Before', index: structure.notBeforeIndex },
+      { name: 'Request ID', index: structure.requestIdIndex },
+      { name: 'Resources', index: structure.resourcesIndex }
+    ].filter(field => field.index !== -1);
+
+    // For each optional field found, check if there are extra empty lines before it
+    optionalFields.forEach(field => {
+      const fieldIndex = field.index;
+      
+      // Find what should be the previous line (either last required field or previous optional field)
+      let expectedPreviousIndex = structure.issuedAtIndex; // Default to Issued At
+      
+      // Check if there's an optional field that comes before this one
+      for (const otherField of optionalFields) {
+        if (otherField.index < fieldIndex && otherField.index > expectedPreviousIndex) {
+          expectedPreviousIndex = otherField.index;
+        }
+      }
+      
+      // If we found a previous field, check for extra empty lines
+      if (expectedPreviousIndex !== -1 && fieldIndex > expectedPreviousIndex + 1) {
+        const emptyLinesBetween = fieldIndex - expectedPreviousIndex - 1;
+        if (emptyLinesBetween > 0) {
+          errors.push({
+            type: 'format',
+            field: 'structure',
+            line: expectedPreviousIndex + 2,
+            column: 1,
+            message: `Extra empty lines before ${field.name} field (${emptyLinesBetween} empty lines found)`,
+            severity: 'error',
+            fixable: true,
+            suggestion: `${field.name} should immediately follow the previous field with no empty lines`,
+            code: 'EXTRA_LINE_BREAKS_BEFORE_OPTIONAL_FIELD'
+          });
+        }
+      }
+    });
+
     return errors;
   }
 
@@ -222,6 +265,10 @@ export class LineBreakValidator {
     chainIdIndex: number;
     nonceIndex: number;
     issuedAtIndex: number;
+    expirationTimeIndex: number;
+    notBeforeIndex: number;
+    requestIdIndex: number;
+    resourcesIndex: number;
   } {
     const structure = {
       headerIndex: -1,
@@ -231,7 +278,11 @@ export class LineBreakValidator {
       versionIndex: -1,
       chainIdIndex: -1,
       nonceIndex: -1,
-      issuedAtIndex: -1
+      issuedAtIndex: -1,
+      expirationTimeIndex: -1,
+      notBeforeIndex: -1,
+      requestIdIndex: -1,
+      resourcesIndex: -1
     };
 
     lines.forEach((line, index) => {
@@ -258,6 +309,18 @@ export class LineBreakValidator {
       }
       else if (line.startsWith('Issued At: ')) {
         structure.issuedAtIndex = index;
+      }
+      else if (line.startsWith('Expiration Time: ')) {
+        structure.expirationTimeIndex = index;
+      }
+      else if (line.startsWith('Not Before: ')) {
+        structure.notBeforeIndex = index;
+      }
+      else if (line.startsWith('Request ID: ')) {
+        structure.requestIdIndex = index;
+      }
+      else if (line.startsWith('Resources:')) {
+        structure.resourcesIndex = index;
       }
       // Statement line (non-empty, not a field, after address, before URI)
       else if (line.trim() && 

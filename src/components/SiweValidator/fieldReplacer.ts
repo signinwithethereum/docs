@@ -71,8 +71,12 @@ export class FieldReplacer {
         newValue = new Date().toISOString();
         break;
       case 'ISSUED_AT_INVALID_FORMAT':
+        // Always generate fresh current timestamp for invalid Issued At
+        newValue = new Date().toISOString();
+        break;
       case 'EXPIRATION_TIME_INVALID_FORMAT':
-        newValue = this.fixTimestampFormat(fieldValue as string) || fieldValue as string;
+        // Always generate fresh future timestamp for invalid Expiration Time
+        newValue = this.generateValidExpirationTime(parsed);
         break;
       case 'NONCE_REQUIRED':
       case 'NONCE_TOO_SHORT':
@@ -100,6 +104,7 @@ export class FieldReplacer {
       case 'EXTRA_LINE_BREAK_HEADER_ADDRESS':
       case 'EXTRA_LINE_BREAKS_BEFORE_URI':
       case 'EXTRA_LINE_BREAKS_BETWEEN_FIELDS':
+      case 'EXTRA_LINE_BREAKS_BEFORE_OPTIONAL_FIELD':
       case 'MISSING_LINE_BREAK_ADDRESS_STATEMENT':
       case 'MISSING_LINE_BREAK_STATEMENT_URI':
       case 'TRAILING_WHITESPACE':
@@ -279,5 +284,25 @@ export class FieldReplacer {
     }
     
     return result;
+  }
+
+  private static generateValidExpirationTime(parsed: any): string {
+    // Base time for expiration - use Issued At if valid, otherwise current time
+    let baseTime = new Date();
+    
+    if (parsed.fields.issuedAt) {
+      try {
+        const issuedDate = new Date(parsed.fields.issuedAt);
+        if (!isNaN(issuedDate.getTime())) {
+          baseTime = issuedDate;
+        }
+      } catch {
+        // Use current time if Issued At is invalid
+      }
+    }
+    
+    // Generate expiration time 10 minutes from base time
+    const expiration = new Date(baseTime.getTime() + 10 * 60 * 1000);
+    return expiration.toISOString();
   }
 }

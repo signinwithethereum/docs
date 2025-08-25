@@ -286,6 +286,82 @@ Expiration Time: 2025-08-19T05:16:33.555Z`;
     });
   });
 
+  describe('Extra Line Breaks Before Optional Fields', () => {
+    test('detects extra line break before Expiration Time', () => {
+      const messageWithExtraLineBreak = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+Sign in to our Web3 application.
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z
+
+Expiration Time: 2025-08-19T05:16:33.555Z`;
+
+      const errors = LineBreakValidator.validateLineBreaks(messageWithExtraLineBreak);
+      
+      const optionalFieldError = errors.find(e => 
+        e.code === 'EXTRA_LINE_BREAKS_BEFORE_OPTIONAL_FIELD'
+      );
+      
+      expect(optionalFieldError).toBeDefined();
+      expect(optionalFieldError?.message).toContain('Extra empty lines before Expiration Time field');
+    });
+
+    test('detects extra line break before Not Before field', () => {
+      const messageWithExtraLineBreak = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+Sign in to our Web3 application.
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z
+
+Not Before: 2025-08-19T05:06:33.555Z`;
+
+      const errors = LineBreakValidator.validateLineBreaks(messageWithExtraLineBreak);
+      
+      const optionalFieldError = errors.find(e => 
+        e.code === 'EXTRA_LINE_BREAKS_BEFORE_OPTIONAL_FIELD'
+      );
+      
+      expect(optionalFieldError).toBeDefined();
+      expect(optionalFieldError?.message).toContain('Extra empty lines before Not Before field');
+    });
+
+    test('detects extra line break between multiple optional fields', () => {
+      const messageWithExtraLineBreak = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+Sign in to our Web3 application.
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z
+Expiration Time: 2025-08-19T05:16:33.555Z
+
+Not Before: 2025-08-19T05:06:33.555Z`;
+
+      const errors = LineBreakValidator.validateLineBreaks(messageWithExtraLineBreak);
+      
+      const optionalFieldError = errors.find(e => 
+        e.code === 'EXTRA_LINE_BREAKS_BEFORE_OPTIONAL_FIELD' && 
+        e.message.includes('Not Before')
+      );
+      
+      expect(optionalFieldError).toBeDefined();
+      expect(optionalFieldError?.message).toContain('Extra empty lines before Not Before field');
+    });
+  });
+
   describe('Message Structure Analysis', () => {
     test('correctly identifies all field positions', () => {
       const structure = (LineBreakValidator as any).analyzeMessageStructure(validMessage.split('\n'));
@@ -298,6 +374,29 @@ Expiration Time: 2025-08-19T05:16:33.555Z`;
       expect(structure.chainIdIndex).toBe(7);
       expect(structure.nonceIndex).toBe(8);
       expect(structure.issuedAtIndex).toBe(9);
+      expect(structure.expirationTimeIndex).toBe(10);
+    });
+
+    test('correctly identifies optional field positions', () => {
+      const messageWithOptionalFields = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+Sign in to our Web3 application.
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z
+Expiration Time: 2025-08-19T05:16:33.555Z
+Not Before: 2025-08-19T05:06:33.555Z
+Request ID: abcd1234`;
+
+      const structure = (LineBreakValidator as any).analyzeMessageStructure(messageWithOptionalFields.split('\n'));
+      
+      expect(structure.expirationTimeIndex).toBe(10);
+      expect(structure.notBeforeIndex).toBe(11);
+      expect(structure.requestIdIndex).toBe(12);
     });
   });
 });
