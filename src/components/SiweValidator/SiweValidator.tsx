@@ -263,8 +263,11 @@ Issued At: 2023-10-31T16:25:24Z`}
                   className={styles.quickAction}
                   onClick={() => handleLoadSample('withResources')}
                 >
-                  📚 With Resources
+                  📚 With Optional Fields
                 </button>
+              </div>
+              <div style={{ color: '#aaa', fontStyle: 'italic', fontSize: '0.75rem', marginTop: '0.5rem' }}>
+                    * Exact message contents should not just be copied verbatim for production use.
               </div>
             </div>
           </div>
