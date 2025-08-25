@@ -267,7 +267,7 @@ Issued At: 2023-10-31T16:25:24Z`}
                 </button>
               </div>
               <div style={{ color: '#aaa', fontStyle: 'italic', fontSize: '0.75rem', marginTop: '0.5rem' }}>
-                    * Exact message contents should not just be copied verbatim for production use.
+                    * Test message contents should not just be copied verbatim for production use.
               </div>
             </div>
           </div>
