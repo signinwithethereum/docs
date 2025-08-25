@@ -214,4 +214,160 @@ Expiration Time: 2025-08-19T05:16:33.555Z`;
       }
     });
   });
+
+  describe('Timestamp fixing improvements', () => {
+    test('generates fresh timestamp for invalid Issued At instead of coercing', () => {
+      const messageWithInvalidIssuedAt = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+Sign in to our Web3 application.
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: n`;
+
+      const result = ValidationEngine.validate(messageWithInvalidIssuedAt);
+      const timestampError = result.errors.find(e => e.code === 'ISSUED_AT_INVALID_FORMAT');
+      
+      expect(timestampError).toBeDefined();
+      expect(timestampError?.fixable).toBe(true);
+      
+      if (timestampError) {
+        const fixed = FieldReplacer.applyFieldFix(messageWithInvalidIssuedAt, timestampError);
+        
+        // Should contain a valid ISO timestamp, not 'n'
+        expect(fixed).toMatch(/Issued At: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/);
+        expect(fixed).not.toContain('Issued At: n');
+        
+        // The generated timestamp should be recent (within last 5 seconds)
+        const match = fixed.match(/Issued At: (.*)/);
+        expect(match).toBeTruthy();
+        const generatedTime = new Date(match![1]);
+        const now = new Date();
+        const timeDiff = Math.abs(now.getTime() - generatedTime.getTime());
+        expect(timeDiff).toBeLessThan(5000); // Within 5 seconds
+      }
+    });
+
+    test('generates valid future expiration time for invalid input', () => {
+      const messageWithInvalidExpiration = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+Sign in to our Web3 application.
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z
+Expiration Time: 1`;
+
+      const result = ValidationEngine.validate(messageWithInvalidExpiration);
+      const expirationError = result.errors.find(e => e.code === 'EXPIRATION_TIME_INVALID_FORMAT');
+      
+      expect(expirationError).toBeDefined();
+      expect(expirationError?.fixable).toBe(true);
+      
+      if (expirationError) {
+        const fixed = FieldReplacer.applyFieldFix(messageWithInvalidExpiration, expirationError);
+        
+        // Should contain a valid ISO timestamp, not '1'
+        expect(fixed).toMatch(/Expiration Time: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/);
+        expect(fixed).not.toContain('Expiration Time: 1');
+        
+        // The generated expiration should be in the future relative to Issued At
+        const issuedMatch = fixed.match(/Issued At: (.*)/);
+        const expirationMatch = fixed.match(/Expiration Time: (.*)/);
+        
+        expect(issuedMatch).toBeTruthy();
+        expect(expirationMatch).toBeTruthy();
+        
+        const issuedTime = new Date(issuedMatch![1]);
+        const expirationTime = new Date(expirationMatch![1]);
+        
+        expect(expirationTime.getTime()).toBeGreaterThan(issuedTime.getTime());
+        
+        // Should be approximately 10 minutes later (within 1 second tolerance)
+        const expectedExpiration = issuedTime.getTime() + 10 * 60 * 1000;
+        const actualExpiration = expirationTime.getTime();
+        expect(Math.abs(actualExpiration - expectedExpiration)).toBeLessThan(1000);
+      }
+    });
+
+    test('prevents coerced timestamps that create expired messages', () => {
+      // This tests the specific bug where '1' gets coerced to '2001-01-01T05:00:00.000Z'
+      const messageWithCoercibleBadTimestamp = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+Sign in to our Web3 application.
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z
+Expiration Time: 1`;
+
+      const result = ValidationEngine.validate(messageWithCoercibleBadTimestamp);
+      const expirationError = result.errors.find(e => e.code === 'EXPIRATION_TIME_INVALID_FORMAT');
+      
+      expect(expirationError).toBeDefined();
+      
+      if (expirationError) {
+        const fixed = FieldReplacer.applyFieldFix(messageWithCoercibleBadTimestamp, expirationError);
+        
+        // Should NOT coerce to 2001 date
+        expect(fixed).not.toContain('2001-01-01');
+        expect(fixed).not.toContain('Expiration Time: 1');
+        
+        // Should generate a valid future timestamp
+        const expirationMatch = fixed.match(/Expiration Time: (.*)/);
+        expect(expirationMatch).toBeTruthy();
+        
+        const expirationTime = new Date(expirationMatch![1]);
+        const now = new Date();
+        
+        // The generated timestamp should be in the future
+        expect(expirationTime.getTime()).toBeGreaterThan(now.getTime());
+        
+        // And specifically should be after 2020 (not the coerced 2001)
+        expect(expirationTime.getFullYear()).toBeGreaterThan(2020);
+      }
+    });
+
+    test('handles unparseable timestamps gracefully', () => {
+      const messageWithUnparseableTimestamp = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+Sign in to our Web3 application.
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: totally-not-a-date`;
+
+      const result = ValidationEngine.validate(messageWithUnparseableTimestamp);
+      const timestampError = result.errors.find(e => e.code === 'ISSUED_AT_INVALID_FORMAT');
+      
+      expect(timestampError).toBeDefined();
+      
+      if (timestampError) {
+        const fixed = FieldReplacer.applyFieldFix(messageWithUnparseableTimestamp, timestampError);
+        
+        // Should replace with current timestamp, not keep the invalid value
+        expect(fixed).not.toContain('totally-not-a-date');
+        expect(fixed).toMatch(/Issued At: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/);
+        
+        // Validate the fixed message doesn't have errors
+        const revalidated = ValidationEngine.validate(fixed);
+        const remainingTimestampErrors = revalidated.errors.filter(e => 
+          e.field === 'issuedAt' && e.code === 'ISSUED_AT_INVALID_FORMAT'
+        );
+        expect(remainingTimestampErrors).toHaveLength(0);
+      }
+    });
+  });
 });
