@@ -74,6 +74,9 @@ const config: Config = {
 
 	themeConfig: {
 		image: 'img/og.png',
+		colorMode: {
+			defaultMode: 'dark',
+		},
 		navbar: {
 			title: 'Sign in with Ethereum',
 			logo: {
