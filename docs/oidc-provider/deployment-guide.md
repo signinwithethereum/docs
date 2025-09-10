@@ -33,7 +33,7 @@ The SIWE OIDC Provider can be deployed in three primary modes:
 
 Railway is a platform that allows users to easily deploy and manage services and environments.  
 
-Deploying the SIWE-OIDC template on Railway is the easiest option to deploy the service and is as simple as clicking the button below.  The template is proconfigured and only requires you to create a Railway account if you don't already have one, and enter in a Re-Own (Wallet Connect) project ID.
+Deploying the SIWE-OIDC template on Railway is the easiest option to deploy the service and is as simple as clicking the button below.  The template is preconfigured and only requires you to create a Railway account if you don't already have one, and enter in a Re-Own (Wallet Connect) project ID.
 
 <a href="https://railway.com/deploy/siwe-oidc?referralCode=98Kre1" target="_blank" rel="noopener noreferrer"><img src="https://railway.com/button.svg" alt="Deploy on Railway" /></a>
 
