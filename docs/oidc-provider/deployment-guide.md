@@ -4,10 +4,11 @@ This guide covers deploying the SIWE OIDC Provider in production environments. C
 
 ## Deployment Options
 
-The SIWE OIDC Provider can be deployed in two primary modes:
+The SIWE OIDC Provider can be deployed in three primary modes:
 
-1. **[Cloudflare Workers](#cloudflare-workers-deployment)** - Serverless, globally distributed
-2. **[Standalone Binary](#standalone-binary-deployment)** - Self-hosted with full control
+1. **[Railway Template](#railway-template-deployment)** - Preconfigured and easily deployed
+2. **[Cloudflare Workers](#cloudflare-workers-deployment)** - Serverless, globally distributed
+3. **[Standalone Binary](#standalone-binary-deployment)** - Self-hosted with full control
 
 ## Prerequisites
 
@@ -27,6 +28,14 @@ The SIWE OIDC Provider can be deployed in two primary modes:
 
 -   **Cloudflare account** with Workers enabled
 -   **Wrangler CLI** installed locally
+
+## Railway Template Deployment
+
+Railway is a platform that allows users to easily deploy and manage services and environments.  
+
+Deploying the SIWE-OIDC template on Railway is the easiest option to deploy the service and is as simple as clicking the button below.  The template is proconfigured and only requires you to create a Railway account if you don't already have one, and enter in a Re-Own (Wallet Connect) project ID.
+
+<a href="https://railway.com/deploy/siwe-oidc?referralCode=98Kre1" target="_blank" rel="noopener noreferrer"><img src="https://railway.com/button.svg" alt="Deploy on Railway" /></a>
 
 ## Cloudflare Workers Deployment
 
