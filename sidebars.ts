@@ -95,6 +95,18 @@ const sidebars: SidebarsConfig = {
 			items: [
 				'oidc-provider/deployment-guide',
 				'oidc-provider/hosted-provider',
+                {
+                    type: 'link',
+                    label: 'SIWE OIDC Connector',
+                    href: 'https://github.com/signinwithethereum/siwe-oidc',
+                    className: 'text-accent hover:text-white transition-colors font-medium group',
+                },
+                {
+                    type: 'link',
+                    label: 'SIWE OIDC Demo',
+                    href: 'https://oidc-demo.siwe.xyz/',
+                    className: 'text-accent hover:text-white transition-colors font-medium group',
+                }
 			],
 		},
 
