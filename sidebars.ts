@@ -90,10 +90,11 @@ const sidebars: SidebarsConfig = {
 		},
 		{
 			type: 'category',
-			label: '🔐 OIDC Provider',
+			label: '🖥️ OIDC Provider',
 			link: { type: 'doc', id: 'oidc-provider/index' },
 			items: [
 				'oidc-provider/deployment-guide',
+				'oidc-provider/hosted-provider',
 			],
 		},
 
