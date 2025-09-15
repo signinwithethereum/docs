@@ -4,19 +4,19 @@
 
 ## Key Benefits
 
-### 🤝 **Complements other elements of the Ethereum Identity Stack**
+### **Complements other elements of the Ethereum Identity Stack**
 
 After the user authenticates, apps may use their onchain **[ENS](https://ens.domains)** username and profile and **[EFP](https://efp.app)** social graph.
 
-### [⛓️ **Enrich your app's UX with onchain data**](./quickstart/retrieve-onchain-data.mdx)
+### [**Enrich your app's UX with onchain data**](./quickstart/retrieve-onchain-data.mdx)
 
 Seamlessly connects user identity with onchain activities, enabling applications to verify user ownership of NFTs, tokens, and other blockchain assets.
 
-### 🛡️ **Self-Sovereign Identity**
+### **Self-Sovereign Identity**
 
 Users maintain control over their identity credentials, eliminating dependency on centralized identity providers like Google or Facebook.
 
-### 🖊️ **Single Sign-On**
+### **Single Sign-On**
 
 Works across any application that implements the SIWE standard, creating a unified authentication and account experience.
 
@@ -38,11 +38,11 @@ SIWE is defined by **[EIP-4361](https://eips.ethereum.org/EIPS/eip-4361)** stand
 
 Ready to implement SIWE in your application? Here are some quick paths forward:
 
-### 🚀 **Quick Start**
+### **Quick Start**
 
 Follow our [Quickstart Guide](quickstart/index.md) for a step-by-step tutorial on implementing SIWE from scratch.
 
-### 📚 **Choose Your Library**
+### **Choose Your Library**
 
 We provide official libraries for multiple programming languages:
 
@@ -53,11 +53,11 @@ We provide official libraries for multiple programming languages:
 -   [Go](libraries/go)
 -   [Elixir](libraries/elixir)
 
-### 🪪 **Ethereum Identity Kit component library and API**
+### **Ethereum Identity Kit component library and API**
 
 We offer the [Ethereum Identity Kit](https://ethidentitykit.com/) component library and API to help you integrate SIWE and the rest of the Ethereum identity stack.
 
-### 🔌 **Pre-built Integrations**
+### **Pre-built Integrations**
 
 Get started quickly with existing integrations:
 

@@ -1,4 +1,4 @@
-# 🔒 Security Considerations
+# Security Considerations
 
 ## Overview
 

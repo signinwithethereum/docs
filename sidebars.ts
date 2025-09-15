@@ -5,11 +5,11 @@ const sidebars: SidebarsConfig = {
 		{
 			type: 'doc',
 			id: 'index',
-			label: '👋 Introduction',
+			label: 'Introduction',
 		},
 		{
 			type: 'category',
-			label: '⭐ Quickstart Guide',
+			label: 'Quickstart Guide',
 			link: { type: 'doc', id: 'quickstart/index' },
 			items: [
 				{
@@ -41,13 +41,13 @@ const sidebars: SidebarsConfig = {
 		},
 		{
 			type: 'category',
-			label: '💻 Libraries',
+			label: 'Libraries',
 			collapsed: false,
 			link: { type: 'doc', id: 'libraries/index' },
 			items: [
 				{
 					type: 'category',
-					label: '⌨️ TypeScript',
+					label: 'TypeScript',
 					link: { type: 'doc', id: 'libraries/typescript' },
 					items: [
 						'libraries/typescript/migrating-to-v2',
@@ -59,7 +59,7 @@ const sidebars: SidebarsConfig = {
 				'libraries/python',
 				{
 					type: 'category',
-					label: '💎 Ruby',
+					label: 'Ruby',
 					link: { type: 'doc', id: 'libraries/ruby' },
 					items: ['libraries/ruby/rails'],
 				},
@@ -69,7 +69,7 @@ const sidebars: SidebarsConfig = {
 		},
 		{
 			type: 'category',
-			label: '🔌 Integrations',
+			label: 'Integrations',
 			link: { type: 'doc', id: 'integrations/index' },
 			items: [
 				'integrations/discourse',
@@ -79,7 +79,7 @@ const sidebars: SidebarsConfig = {
 		},
 		{
 			type: 'category',
-			label: '⛓️ Onchain Data',
+			label: 'Onchain Data',
 			collapsed: false,
 			link: { type: 'doc', id: 'quickstart/retrieve-onchain-data' },
 			items: [
@@ -90,7 +90,7 @@ const sidebars: SidebarsConfig = {
 		},
 		{
 			type: 'category',
-			label: '🖥️ OIDC Provider',
+			label: 'OIDC Provider',
 			link: { type: 'doc', id: 'oidc-provider/index' },
 			items: [
 				'oidc-provider/deployment-guide',
@@ -112,7 +112,7 @@ const sidebars: SidebarsConfig = {
 
 		{
 			type: 'category',
-			label: '🔍 Message Validator',
+			label: 'Message Validator',
             link: { type: 'doc', id: 'validator/index' },
             items: [
 				'validator/index',
@@ -123,7 +123,7 @@ const sidebars: SidebarsConfig = {
 		'security-considerations',
 		{
 			type: 'link',
-			label: '📄 EIP-4361 Specification',
+			label: 'EIP-4361 Specification',
 			href: 'https://eips.ethereum.org/EIPS/eip-4361',
 			className: 'text-accent hover:text-white transition-colors font-medium group',
 		}

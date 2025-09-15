@@ -1,4 +1,4 @@
-# 🛤️ Rails
+# Rails
 
 ## Overview
 

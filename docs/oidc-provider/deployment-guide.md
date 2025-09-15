@@ -1,4 +1,4 @@
-# ⭐ Deployment Guide
+# Deployment Guide
 
 This guide covers deploying the SIWE OIDC Provider in production environments. Choose from multiple deployment options based on your infrastructure needs.
 
