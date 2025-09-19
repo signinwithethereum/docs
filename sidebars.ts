@@ -121,11 +121,18 @@ const sidebars: SidebarsConfig = {
 		},
 
 		'security-considerations',
+
 		{
 			type: 'link',
 			label: 'EIP-4361 Specification',
 			href: 'https://eips.ethereum.org/EIPS/eip-4361',
 			className: 'text-accent hover:text-white transition-colors font-medium group',
+		},
+		
+		{
+			type: 'doc',
+			id: 'media-kit',
+			label: 'Media Kit',
 		}
 	],
 }
