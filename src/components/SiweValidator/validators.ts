@@ -528,24 +528,53 @@ export class FieldValidators {
   // Helper methods for specific validations
 
   private static validateDomainFormat(domain: string): DomainValidation {
-    // Basic domain format validation
+    // Extract domain and port if present (e.g., "example.com:3000")
+    let domainPart = domain;
+    let port: string | null = null;
+
+    const portMatch = domain.match(/^(.+):(\d+)$/);
+    if (portMatch) {
+      domainPart = portMatch[1];
+      port = portMatch[2];
+
+      // Validate port range (1-65535)
+      const portNum = parseInt(port, 10);
+      if (portNum < 1 || portNum > 65535) {
+        return {
+          isValid: false,
+          isSubdomain: false,
+          tld: null,
+          securityRisk: 'none'
+        };
+      }
+    }
+
+    // Basic domain format validation (now without port)
     const domainRegex = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)*[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
-    const isValid = domainRegex.test(domain) && domain.length <= 253;
-    
-    const parts = domain.split('.');
-    const tld = parts[parts.length - 1];
-    const isSubdomain = parts.length > 2;
-    
+
+    // Also allow IP addresses (IPv4 for now)
+    const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
+    const isIPv4 = ipv4Regex.test(domainPart);
+
+    // Check if it's localhost
+    const isLocalhost = domainPart === 'localhost';
+
+    const isValid = (domainRegex.test(domainPart) || isIPv4 || isLocalhost) && domainPart.length <= 253;
+
+    const parts = domainPart.split('.');
+    const tld = !isIPv4 && !isLocalhost && parts.length > 1 ? parts[parts.length - 1] : null;
+    const isSubdomain = !isIPv4 && !isLocalhost && parts.length > 2;
+
     // Basic security risk assessment
     let securityRisk: 'none' | 'low' | 'medium' | 'high' = 'none';
-    if (domain.includes('localhost') || domain.includes('127.0.0.1')) {
+    if (isLocalhost || domainPart.includes('127.0.0.1') || domainPart === '0.0.0.0') {
       securityRisk = 'low';
     }
-    
+
     return {
       isValid,
       isSubdomain,
-      tld: isValid ? tld : null,
+      tld,
       securityRisk
     };
   }

@@ -23,6 +23,40 @@ Version: 2
 Chain ID: 0
 Nonce: test`;
 
+  const messageWithScheme = `https://app.example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+Sign in to our Web3 application.
+
+URI: https://app.example.com/auth
+Version: 1
+Chain ID: 137
+Nonce: tw9ZbAehXkE3uuDQ
+Issued At: 2025-08-31T19:06:58.219Z
+Expiration Time: 2025-08-31T21:16:58.219Z`;
+
+  const messageWithPort = `example.com:3000 wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+Sign in to our Web3 application.
+
+URI: https://example.com:3000/auth
+Version: 1
+Chain ID: 1
+Nonce: a1B2c3D4e5F6g7H8
+Issued At: 2023-10-31T16:25:24Z`;
+
+  const messageWithSchemeAndPort = `https://localhost:8080 wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+Testing local development.
+
+URI: https://localhost:8080/api/auth
+Version: 1
+Chain ID: 31337
+Nonce: randomNonce123
+Issued At: 2023-10-31T16:25:24Z`;
+
   describe('ValidationEngine.validate', () => {
     test('validates a correct SIWE message', () => {
       const result = ValidationEngine.validate(validMessage);
@@ -59,14 +93,56 @@ Nonce: test`;
       const strictResult = ValidationEngine.validate(invalidMessage, {
         profile: ValidationEngine.PROFILES.strict
       });
-      
+
       const basicResult = ValidationEngine.validate(invalidMessage, {
         profile: ValidationEngine.PROFILES.basic
       });
-      
+
       // Strict mode should find more issues
       expect(strictResult.errors.length + strictResult.warnings.length)
         .toBeGreaterThanOrEqual(basicResult.errors.length + basicResult.warnings.length);
+    });
+
+    test('validates message with scheme prefix', () => {
+      const result = ValidationEngine.validate(messageWithScheme);
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+
+      // Parse the message to verify fields
+      const parsed = SiweMessageParser.parse(messageWithScheme);
+      expect(parsed.fields.scheme).toBe('https');
+      expect(parsed.fields.domain).toBe('app.example.com');
+    });
+
+    test('validates message with port', () => {
+      const result = ValidationEngine.validate(messageWithPort);
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+
+      // Parse the message to verify fields
+      const parsed = SiweMessageParser.parse(messageWithPort);
+      expect(parsed.fields.domain).toBe('example.com:3000');
+    });
+
+    test('validates message with both scheme and port', () => {
+      const result = ValidationEngine.validate(messageWithSchemeAndPort);
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+
+      // Parse the message to verify fields
+      const parsed = SiweMessageParser.parse(messageWithSchemeAndPort);
+      expect(parsed.fields.scheme).toBe('https');
+      expect(parsed.fields.domain).toBe('localhost:8080');
+    });
+
+    test('regenerates message with scheme correctly', () => {
+      const parsed = SiweMessageParser.parse(messageWithScheme);
+      const regenerated = SiweMessageParser.generateMessage(parsed.fields);
+
+      expect(regenerated).toContain('https://app.example.com wants you to sign in');
     });
   });
 

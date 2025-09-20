@@ -129,9 +129,27 @@ export class SecurityValidators {
     if (uri) {
       try {
         const url = new URL(uri);
-        const uriDomain = url.hostname;
-        
-        if (domain !== uriDomain && !uriDomain.endsWith(`.${domain}`)) {
+        const uriHostname = url.hostname;
+        // Only use url.port if it's explicitly specified in the URI
+        const uriPort = url.port || null;
+
+        // Extract hostname and port from message domain (e.g., "example.com:3000" -> "example.com", "3000")
+        let messageHostname = domain;
+        let messagePort: string | null = null;
+
+        const portMatch = domain.match(/^(.+):(\d+)$/);
+        if (portMatch) {
+          messageHostname = portMatch[1];
+          messagePort = portMatch[2];
+        }
+
+        // Check hostname mismatch
+        const hostnameMismatch = messageHostname !== uriHostname && !uriHostname.endsWith(`.${messageHostname}`);
+
+        // Only check port mismatch if BOTH have explicit ports specified
+        const portMismatch = messagePort && uriPort && messagePort !== uriPort;
+
+        if (hostnameMismatch) {
           errors.push({
             type: 'security',
             field: 'uri',
@@ -142,6 +160,18 @@ export class SecurityValidators {
             fixable: false,
             suggestion: 'Ensure URI domain matches or is subdomain of message domain',
             code: 'SECURITY_DOMAIN_MISMATCH'
+          });
+        } else if (portMismatch) {
+          errors.push({
+            type: 'security',
+            field: 'uri',
+            line: SiweMessageParser.getFieldLine(message.rawMessage, 'uri'),
+            column: 1,
+            message: `URI port (${uriPort}) does not match message domain port (${messagePort})`,
+            severity: 'warning',
+            fixable: false,
+            suggestion: 'Ensure URI port matches the port specified in the domain',
+            code: 'SECURITY_PORT_MISMATCH'
           });
         }
       } catch {
@@ -511,6 +541,13 @@ export class SecurityValidators {
   }
 
   private static isSuspiciousDomain(domain: string): boolean {
+    // Extract hostname from domain (remove port if present)
+    let hostname = domain;
+    const portMatch = domain.match(/^(.+):(\d+)$/);
+    if (portMatch) {
+      hostname = portMatch[1];
+    }
+
     const suspiciousPatterns = [
       /metamask.*\.(?!io$)/i, // Fake MetaMask domains
       /wallet.*connect/i, // Fake WalletConnect
@@ -522,10 +559,17 @@ export class SecurityValidators {
       /[0-9]{8,}\./, // Domains with long numbers
     ];
 
-    return suspiciousPatterns.some(pattern => pattern.test(domain));
+    return suspiciousPatterns.some(pattern => pattern.test(hostname));
   }
 
   private static isDevelopmentDomain(domain: string): boolean {
+    // Extract hostname from domain (remove port if present)
+    let hostname = domain;
+    const portMatch = domain.match(/^(.+):(\d+)$/);
+    if (portMatch) {
+      hostname = portMatch[1];
+    }
+
     const devPatterns = [
       'localhost',
       '127.0.0.1',
@@ -539,6 +583,6 @@ export class SecurityValidators {
       'test.'
     ];
 
-    return devPatterns.some(pattern => domain.includes(pattern));
+    return devPatterns.some(pattern => hostname.includes(pattern));
   }
 }
