@@ -6,7 +6,8 @@ export class SiweMessageParser {
   private static readonly REQUIRED_FIELDS = ['domain', 'address', 'uri', 'version', 'chainId', 'nonce', 'issuedAt'];
   
   private static readonly FIELD_PATTERNS = {
-    domain: /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)*[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/,
+    // Domain pattern now allows optional port (e.g., example.com:3000)
+    domain: /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)*[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(:[0-9]+)?$/,
     address: /^0x[a-fA-F0-9]{40}$/,
     uri: /^[a-zA-Z][a-zA-Z0-9+.-]*:/,
     version: /^1$/,
@@ -22,18 +23,30 @@ export class SiweMessageParser {
     let lineIndex = 0;
 
     try {
-      // Parse header line: domain + " wants you to sign in with your Ethereum account:"
+      // Parse header line: [scheme "://"] domain + " wants you to sign in with your Ethereum account:"
+      // According to EIP-4361, the scheme is optional
       if (lineIndex < lines.length) {
-        const headerMatch = lines[lineIndex].match(/^(.+) wants you to sign in with your Ethereum account:$/);
+        // Match with optional scheme (e.g., "https://example.com" or just "example.com")
+        const headerMatch = lines[lineIndex].match(/^(?:([a-zA-Z][a-zA-Z0-9+.-]*):(?:\/\/))?(.+) wants you to sign in with your Ethereum account:$/);
         if (headerMatch) {
-          fields.domain = headerMatch[1];
+          // headerMatch[1] is the optional scheme, headerMatch[2] is the domain (with optional port)
+          const scheme = headerMatch[1];
+          const domainWithPort = headerMatch[2];
+
+          // Store the domain (including port if present)
+          fields.domain = domainWithPort;
+
+          // Store the scheme separately if present (for validation or reconstruction)
+          if (scheme) {
+            fields.scheme = scheme;
+          }
         } else {
           parseErrors.push(this.createParseError(
             'format',
             'header',
             lineIndex + 1,
             1,
-            'Invalid header format. Expected: "domain wants you to sign in with your Ethereum account:"',
+            'Invalid header format. Expected: "[scheme://]domain wants you to sign in with your Ethereum account:"',
             'INVALID_HEADER'
           ));
         }
@@ -173,9 +186,10 @@ export class SiweMessageParser {
   public static generateMessage(fields: SiweMessageFields): string {
     const lines: string[] = [];
     
-    // Header
+    // Header (with optional scheme)
     if (fields.domain) {
-      lines.push(`${fields.domain} wants you to sign in with your Ethereum account:`);
+      const prefix = fields.scheme ? `${fields.scheme}://` : '';
+      lines.push(`${prefix}${fields.domain} wants you to sign in with your Ethereum account:`);
     }
     
     // Address

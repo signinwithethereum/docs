@@ -30,7 +30,8 @@ export interface ValidationSuggestion extends ValidationError {
 }
 
 export interface SiweMessageFields {
-  domain?: string;
+  scheme?: string; // Optional scheme from the header (e.g., "https")
+  domain?: string; // Domain with optional port (e.g., "example.com:3000")
   address?: string;
   statement?: string;
   uri?: string;
