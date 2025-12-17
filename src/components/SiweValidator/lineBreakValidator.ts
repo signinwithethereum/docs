@@ -414,8 +414,11 @@ export class LineBreakValidator {
         fixedLines.push(line);
         i++;
         
-        // Add empty line after address if there's a statement
+        // Per EIP-4361: add 1 empty line if there's a statement, 2 empty lines if no statement
         if (structure.statementIndex !== -1) {
+          fixedLines.push('');
+        } else {
+          fixedLines.push('');
           fixedLines.push('');
         }
       }

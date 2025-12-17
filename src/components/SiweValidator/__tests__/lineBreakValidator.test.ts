@@ -415,6 +415,30 @@ Issued At: 2025-08-19T05:06:33.555Z`;
       expect(extraLinesError).toBeDefined();
       expect(extraLinesError?.message).toContain('expected 2');
     });
+
+    test('fixLineBreaks adds 2 empty lines when no statement', () => {
+      // Message with only 1 empty line (incorrect)
+      const invalidNoStatement = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z`;
+
+      const fixed = LineBreakValidator.fixLineBreaks(invalidNoStatement);
+      
+      // Should have 2 empty lines between address and URI
+      expect(fixed).toContain('0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890\n\n\nURI:');
+      
+      // Validate the fixed message has no line break errors
+      const errors = LineBreakValidator.validateLineBreaks(fixed);
+      const lineBreakErrors = errors.filter(e => 
+        e.code.includes('LINE_BREAK') || e.code.includes('EXTRA')
+      );
+      expect(lineBreakErrors).toHaveLength(0);
+    });
   });
 
   describe('Message Structure Analysis', () => {
