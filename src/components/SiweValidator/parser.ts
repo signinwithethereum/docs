@@ -197,12 +197,13 @@ export class SiweMessageParser {
       lines.push(fields.address);
     }
     
-    // Empty line
-    lines.push('');
-    
-    // Statement (optional)
+    // Per EIP-4361: 1 empty line + statement + 1 empty line, or 2 empty lines if no statement
     if (fields.statement) {
+      lines.push('');
       lines.push(fields.statement);
+      lines.push('');
+    } else {
+      lines.push('');
       lines.push('');
     }
     

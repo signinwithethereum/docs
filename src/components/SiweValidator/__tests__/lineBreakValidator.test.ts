@@ -2,6 +2,8 @@
 
 import { LineBreakValidator } from '../lineBreakValidator';
 import { ValidationEngine } from '../validationEngine';
+import { SiweMessageParser } from '../parser';
+import { FieldReplacer } from '../fieldReplacer';
 
 describe('LineBreakValidator', () => {
   const validMessage = `example.com wants you to sign in with your Ethereum account:
@@ -428,6 +430,92 @@ Nonce: abc123defg4567
 Issued At: 2025-08-19T05:06:33.555Z`;
 
       const fixed = LineBreakValidator.fixLineBreaks(invalidNoStatement);
+      
+      // Should have 2 empty lines between address and URI
+      expect(fixed).toContain('0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890\n\n\nURI:');
+      
+      // Validate the fixed message has no line break errors
+      const errors = LineBreakValidator.validateLineBreaks(fixed);
+      const lineBreakErrors = errors.filter(e => 
+        e.code.includes('LINE_BREAK') || e.code.includes('EXTRA')
+      );
+      expect(lineBreakErrors).toHaveLength(0);
+    });
+
+    test('SiweMessageParser.generateMessage outputs 2 empty lines when no statement', () => {
+      const fields = {
+        domain: 'example.com',
+        address: '0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890',
+        uri: 'https://example.com',
+        version: '1',
+        chainId: '1',
+        nonce: 'abc123defg4567',
+        issuedAt: '2025-08-19T05:06:33.555Z'
+        // No statement
+      };
+
+      const generated = SiweMessageParser.generateMessage(fields);
+      
+      // Should have 2 empty lines between address and URI
+      expect(generated).toContain('0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890\n\n\nURI:');
+      
+      // Validate the generated message has no line break errors
+      const errors = LineBreakValidator.validateLineBreaks(generated);
+      const lineBreakErrors = errors.filter(e => 
+        e.code.includes('LINE_BREAK') || e.code.includes('EXTRA')
+      );
+      expect(lineBreakErrors).toHaveLength(0);
+    });
+
+    test('SiweMessageParser.generateMessage outputs 1 empty line when statement exists', () => {
+      const fields = {
+        domain: 'example.com',
+        address: '0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890',
+        statement: 'Sign in to our Web3 application.',
+        uri: 'https://example.com',
+        version: '1',
+        chainId: '1',
+        nonce: 'abc123defg4567',
+        issuedAt: '2025-08-19T05:06:33.555Z'
+      };
+
+      const generated = SiweMessageParser.generateMessage(fields);
+      
+      // Should have 1 empty line before statement, then statement, then 1 empty line before URI
+      expect(generated).toContain('0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890\n\nSign in');
+      expect(generated).toContain('application.\n\nURI:');
+      
+      // Validate the generated message has no line break errors
+      const errors = LineBreakValidator.validateLineBreaks(generated);
+      const lineBreakErrors = errors.filter(e => 
+        e.code.includes('LINE_BREAK') || e.code.includes('EXTRA')
+      );
+      expect(lineBreakErrors).toHaveLength(0);
+    });
+
+    test('FieldReplacer.applyFieldFix handles MISSING_LINE_BREAK_NO_STATEMENT error', () => {
+      // Message with only 1 empty line (incorrect per EIP-4361)
+      const invalidNoStatement = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z`;
+
+      const error = {
+        type: 'format' as const,
+        field: 'structure',
+        line: 3,
+        column: 1,
+        message: 'Missing empty line between address and URI field',
+        severity: 'error' as const,
+        fixable: true,
+        code: 'MISSING_LINE_BREAK_NO_STATEMENT'
+      };
+
+      const fixed = FieldReplacer.applyFieldFix(invalidNoStatement, error);
       
       // Should have 2 empty lines between address and URI
       expect(fixed).toContain('0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890\n\n\nURI:');
