@@ -272,8 +272,10 @@ export class ValidationEngine {
   // Generate sample messages for testing
   public static generateSamples(): { [key: string]: string } {
     return {
+      // Per EIP-4361: 2 empty lines when no statement
       minimal: `example.com wants you to sign in with your Ethereum account:
 0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
 
 URI: https://example.com
 Version: 1
