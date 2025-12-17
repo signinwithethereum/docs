@@ -49,20 +49,22 @@ export class LineBreakValidator {
       }
     }
 
-    // Check for extra empty lines before URI (should be exactly one after statement/address)
+    // Check for extra empty lines before URI
+    // Per EIP-4361: expect 1 empty line if statement exists, 2 empty lines if no statement
     if (structure.uriIndex !== -1) {
       const expectedEmptyLineIndex = this.getExpectedEmptyLineBeforeUri(lines, structure);
       if (expectedEmptyLineIndex !== -1) {
         // Count consecutive empty lines before URI
         const emptyLinesBefore = this.countConsecutiveEmptyLinesBefore(lines, structure.uriIndex);
-        if (emptyLinesBefore > 1) {
+        const expectedEmptyLines = structure.statementIndex === -1 ? 2 : 1;
+        if (emptyLinesBefore > expectedEmptyLines) {
           const extraLinesStart = structure.uriIndex - emptyLinesBefore + 1;
           errors.push({
             type: 'format',
             field: 'structure',
             line: extraLinesStart + 1,
             column: 1,
-            message: `Extra empty lines before URI field (found ${emptyLinesBefore}, expected 1)`,
+            message: `Extra empty lines before URI field (found ${emptyLinesBefore}, expected ${expectedEmptyLines})`,
             severity: 'error',
             fixable: true,
             suggestion: 'Remove extra empty lines before URI field',
@@ -186,6 +188,24 @@ export class LineBreakValidator {
           fixable: true,
           suggestion: 'Add an empty line between the statement and URI field',
           code: 'MISSING_LINE_BREAK_STATEMENT_URI'
+        });
+      }
+    }
+
+    // Check if there should be 2 empty lines when no statement (per EIP-4361)
+    if (structure.statementIndex === -1 && structure.addressIndex !== -1 && structure.uriIndex !== -1) {
+      const emptyLinesBefore = this.countConsecutiveEmptyLinesBefore(lines, structure.uriIndex);
+      if (emptyLinesBefore < 2) {
+        errors.push({
+          type: 'format',
+          field: 'structure',
+          line: structure.addressIndex + 2,
+          column: 1,
+          message: `Missing empty line between address and URI field (found ${emptyLinesBefore}, expected 2 when no statement)`,
+          severity: 'error',
+          fixable: true,
+          suggestion: 'Add a second empty line between the address and URI field when there is no statement',
+          code: 'MISSING_LINE_BREAK_NO_STATEMENT'
         });
       }
     }
