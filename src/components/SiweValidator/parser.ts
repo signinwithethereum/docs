@@ -68,20 +68,21 @@ export class SiweMessageParser {
         ));
       }
 
-      // Skip empty line
+      // Skip empty line after address
       if (lineIndex < lines.length && lines[lineIndex] === '') {
         lineIndex++;
       }
 
-      // Parse optional statement
+      // Parse optional statement (non-empty line that doesn't start with URI:)
       if (lineIndex < lines.length && lines[lineIndex] && !lines[lineIndex].startsWith('URI:')) {
         fields.statement = lines[lineIndex];
         lineIndex++;
-        
-        // Skip empty line after statement
-        if (lineIndex < lines.length && lines[lineIndex] === '') {
-          lineIndex++;
-        }
+      }
+
+      // Skip empty line(s) before required fields
+      // Per EIP-4361: 1 empty line after statement, or 2 empty lines total when no statement
+      while (lineIndex < lines.length && lines[lineIndex] === '') {
+        lineIndex++;
       }
 
       // Parse required fields

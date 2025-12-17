@@ -527,6 +527,34 @@ Issued At: 2025-08-19T05:06:33.555Z`;
       );
       expect(lineBreakErrors).toHaveLength(0);
     });
+
+    test('SiweMessageParser.parse correctly handles 2 empty lines when no statement', () => {
+      const validNoStatement = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z`;
+
+      const parsed = SiweMessageParser.parse(validNoStatement);
+      
+      // Should parse all fields correctly
+      expect(parsed.fields.domain).toBe('example.com');
+      expect(parsed.fields.address).toBe('0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890');
+      expect(parsed.fields.statement).toBeUndefined();
+      expect(parsed.fields.uri).toBe('https://example.com');
+      expect(parsed.fields.version).toBe('1');
+      expect(parsed.fields.chainId).toBe('1');
+      expect(parsed.fields.nonce).toBe('abc123defg4567');
+      expect(parsed.fields.issuedAt).toBe('2025-08-19T05:06:33.555Z');
+      
+      // Should have no parse errors
+      expect(parsed.parseErrors).toHaveLength(0);
+      expect(parsed.isValid).toBe(true);
+    });
   });
 
   describe('Message Structure Analysis', () => {
