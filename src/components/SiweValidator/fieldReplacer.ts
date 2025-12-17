@@ -107,6 +107,7 @@ export class FieldReplacer {
       case 'EXTRA_LINE_BREAKS_BEFORE_OPTIONAL_FIELD':
       case 'MISSING_LINE_BREAK_ADDRESS_STATEMENT':
       case 'MISSING_LINE_BREAK_STATEMENT_URI':
+      case 'MISSING_LINE_BREAK_NO_STATEMENT':
       case 'TRAILING_WHITESPACE':
       case 'TOO_MANY_CONSECUTIVE_EMPTY_LINES':
         return LineBreakValidator.fixLineBreaks(originalMessage);
