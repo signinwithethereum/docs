@@ -19,6 +19,7 @@ Expiration Time: 2025-08-19T05:16:33.555Z`;
   describe('User Reported Scenario', () => {
     test('detects extra line break between last two lines', () => {
       // Add extra line break between Issued At and Expiration Time
+      // Note: Expiration Time is an optional field, so this should use EXTRA_LINE_BREAKS_BEFORE_OPTIONAL_FIELD
       const messageWithExtraLineBreak = `example.com wants you to sign in with your Ethereum account:
 0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
 
@@ -34,14 +35,14 @@ Expiration Time: 2025-08-19T05:16:33.555Z`;
 
       const errors = LineBreakValidator.validateLineBreaks(messageWithExtraLineBreak);
       
-      // Should detect extra line break between fields
+      // Should detect extra line break before optional field (Expiration Time)
       const extraLineBreakError = errors.find(e => 
-        e.code === 'EXTRA_LINE_BREAKS_BETWEEN_FIELDS'
+        e.code === 'EXTRA_LINE_BREAKS_BEFORE_OPTIONAL_FIELD'
       );
       
       expect(extraLineBreakError).toBeDefined();
       expect(extraLineBreakError?.fixable).toBe(true);
-      expect(extraLineBreakError?.message).toContain('Extra empty lines between required fields');
+      expect(extraLineBreakError?.message).toContain('Extra empty lines before Expiration Time field');
     });
 
     test('full validation engine prioritizes line break errors over parsing errors', () => {
@@ -359,6 +360,60 @@ Not Before: 2025-08-19T05:06:33.555Z`;
       
       expect(optionalFieldError).toBeDefined();
       expect(optionalFieldError?.message).toContain('Extra empty lines before Not Before field');
+    });
+  });
+
+  describe('No Statement Line Break Handling (EIP-4361)', () => {
+    test('valid message with no statement and 2 empty lines should pass', () => {
+      const validNoStatement = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z`;
+
+      const errors = LineBreakValidator.validateLineBreaks(validNoStatement);
+      const lineBreakErrors = errors.filter(e => 
+        e.code.includes('LINE_BREAK') || e.code.includes('EXTRA')
+      );
+      expect(lineBreakErrors).toHaveLength(0);
+    });
+
+    test('invalid message with no statement and only 1 empty line should fail', () => {
+      const invalidNoStatement = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z`;
+
+      const errors = LineBreakValidator.validateLineBreaks(invalidNoStatement);
+      const missingLineError = errors.find(e => e.code === 'MISSING_LINE_BREAK_NO_STATEMENT');
+      expect(missingLineError).toBeDefined();
+      expect(missingLineError?.message).toContain('expected 2');
+    });
+
+    test('message with no statement and 3 empty lines should report extra', () => {
+      const tooManyLines = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6C4C1Ca5d428d9eE0e9B1E1234567890
+
+
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: abc123defg4567
+Issued At: 2025-08-19T05:06:33.555Z`;
+
+      const errors = LineBreakValidator.validateLineBreaks(tooManyLines);
+      const extraLinesError = errors.find(e => e.code === 'EXTRA_LINE_BREAKS_BEFORE_URI');
+      expect(extraLinesError).toBeDefined();
+      expect(extraLinesError?.message).toContain('expected 2');
     });
   });
 

@@ -1,25 +1,27 @@
 // Jest setup file for testing
 
-// Mock CSS modules
-jest.mock('*.module.css', () => ({}), { virtual: true });
+// CSS modules are handled by moduleNameMapper in jest.config.js
 
-// Mock Docusaurus specific modules
-jest.mock('@docusaurus/useDocusaurusContext', () => ({
-  __esModule: true,
-  default: () => ({
-    siteConfig: {
-      title: 'SIWE Docs',
-      tagline: 'Sign in with Ethereum Documentation',
-    },
-  }),
-}));
+// Mock Docusaurus specific modules (only if they exist)
+try {
+  jest.mock('@docusaurus/useDocusaurusContext', () => ({
+    __esModule: true,
+    default: () => ({
+      siteConfig: {
+        title: 'SIWE Docs',
+        tagline: 'Sign in with Ethereum Documentation',
+      },
+    }),
+  }), { virtual: true });
 
-// Mock other Docusaurus hooks if needed
-jest.mock('@docusaurus/Link', () => ({
-  __esModule: true,
-  default: ({ children, ...props }: any) =>
-    require('react').createElement('a', props, children),
-}));
+  jest.mock('@docusaurus/Link', () => ({
+    __esModule: true,
+    default: ({ children, ...props }: any) =>
+      require('react').createElement('a', props, children),
+  }), { virtual: true });
+} catch {
+  // Ignore if Docusaurus modules are not available
+}
 
 // Setup global test environment
 global.console = {
