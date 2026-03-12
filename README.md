@@ -63,7 +63,7 @@ Get started quickly with existing integrations:
 
 -   [NextAuth.js](./integrations/nextauth.js.mdx)
 -   [Auth0](./integrations/auth0.mdx)
--   [Discourse](./integrations/discourse)
+-   [Discourse](./integrations/discourse.mdx)
 
 ## Security First
 
