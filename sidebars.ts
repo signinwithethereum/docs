@@ -50,7 +50,7 @@ const sidebars: SidebarsConfig = {
 					label: 'TypeScript',
 					link: { type: 'doc', id: 'libraries/typescript' },
 					items: [
-						'libraries/typescript/migrating-to-v2',
+						'libraries/typescript/migrating-to-v4',
 						'libraries/typescript/typescript-quickstart',
 					],
 				},
