@@ -65,11 +65,11 @@ Here's how to get started with each library:
 ### JavaScript/TypeScript
 
 ```bash
-npm install siwe ethers
+npm install @signinwithethereum/siwe
 ```
 
 ```javascript
-import { SiweMessage } from 'siwe'
+import { SiweMessage, generateNonce } from '@signinwithethereum/siwe'
 
 const message = new SiweMessage({
 	domain: 'example.com',
@@ -77,6 +77,8 @@ const message = new SiweMessage({
 	uri: 'https://example.com',
 	version: '1',
 	chainId: 1,
+	nonce: generateNonce(),
+	issuedAt: new Date().toISOString(),
 })
 ```
 
@@ -306,7 +308,7 @@ Visit our [GitHub repository](https://github.com/signinwithethereum/siwe) for li
 
 When upgrading between major versions:
 
-- **TypeScript v1 → v2**: Constructor API changes, see [migration guide](typescript/migrating-to-v2)
+- **TypeScript v2 → v4**: Package rename, provider-agnostic config, required domain/nonce in verify(), see [migration guide](typescript/migrating-to-v4)
 - **Python v2 → v3**: Async/await support, dataclass changes
 - **Ruby v1 → v2**: Rails integration improvements
 

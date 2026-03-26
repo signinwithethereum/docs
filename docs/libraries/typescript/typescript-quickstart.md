@@ -7,7 +7,7 @@
 
 ## Requirements
 
--   NodeJS version 14.0 or higher
+-   Node.js version 18.0 or higher
 
 ## Setup and Running the Quickstart
 
