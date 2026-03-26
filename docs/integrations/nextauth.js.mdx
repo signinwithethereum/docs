@@ -41,7 +41,7 @@ Rename to `.env.local`
 ### 3. Install Dependencies
 
 ```bash
-yarn add siwe@beta ethers wagmi
+npm install @signinwithethereum/siwe wagmi viem
 ```
 
 ### 4. Update App Configuration
@@ -80,7 +80,7 @@ Update `pages/api/auth/[...nextauth].ts`:
 ```typescript
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { SiweMessage } from 'siwe'
+import { SiweMessage, configure, createConfig } from '@signinwithethereum/siwe'
 
 export default NextAuth({
 	providers: [
@@ -109,7 +109,11 @@ export default NextAuth({
 						return null
 					}
 
-					await siwe.validate(credentials?.signature || '')
+					await siwe.verify({
+						signature: credentials?.signature || '',
+						domain: nextAuthUrl.host,
+						nonce: siwe.nonce,
+					})
 					return {
 						id: siwe.address,
 						name: siwe.address,
@@ -140,7 +144,7 @@ Create a sign-in component that uses SIWE with NextAuth.js:
 
 ```typescript
 import { useAccount, useConnect, useSignMessage, useDisconnect } from 'wagmi'
-import { SiweMessage } from 'siwe'
+import { SiweMessage } from '@signinwithethereum/siwe'
 import { signIn, useSession } from 'next-auth/react'
 
 export function SiweLogin() {
