@@ -139,7 +139,7 @@ const config: Config = {
 						},
 						{
 							label: 'npm Package',
-							href: 'https://www.npmjs.com/package/sign-in-with-ethereum',
+							href: 'https://www.npmjs.com/package/@signinwithethereum/siwe',
 						},
 						{
 							label: 'Security Best Practices',

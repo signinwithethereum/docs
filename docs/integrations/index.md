@@ -51,14 +51,7 @@ Choose the integration that best fits your technology stack:
 
 ## Custom Integrations
 
-If you don't see your platform listed, you can build custom integrations using the SIWE libraries:
-
--   [TypeScript/JavaScript](/libraries/typescript)
--   [Python](/libraries/python)
--   [Ruby](/libraries/ruby)
--   [Go](/libraries/go)
--   [Rust](/libraries/rust)
--   [Elixir](/libraries/elixir)
+If you don't see your platform listed, you can build custom integrations using the [TypeScript library](/libraries/typescript) or the [OIDC Provider](/oidc-provider) (which works with any OIDC-compatible client).
 
 ## Community Contributions
 

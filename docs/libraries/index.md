@@ -8,7 +8,7 @@ SIWE provides official libraries in multiple programming languages, making it ea
 
 The original and most feature-complete SIWE implementation.
 
--   **Package**: `siwe` on npm
+-   **Package**: `@signinwithethereum/siwe` on npm
 -   **Platforms**: Node.js, Browser, React Native
 -   **Features**: Complete [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) support, TypeScript definitions, extensive testing
 -   **Best for**: Web applications, React/Vue/Angular apps, Node.js backends
@@ -226,7 +226,7 @@ Each library has specific installation and setup instructions:
 
 If you need to switch between libraries or upgrade versions:
 
--   [TypeScript v1 to v2 Migration](typescript#migration-guide)
+-   [TypeScript v2 to v4 Migration](typescript/migrating-to-v4)
 -   [Cross-language Migration Tips](#cross-language-migration)
 -   Version Compatibility Matrix (see below)
 

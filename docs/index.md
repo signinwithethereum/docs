@@ -8,7 +8,7 @@
 
 After the user authenticates, apps may use their onchain **[ENS](https://ens.domains)** username and profile and **[EFP](https://efp.app)** social graph.
 
-### [**Enrich your app's UX with onchain data**](./quickstart/retrieve-onchain-data.mdx)
+### **Enrich your app's UX with onchain data**
 
 Seamlessly connects user identity with onchain activities, enabling applications to verify user ownership of NFTs, tokens, and other blockchain assets.
 
@@ -42,16 +42,11 @@ Ready to implement SIWE in your application? Here are some quick paths forward:
 
 Follow our [Quickstart Guide](quickstart/index.md) for a step-by-step tutorial on implementing SIWE from scratch.
 
-### **Choose Your Library**
+### **TypeScript Library**
 
-We provide official libraries for multiple programming languages:
+The official SIWE library for JavaScript and TypeScript:
 
--   [TypeScript](libraries/typescript)
--   [Rust](libraries/rust)
--   [Python](libraries/python)
--   [Ruby](libraries/ruby)
--   [Go](libraries/go)
--   [Elixir](libraries/elixir)
+-   [TypeScript Library Documentation](libraries/typescript)
 
 ### **Ethereum Identity Kit component library and API**
 

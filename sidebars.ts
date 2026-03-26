@@ -14,57 +14,24 @@ const sidebars: SidebarsConfig = {
 			items: [
 				{
 					type: 'doc',
-					id: 'quickstart/creating-messages',
-					label: 'Creating a SIWE Message',
+					id: 'quickstart/frontend',
+					label: 'Frontend',
 				},
 				{
 					type: 'doc',
-					id: 'quickstart/frontend-setup',
-					label: 'Frontend Setup',
+					id: 'quickstart/backend',
+					label: 'Backend',
 				},
-				{
-					type: 'doc',
-					id: 'quickstart/backend-verification',
-					label: 'Backend Verification',
-				},
-				{
-					type: 'doc',
-					id: 'quickstart/connect-the-frontend',
-					label: 'Connect the Frontend',
-				},
-				{
-					type: 'doc',
-					id: 'quickstart/implement-sessions',
-					label: 'Implement Sessions',
-				},
-					],
+			],
 		},
 		{
 			type: 'category',
-			label: 'Libraries',
+			label: 'TypeScript Library',
 			collapsed: false,
-			link: { type: 'doc', id: 'libraries/index' },
+			link: { type: 'doc', id: 'libraries/typescript' },
 			items: [
-				{
-					type: 'category',
-					label: 'TypeScript',
-					link: { type: 'doc', id: 'libraries/typescript' },
-					items: [
-						'libraries/typescript/migrating-to-v4',
-						'libraries/typescript/typescript-quickstart',
-					],
-				},
-				'libraries/rust',
-				'libraries/elixir',
-				'libraries/python',
-				{
-					type: 'category',
-					label: 'Ruby',
-					link: { type: 'doc', id: 'libraries/ruby' },
-					items: ['libraries/ruby/rails'],
-				},
-				'libraries/go',
-				'libraries/ethereum-idetntiy-kit',
+				'libraries/typescript/typescript-quickstart',
+				'libraries/typescript/migrating-to-v4',
 			],
 		},
 		{
@@ -79,34 +46,24 @@ const sidebars: SidebarsConfig = {
 		},
 		{
 			type: 'category',
-			label: 'Onchain Data',
-			collapsed: false,
-			link: { type: 'doc', id: 'quickstart/retrieve-onchain-data' },
-			items: [
-					'quickstart/resolve-ens-profiles',
-					'quickstart/resolve-efp-data',
-					'quickstart/resolve-onchain-holdings',
-					],
-		},
-		{
-			type: 'category',
 			label: 'OIDC Provider',
 			link: { type: 'doc', id: 'oidc-provider/index' },
 			items: [
+				'oidc-provider/api-reference',
 				'oidc-provider/deployment-guide',
-				'oidc-provider/hosted-provider',
-                {
-                    type: 'link',
-                    label: 'SIWE OIDC Connector',
-                    href: 'https://github.com/signinwithethereum/siwe-oidc',
-                    className: 'text-accent hover:text-white transition-colors font-medium group',
-                },
-                {
-                    type: 'link',
-                    label: 'SIWE OIDC Demo',
-                    href: 'https://oidc-demo.siwe.xyz/',
-                    className: 'text-accent hover:text-white transition-colors font-medium group',
-                }
+				'oidc-provider/client-setup',
+				{
+					type: 'link',
+					label: 'Provider GitHub',
+					href: 'https://github.com/signinwithethereum/oidc-provider',
+					className: 'text-accent hover:text-white transition-colors font-medium group',
+				},
+				{
+					type: 'link',
+					label: 'Client GitHub',
+					href: 'https://github.com/signinwithethereum/oidc-client',
+					className: 'text-accent hover:text-white transition-colors font-medium group',
+				},
 			],
 		},
 
@@ -115,7 +72,6 @@ const sidebars: SidebarsConfig = {
 			label: 'Message Validator',
             link: { type: 'doc', id: 'validator/index' },
             items: [
-				'validator/index',
 				'validator/validator-guide',
 			],
 		},

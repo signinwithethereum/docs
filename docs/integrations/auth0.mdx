@@ -1,10 +1,10 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
 # Auth0
 
 ## Overview
 
-This integration provides authentication and authorization for web2 applications across various sectors including retail, publishing, and B2B SaaS.
-
-import FullWidthLink from '@site/src/components/full-width-link'
+Auth0 supports Sign in with Ethereum via an OpenID Connect custom social connection. This allows enterprise applications to authenticate users with their Ethereum wallets while leveraging Auth0's existing infrastructure.
 
 <FullWidthLink
 	href='https://auth0.com/blog/sign-in-with-ethereum-siwe-now-available-on-auth0/'
@@ -13,69 +13,64 @@ import FullWidthLink from '@site/src/components/full-width-link'
 	themeAware={true}
 />
 
-## Key Components
+## How It Works
 
--   **Identity Provider**: Open-source OpenID Connect Identity Provider
--   **Implementation**: Hosted at oidc.login.xyz
--   **Language**: Rust-based implementation
+Auth0 connects to a SIWE [OIDC Provider](/oidc-provider) as a custom social connection:
 
-## Workflow
+1. User clicks **Sign in with Ethereum** in your app
+2. Auth0 redirects to the SIWE OIDC Provider
+3. The provider prompts the user to sign a SIWE message with their wallet
+4. The provider verifies the signature and returns OIDC tokens to Auth0
+5. Auth0 creates a user session and redirects back to your app
 
-The integration follows a comprehensive authentication workflow that demonstrates the complete authentication process from wallet connection to application access.
+The SIWE OIDC Provider handles wallet connection, message signing, and ENS resolution — Auth0 treats it as a standard OIDC identity provider.
 
-### Authentication Flow
+## Setup
 
-1. User clicks login button
-2. Redirected to Auth0 SIWE interface
-3. Wallet authentication process
-4. Redirected back to application
-5. Optional ENS name resolution
+### 1. Deploy a SIWE OIDC Provider
 
-## Example Application
+You need a running instance of the [SIWE OIDC Provider](/oidc-provider). See the [Deployment Guide](/oidc-provider/deployment-guide) for options.
 
-A demo application showcases the authentication flow:
+### 2. Register with the OIDC Provider
 
--   Features a mock NFT gallery website
--   Enables Sign In with Ethereum
--   Resolves NFT holdings via OpenSea API after authentication
--   Available at: [auth0-demo.login.xyz](https://auth0-demo.login.xyz/#/)
+Register Auth0 as an OIDC client. You can either:
 
-## Technical Details
+- **Dynamic registration**: POST to the provider's `/reg` endpoint with your Auth0 callback URL
+- **Default clients**: Pre-configure Auth0 as a default client via the `NUXT_OIDC_DEFAULT_CLIENTS` environment variable
 
--   Supports Ethereum-based authentication
--   Integrates with existing Auth0 authentication systems
--   Provides flexible authentication options for web applications
--   Uses OpenID Connect standard for interoperability
+Your Auth0 callback URL is typically: `https://YOUR_AUTH0_DOMAIN/login/callback`
 
-## Implementation Benefits
+### 3. Configure Auth0
 
--   **Seamless Integration**: Works with existing Auth0 infrastructure
--   **Enterprise Ready**: Built for production web2 applications
--   **Multi-Sector Support**: Suitable for retail, publishing, and B2B SaaS
--   **Standards Compliance**: Uses OpenID Connect for standardization
+In your Auth0 dashboard:
 
-## Getting Started
+1. Go to **Authentication > Social** and create a new connection
+2. Choose **Create Custom** and select **OpenID Connect**
+3. Configure the connection:
+   - **Issuer URL**: Your OIDC provider URL (e.g., `https://oidc.yourdomain.com`)
+   - **Client ID**: From the registration step
+   - **Scopes**: `openid profile`
+4. Enable the connection for your application
 
-1. **Set up Auth0 Account**: Configure your Auth0 tenant
-2. **Enable SIWE Provider**: Add SIWE as an identity provider
-3. **Configure Application**: Update your application settings
-4. **Test Integration**: Use the demo application as reference
+### 4. Map User Claims
 
-## Configuration
+The SIWE OIDC Provider returns these claims:
 
-The integration requires proper configuration of:
+| Auth0 Field | OIDC Claim | Value |
+|-------------|------------|-------|
+| `user_id` | `sub` | `eip155:{chainId}:{address}` |
+| `name` | `preferred_username` | ENS name or Ethereum address |
+| `picture` | `picture` | ENS avatar URL |
 
--   Auth0 tenant settings
--   Application callback URLs
--   SIWE provider settings
--   Session management
+## Benefits
+
+- **Enterprise Ready**: Leverages Auth0's existing infrastructure (MFA, audit logs, compliance)
+- **Standards Compliant**: Uses standard OIDC — no custom Auth0 plugins required
+- **ENS Integration**: Users see their ENS name and avatar in Auth0 profiles
+- **Multi-App SSO**: One SIWE sign-in works across all your Auth0 applications
 
 ## Resources
 
--   [Demo Application](https://auth0-demo.login.xyz/#/)
--   [OIDC Provider Documentation](/oidc-provider)
--   [Auth0 Documentation (official Auth0 docs)](https://auth0.com/docs)
-
-## Support
-
-This integration is part of the broader SIWE ecosystem and leverages Auth0's enterprise-grade authentication infrastructure while providing decentralized identity capabilities.
+- [OIDC Provider Documentation](/oidc-provider) — deploy and configure the identity provider
+- [OIDC API Reference](/oidc-provider/api-reference) — endpoints, scopes, and claims
+- [Auth0 Custom Social Connections](https://auth0.com/docs/authenticate/identity-providers/social-identity-providers/custom-social-connections) — Auth0's guide for OIDC connections

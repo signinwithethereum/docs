@@ -40,6 +40,14 @@ Add functions to retrieve and display both asset and NFT holdings:
 #### Asset Holdings Functions
 
 ```javascript
+import { createPublicClient, http, formatEther } from 'viem'
+import { mainnet } from 'viem/chains'
+
+const publicClient = createPublicClient({
+	chain: mainnet,
+	transport: http(),
+})
+
 // Element references
 const holdingsElm = document.getElementById('holdings')
 const assetsLoaderElm = document.getElementById('assetsLoader')
@@ -85,9 +93,9 @@ async function getTokenBalances() {
 
 async function getETHBalance() {
 	try {
-		const balance = await provider.getBalance(address)
-		const ethBalance = ethers.utils.formatEther(balance)
-		
+		const balance = await publicClient.getBalance({ address })
+		const ethBalance = formatEther(balance)
+
 		return {
 			name: 'Ethereum',
 			symbol: 'ETH',
@@ -140,29 +148,26 @@ async function displayAssets() {
 // NFT holdings functions
 
 async function getNFTs() {
+	const apiKey = 'your-alchemy-api-key'
+	const baseURL = `https://eth-mainnet.g.alchemy.com/v2/${apiKey}/getNFTs/`
+
 	try {
-		let res = await fetch(
-			`https://api.opensea.io/api/v1/assets?owner=${address}`
-		)
-		if (!res.ok) {
-			throw new Error(res.statusText)
+		const response = await fetch(`${baseURL}?owner=${address}`)
+		if (!response.ok) {
+			throw new Error(response.statusText)
 		}
 
-		let body = await res.json()
+		const data = await response.json()
 
-		if (
-			!body.assets ||
-			!Array.isArray(body.assets) ||
-			body.assets.length === 0
-		) {
+		if (!data.ownedNfts || data.ownedNfts.length === 0) {
 			return []
 		}
 
-		return body.assets.map(asset => {
-			let { name, asset_contract, token_id } = asset
-			let { address } = asset_contract
-			return { name, address, token_id }
-		})
+		return data.ownedNfts.map(nft => ({
+			name: nft.title || 'Unnamed',
+			address: nft.contract.address,
+			token_id: nft.id.tokenId,
+		}))
 	} catch (err) {
 		console.error(`Failed to resolve nfts: ${err.message}`)
 		return []
