@@ -36,7 +36,6 @@ const sidebars: SidebarsConfig = {
 					link: { type: 'doc', id: 'libraries/typescript' },
 					items: [
 						'libraries/typescript/typescript-quickstart',
-						'libraries/typescript/migrating-to-v4',
 					],
 				},
 				{

@@ -5,10 +5,6 @@
 -   Run a Sign in with Ethereum example locally
 -   Sign in using a preferred wallet
 
-## Requirements
-
--   Node.js version 18.0 or higher
-
 ## Setup and Running the Quickstart
 
 ### Clone the Repository
@@ -21,8 +17,8 @@ git clone https://github.com/signinwithethereum/siwe-notepad
 
 ```bash
 cd siwe-notepad
-npm install
-npm run dev
+yarn
+yarn dev
 ```
 
 ### Access the Example

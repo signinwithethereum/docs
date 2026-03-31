@@ -70,7 +70,6 @@ configure(await createEthersConfig(provider))
 ### Additional Resources
 
 -   [Quickstart Guide](/quickstart)
--   [Migrating to v4](/libraries/typescript/migrating-to-v4)
 
 ### Integrations
 
@@ -758,6 +757,178 @@ await message.verify({ signature, domain: 'example.com', nonce: storedNonce })
 -   Check that the address is in EIP-55 checksum format
 -   Ensure the signature is in the correct format (0x-prefixed hex)
 -   For contract wallets, ensure your config includes `checkContractWalletSignature`
+
+## Migrating from `siwe`
+
+`@signinwithethereum/siwe` (v4) is a major release that makes the library **provider-agnostic**, adds **EIP-6492 support**, and strengthens verification security by requiring `domain` and `nonce` in all `verify()` calls.
+
+### Package Name Change
+
+```diff
+- npm install siwe ethers
++ npm install @signinwithethereum/siwe
+```
+
+Update all imports:
+
+```diff
+- import { SiweMessage, generateNonce } from 'siwe'
++ import { SiweMessage, generateNonce } from '@signinwithethereum/siwe'
+```
+
+### Breaking Changes
+
+#### `nonce` and `issuedAt` are required in constructor
+
+When constructing a `SiweMessage` from an object, `nonce` and `issuedAt` are now required fields (they are no longer auto-generated):
+
+```typescript
+// Old — nonce and issuedAt auto-generated
+const message = new SiweMessage({
+	domain: 'example.com',
+	address: '0x...',
+	uri: 'https://example.com',
+	version: '1',
+	chainId: 1,
+})
+
+// New — must provide nonce and issuedAt
+const message = new SiweMessage({
+	domain: 'example.com',
+	address: '0x...',
+	uri: 'https://example.com',
+	version: '1',
+	chainId: 1,
+	nonce: generateNonce(),
+	issuedAt: new Date().toISOString(),
+})
+```
+
+#### `domain` and `nonce` are required in `verify()`
+
+The `verify()` method now requires `domain` and `nonce` parameters for security (origin binding and replay resistance):
+
+```typescript
+// Old — domain and nonce optional
+const result = await message.verify({ signature })
+
+// New — domain and nonce required
+const result = await message.verify({
+	signature,
+	domain: 'example.com',
+	nonce: storedNonce,
+})
+```
+
+#### `verify()` throws by default
+
+Previously, `verify()` returned `{ success: false, error }` on failure. In v4, it **throws a `SiweError`** by default:
+
+```typescript
+// Old — check success boolean
+const result = await message.verify({ signature })
+if (result.success) {
+	console.log(result.data)
+} else {
+	console.error(result.error)
+}
+
+// New — use try/catch (default behavior)
+try {
+	const result = await message.verify({
+		signature,
+		domain: 'example.com',
+		nonce: storedNonce,
+	})
+	console.log(result.data)
+} catch (error) {
+	// error is SiweError with type, expected, received
+	console.error(error.type)
+}
+
+// New — or suppress exceptions for legacy behavior
+const result = await message.verify(
+	{ signature, domain: 'example.com', nonce: storedNonce },
+	{ suppressExceptions: true },
+)
+if (!result.success) {
+	console.error(result.error)
+}
+```
+
+#### Provider-agnostic configuration
+
+The library no longer depends on ethers.js. You must configure a verification backend:
+
+```typescript
+// Old — ethers auto-detected, provider passed to verify
+import { ethers } from 'ethers'
+const provider = new ethers.providers.JsonRpcProvider('https://...')
+const result = await message.verify({ signature, provider })
+
+// New — configure once at startup
+import { configure, createConfig } from '@signinwithethereum/siwe'
+
+configure(await createConfig('https://eth.llamarpc.com'))
+
+// Then verify without passing provider
+const result = await message.verify({
+	signature,
+	domain: 'example.com',
+	nonce: storedNonce,
+})
+```
+
+For explicit viem or ethers configuration, see the [Configuration](#configuration) section.
+
+#### `validate()` removed
+
+The `validate()` method from v1 has been fully removed. Use `verify()` instead.
+
+#### `SiweError` extends `Error`
+
+`SiweError` is now a proper `Error` subclass with stack traces and `instanceof` support:
+
+```typescript
+import { SiweError, SiweErrorType } from '@signinwithethereum/siwe'
+
+try {
+	await message.verify({ signature, domain, nonce })
+} catch (error) {
+	if (error instanceof SiweError) {
+		switch (error.type) {
+			case SiweErrorType.EXPIRED_MESSAGE:
+				// handle expired
+				break
+			case SiweErrorType.INVALID_SIGNATURE:
+				// handle invalid sig
+				break
+		}
+	}
+}
+```
+
+#### `SiweResponse.data` is `SiweMessage`
+
+The `data` field in `SiweResponse` is now the `SiweMessage` instance itself, not a plain object:
+
+```typescript
+const result = await message.verify({ signature, domain, nonce })
+// result.data is the SiweMessage instance
+console.log(result.data.address) // same as message.address
+```
+
+### Upgrade Checklist
+
+1. Update package name: `siwe` → `@signinwithethereum/siwe`
+2. Update all import paths
+3. Add `nonce: generateNonce()` and `issuedAt: new Date().toISOString()` to all `SiweMessage` constructors
+4. Add `domain` and `nonce` to all `verify()` calls
+5. Add verification configuration (`configure()` / `createConfig()`)
+6. Update error handling: `verify()` now throws by default
+7. Replace any `validate()` calls with `verify()`
+8. Replace `provider` option with `config` option in `verify()`
+9. Remove `ethers` as a required dependency (keep as peer dep if using ethers-based config)
 
 ## Resources
 
