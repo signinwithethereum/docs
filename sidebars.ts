@@ -52,7 +52,6 @@ const sidebars: SidebarsConfig = {
 			link: { type: 'doc', id: 'integrations/index' },
 			items: [
 				'integrations/discourse',
-				'integrations/nextauth.js',
 				'integrations/auth0',
 			],
 		},

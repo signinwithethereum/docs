@@ -113,5 +113,4 @@ For production deployments, review the full [Security Considerations](/security-
 
 - [TypeScript Library Reference](/libraries/typescript) — full API documentation including configuration options
 - [Security Considerations](/security-considerations) — comprehensive security guide
-- [NextAuth.js Integration](/integrations/nextauth.js) — use SIWE with NextAuth.js
 - [OIDC Provider](/oidc-provider) — use SIWE as an OpenID Connect identity provider

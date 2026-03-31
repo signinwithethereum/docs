@@ -48,6 +48,12 @@ The official SIWE library for JavaScript and TypeScript:
 
 -   [TypeScript Library Documentation](libraries/typescript)
 
+### **Rust Library**
+
+The official SIWE library for Rust:
+
+-   [Rust Library Documentation](libraries/rust)
+
 ### **Ethereum Identity Kit component library and API**
 
 We offer the [Ethereum Identity Kit](https://ethidentitykit.com/) component library and API to help you integrate SIWE and the rest of the Ethereum identity stack.
@@ -56,9 +62,12 @@ We offer the [Ethereum Identity Kit](https://ethidentitykit.com/) component libr
 
 Get started quickly with existing integrations:
 
--   [NextAuth.js](./integrations/nextauth.js.mdx)
--   [Auth0](./integrations/auth0.mdx)
--   [Discourse](./integrations/discourse)
+-   [Auth0](integrations/auth0)
+-   [Discourse](integrations/discourse)
+
+## Message Validator
+
+Use our [Message Validator](validator/index.mdx) to check your SIWE messages for EIP-4361 compliance, security best practices, and proper formatting.
 
 ## Security First
 
@@ -69,18 +78,18 @@ SIWE prioritizes security through:
 -   **Expiration timestamps** for time-limited authentication
 -   **Best practices guidance** for secure implementation
 
-Learn more about [Security Best Practices](/security-considerations).
+Learn more about [Security Best Practices](security-considerations.md).
 
 ## Enterprise Ready
 
 For enterprise applications, SIWE provides:
 
--   **[OpenID Connect (OIDC) Provider](./oidc-provider/index.mdx)** for standards-compliant integration
+-   **[OpenID Connect (OIDC) Provider](oidc-provider/index.mdx)** for standards-compliant integration
 -   **Scalable authentication** supporting millions of users
 -   **Compliance-friendly** audit trails and security controls
 -   **Professional support** and deployment guidance
 
-Learn more about [OpenID Connect Integration](/integrations/auth0).
+Learn more about the [OpenID Connect Provider](oidc-provider/index.mdx).
 
 ## Community & Support
 
@@ -97,5 +106,5 @@ SIWE fully complies with:
 
 -   [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361): Sign in with Ethereum specification
 -   [OpenID Connect](oidc-provider/index.mdx) 1.0 for enterprise integration
--   [OAuth 2.0](integrations/auth0.mdx) for authorization flows
+-   [OAuth 2.0](integrations/auth0) for authorization flows
 -   Web3 wallet standards for broad compatibility

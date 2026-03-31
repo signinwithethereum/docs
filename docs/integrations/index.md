@@ -10,7 +10,6 @@ Sign in with Ethereum (SIWE) can be integrated with various platforms and framew
 
 ### Authentication Libraries
 
--   **[NextAuth.js](/integrations/nextauth.js)**: Integrate SIWE with NextAuth.js for Next.js applications
 -   **[Auth0](/integrations/auth0)**: Use SIWE with Auth0's enterprise authentication platform
 
 ## Integration Benefits
@@ -45,7 +44,6 @@ Backend integrations typically:
 
 Choose the integration that best fits your technology stack:
 
--   For Next.js applications, start with [NextAuth.js](/integrations/nextauth.js)
 -   For community platforms, see [Discourse](/integrations/discourse)
 -   For enterprise applications, explore [Auth0](/integrations/auth0)
 
