@@ -1,231 +1,233 @@
 # Security Considerations
 
-## Overview
+When implementing Sign in with Ethereum, most security comes down to one principle: **the server must control what gets verified**. The client asks the user to sign a message, but the server decides whether that message is acceptable. This guide covers the verification parameters that enforce that principle and the common mistakes that undermine it.
 
-When using Sign In with Ethereum (SIWE), implementers should aim to mitigate security issues on both the client and server. This is a growing collection of best practices for implementers, but no security checklist can ever be truly complete.
+## Verification Parameters
 
-## Message Generation and Validation
+The `verify()` method accepts parameters that the server asserts against the signed message. If any parameter doesn't match, verification fails with a `SiweError`. These parameters are your primary security controls.
 
-### Key Validation Principles
+### Domain
 
-1. **Backend Validation**
+**Prevents**: phishing attacks where a malicious site tricks a user into signing a message intended for your app.
 
-    - Process SIWE messages according to [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) specifications
-    - Create the entire SIWE message on the backend
-    - Verify that the signed message is identical to the generated message with a valid signature
+The `domain` field binds a SIWE message to a specific origin. Wallets display this to the user, and the server must verify it matches the expected value:
 
-2. **Flexible Message Generation Approaches**
-    - Some implementers may choose alternative methods:
-        - Frontend can request specific field values from the server
-        - Agree on a value generation method
-        - Backend asserts received signed message matches expected verification parameters
+```typescript
+const { data } = await siweMessage.verify({
+  signature,
+  domain: 'example.com', // must match the message's domain field
+  nonce: session.nonce,
+})
+```
 
-### Critical Field Considerations
+**Common mistakes**:
 
-#### Nonce
+- **Trusting the client-supplied domain** — if you read the domain from the message itself and don't compare it against an expected value, an attacker can substitute any domain. Always pass your known domain to `verify()`.
+- **Using the `Host` header without a fallback** — behind reverse proxies, `request.url` may not reflect the public domain. Set an explicit environment variable:
 
-**Purpose**: Prevent replay attacks
+```typescript
+domain: process.env.NEXT_PUBLIC_DOMAIN ?? new URL(request.url).host,
+```
 
-**Recommendations**:
+### Nonce
 
--   Select nonce with sufficient entropy
--   Server should assert nonce matches expected value
--   Potential strategies:
-    -   Derive nonce from recent block hash
-    -   Use system time
-    -   Reduce server interaction
+**Prevents**: replay attacks where a previously signed message is resubmitted.
 
-**Best Practices**:
+The server generates a nonce, stores it in the session, and requires the signed message to include the same nonce. After verification, the nonce is invalidated:
 
--   Use cryptographically secure random generation
--   Ensure nonces are single-use
--   Implement proper nonce cleanup/expiration
--   Store nonces securely on the server
+```typescript
+// Generate — store in session
+session.nonce = generateNonce()
+await session.save()
 
-#### Domain
+// Verify — nonce is checked, then cleared
+const { data } = await siweMessage.verify({
+  signature,
+  domain: process.env.NEXT_PUBLIC_DOMAIN ?? new URL(request.url).host,
+  nonce: session.nonce,
+})
+session.nonce = undefined
+await session.save()
+```
 
-**Purpose**: Prevent phishing attacks
+**Common mistakes**:
 
-**Wallet Capabilities**:
+- **Reusable nonces** — if you don't clear the nonce after verification, the same signed message can be submitted again.
+- **Client-generated nonces** — nonces must come from the server. A client-generated nonce provides no replay protection because an attacker can reuse the signed message with the same nonce.
+- **No expiration** — nonces stored without a TTL can accumulate indefinitely. Clean up unused nonces after a few minutes.
+- **Weak entropy** — use `generateNonce()` from the SIWE library, which produces 96 bits of cryptographically secure randomness.
 
--   Can check/generate correct domain bindings
--   Verify website serving message matches domain
--   Example: Ensure "example.org" securely serves its SIWE message
+### Time Fields
 
-**Best Practices**:
+**Prevents**: indefinitely valid messages and premature use.
 
--   Always validate domain matches the serving origin
--   Use exact domain matching (no wildcards)
--   Implement proper HTTPS/TLS validation
--   Consider subdomain implications
+```typescript
+const message = new SiweMessage({
+  // ...
+  issuedAt: new Date().toISOString(),
+  expirationTime: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes
+})
+```
 
-#### Time-based Fields
+The `verify()` method automatically checks `expirationTime` and `notBefore` against the current time. You can also verify against a specific time:
 
-**issuedAt**:
-
--   Should reflect the actual time of message creation
--   Validate against server time with reasonable tolerance
--   Use RFC 3339 (ISO 8601) format consistently
-
-**expirationTime**:
-
--   Set reasonable expiration windows (5-15 minutes)
--   Always validate expiration on the server
--   Consider clock skew between client and server
-
-**notBefore**:
-
--   Use when implementing scheduled authentication
--   Validate current time is after notBefore time
-
-#### Chain ID
-
-**Purpose**: Prevent cross-chain replay attacks
+```typescript
+await siweMessage.verify({
+  signature,
+  domain: 'example.com',
+  nonce: session.nonce,
+  time: '2024-10-31T16:30:00Z', // check against this time instead of now
+})
+```
 
 **Recommendations**:
 
--   Always specify the correct chain ID
--   Validate chain ID matches expected network
--   Consider multi-chain implications for your application
+- Set `expirationTime` to 5–15 minutes from `issuedAt`.
+- Use `issuedAt` to detect abnormally old messages even when `expirationTime` is set.
+- Account for clock skew between client and server — a few seconds of tolerance is reasonable.
+- Use `notBefore` only when you need delayed validity (e.g., scheduled authentication).
 
-## Server-Side Security
+### Chain ID
 
-### Message Verification
+**Prevents**: cross-chain replay attacks where a message signed for one network is used on another.
 
-1. **Signature Validation**
+```typescript
+await siweMessage.verify({
+  signature,
+  domain: 'example.com',
+  nonce: session.nonce,
+  chainId: 1, // only accept mainnet signatures
+})
+```
 
-    - Use proper cryptographic libraries for signature verification
-    - Implement EIP-191 personal message signing validation
-    - Support EIP-1271 for contract-based signatures when needed
+If your application operates on multiple chains, validate that the chain ID matches one you support and handle each appropriately.
 
-2. **Parameter Validation**
-    - Validate all message parameters against expected values
-    - Implement strict parsing of message format
-    - Reject malformed or unexpected messages
+## Server-Side Message Generation
 
-### Session Management
+The most secure approach is generating the entire SIWE message on the server, so the client can only sign what the server provides. This eliminates any possibility of parameter tampering:
 
-1. **Session Security**
+```typescript
+// Server generates the full message
+app.get('/api/message', async (req, res) => {
+  const session = await getSession()
+  const nonce = generateNonce()
+  session.nonce = nonce
+  await session.save()
 
-    - Implement secure session storage
-    - Use HTTPOnly and Secure cookie flags
-    - Implement proper session expiration
-    - Consider using JWTs with proper validation
+  const message = new SiweMessage({
+    domain: 'example.com',
+    address: req.query.address,
+    statement: 'Sign in with Ethereum.',
+    uri: 'https://example.com',
+    version: '1',
+    chainId: 1,
+    nonce,
+    issuedAt: new Date().toISOString(),
+    expirationTime: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+  })
 
-2. **Rate Limiting**
-    - Implement rate limiting for authentication endpoints
-    - Prevent brute force attacks
-    - Monitor for suspicious authentication patterns
+  res.json({ message: message.prepareMessage() })
+})
+```
 
-### Database Security
+An alternative is letting the client construct the message but having the server assert all parameters during verification. The [Quickstart](/quickstart) uses this approach — the frontend builds the message, and the backend verifies domain and nonce. Both approaches are valid as long as the server verifies the parameters it cares about.
 
-1. **Data Storage**
-    - Store minimal necessary user data
-    - Hash or encrypt sensitive information
-    - Implement proper database access controls
-    - Regular security audits of stored data
+## Signature Verification
 
-## Client-Side Security
+### EOA vs. Smart Contract Wallets
 
-### Wallet Integration
+For regular EOA wallets, signature verification is purely cryptographic — no network call needed. For smart contract wallets (multisigs, account abstraction), the library calls `isValidSignature` ([EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)) onchain, which requires an RPC connection:
 
-1. **Wallet Connection**
+```typescript
+import { configure, createConfig } from '@signinwithethereum/siwe'
 
-    - Only connect to trusted wallet providers
-    - Validate wallet signatures properly
-    - Handle wallet disconnection gracefully
-    - Implement proper error handling
+// Required for smart contract wallet support
+configure(await createConfig(process.env.ETH_RPC_URL || 'https://eth.llamarpc.com'))
+```
 
-2. **Message Presentation**
-    - Display message contents clearly to users
-    - Ensure users understand what they're signing
-    - Implement proper message formatting
-    - Avoid misleading or confusing message content
+Without this configuration, smart contract wallet signatures will fail. The library also supports [EIP-6492](https://eips.ethereum.org/EIPS/eip-6492) for **undeployed** contract wallets when using viem v2+.
 
-### Frontend Security
+### Strict Mode
 
-1. **HTTPS Requirements**
+For higher assurance, enable strict mode to require `uri` and `chainId` verification in addition to `domain` and `nonce`:
 
-    - Always serve SIWE applications over HTTPS
-    - Implement proper TLS certificate validation
-    - Use secure headers (HSTS, CSP, etc.)
+```typescript
+const result = await message.verify(
+  {
+    signature,
+    domain: 'example.com',
+    nonce: expectedNonce,
+    uri: 'https://example.com',
+    chainId: 1,
+  },
+  { strict: true },
+)
+```
 
-2. **Cross-Origin Considerations**
-    - Implement proper CORS policies
-    - Validate origins for authentication requests
-    - Prevent cross-site request forgery (CSRF)
+## Session Management
 
-## Common Vulnerabilities
+Signature verification proves identity at a point in time. After that, session security determines how long that proof remains valid.
 
-### Replay Attacks
+**Recommendations**:
 
-**Risk**: Reusing signed messages for unauthorized access
+- **Encrypt sessions** — use a library like [iron-session](https://github.com/vvo/iron-session) that encrypts cookie values. Without encryption, a user can forge their session cookie and impersonate any address.
+- **Use `httpOnly` and `secure` cookie flags** — prevents JavaScript access and ensures cookies are only sent over HTTPS.
+- **Set `sameSite`** — use `lax` or `strict` to prevent CSRF attacks.
+- **Use a strong session secret** — at least 32 characters, loaded from environment variables, never hardcoded.
+- **Implement session expiration** — sessions should not last indefinitely.
 
-**Mitigation**:
+```typescript
+export const sessionOptions: SessionOptions = {
+  password: process.env.SESSION_SECRET!, // ≥ 32 characters
+  cookieName: 'siwe-session',
+  cookieOptions: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'lax' as const,
+  },
+}
+```
 
--   Implement proper nonce validation
--   Use time-based expiration
--   Track used signatures server-side
+## Rate Limiting
 
-### Phishing Attacks
+Authentication endpoints are abuse targets. Rate-limit both nonce generation and verification endpoints to prevent:
 
-**Risk**: Users signing messages on malicious domains
+- **Nonce exhaustion** — flooding `/api/nonce` to fill up server-side nonce storage.
+- **Brute-force attempts** — repeatedly submitting signatures against the verification endpoint.
+- **Resource consumption** — EIP-1271 verification makes onchain RPC calls, which are more expensive than pure cryptographic checks.
 
-**Mitigation**:
+## HTTPS
 
--   Validate domain field matches serving origin
--   Educate users about domain verification
--   Implement visual indicators for trusted domains
+Always serve SIWE applications over HTTPS. Without TLS:
 
-### Session Hijacking
+- An attacker can intercept the signed message and signature in transit, then submit them to your server (even with nonce protection, the attacker can race the legitimate request).
+- The `domain` field loses its security value since DNS can be spoofed without HTTPS.
+- Session cookies can be intercepted even with `httpOnly` set.
 
-**Risk**: Unauthorized access to authenticated sessions
+## Common Attack Patterns
 
-**Mitigation**:
+| Attack | What happens | Mitigation |
+|--------|-------------|------------|
+| **Replay** | Attacker resubmits a previously signed message | Single-use nonces, `expirationTime` |
+| **Phishing** | User signs a message on a malicious domain | `domain` verification, wallet domain display |
+| **Cross-chain replay** | Message signed for chain A is accepted on chain B | `chainId` verification |
+| **Session forgery** | Attacker crafts a session cookie with a target address | Encrypted sessions (iron-session) |
+| **Message tampering** | Client modifies message fields before signing | Server-side verification of all parameters |
+| **Nonce prediction** | Attacker guesses the next nonce | Cryptographically secure nonce generation |
 
--   Use secure session management
--   Implement session regeneration
--   Monitor for suspicious session activity
--   Provide session termination controls
+## Checklist
 
-### Message Tampering
+Before deploying to production:
 
-**Risk**: Modification of SIWE message content
-
-**Mitigation**:
-
--   Generate messages server-side when possible
--   Validate all message parameters
--   Use cryptographic signatures for integrity
-
-## Deployment Security
-
-### Infrastructure Security
-
-1. **Server Configuration**
-
-    - Keep servers and dependencies updated
-    - Implement proper firewall rules
-    - Use secure authentication for server access
-    - Regular security patches and updates
-
-2. **Monitoring and Logging**
-    - Log authentication attempts and failures
-    - Monitor for unusual patterns
-    - Implement alerting for security events
-    - Regular security audit reviews
-
-### Third-Party Dependencies
-
-1. **Library Security**
-
-    - Keep SIWE libraries updated
-    - Audit third-party dependencies
-    - Monitor for security vulnerabilities
-    - Use dependency scanning tools
-
-2. **Infrastructure Dependencies**
-    - Secure database connections
-    - Use trusted Ethereum node providers
-    - Implement proper API key management
-    - Regular infrastructure security reviews
+- [ ] `domain` passed to `verify()` is a known value, not read from the message
+- [ ] Nonces are generated server-side with `generateNonce()`
+- [ ] Nonces are single-use — cleared after successful verification
+- [ ] Unused nonces expire after a few minutes
+- [ ] `expirationTime` is set on messages (5–15 minutes)
+- [ ] Session cookies use `httpOnly`, `secure`, and `sameSite` flags
+- [ ] Session secret is at least 32 characters, from an environment variable
+- [ ] Sessions are encrypted (not just signed)
+- [ ] RPC is configured for smart contract wallet support (EIP-1271)
+- [ ] Authentication endpoints are rate-limited
+- [ ] Application is served over HTTPS
+- [ ] `NEXT_PUBLIC_DOMAIN` is set when behind a reverse proxy
