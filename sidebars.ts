@@ -30,13 +30,9 @@ const sidebars: SidebarsConfig = {
 			link: { type: 'doc', id: 'libraries/index' },
 			items: [
 				{
-					type: 'category',
+					type: 'doc',
+					id: 'libraries/typescript',
 					label: 'TypeScript',
-					collapsed: false,
-					link: { type: 'doc', id: 'libraries/typescript' },
-					items: [
-						'libraries/typescript/typescript-quickstart',
-					],
 				},
 				{
 					type: 'doc',
