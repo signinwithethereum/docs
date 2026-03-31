@@ -26,12 +26,24 @@ const sidebars: SidebarsConfig = {
 		},
 		{
 			type: 'category',
-			label: 'TypeScript Library',
-			collapsed: false,
-			link: { type: 'doc', id: 'libraries/typescript' },
+			label: 'Libraries',
+			link: { type: 'doc', id: 'libraries/index' },
 			items: [
-				'libraries/typescript/typescript-quickstart',
-				'libraries/typescript/migrating-to-v4',
+				{
+					type: 'category',
+					label: 'TypeScript',
+					collapsed: false,
+					link: { type: 'doc', id: 'libraries/typescript' },
+					items: [
+						'libraries/typescript/typescript-quickstart',
+						'libraries/typescript/migrating-to-v4',
+					],
+				},
+				{
+					type: 'doc',
+					id: 'libraries/rust',
+					label: 'Rust',
+				},
 			],
 		},
 		{
