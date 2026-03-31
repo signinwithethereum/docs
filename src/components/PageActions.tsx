@@ -176,7 +176,6 @@ const PageActions: React.FC<PageActionsProps> = () => {
       '/libraries/elixir',
       // Integration files
       '/integrations/discourse',
-      '/integrations/nextauth.js',
       '/integrations/auth0'
     ]
 

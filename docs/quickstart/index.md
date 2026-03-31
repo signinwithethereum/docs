@@ -55,4 +55,4 @@ The next two pages walk through how this is implemented:
 
 - **Documentation**: [TypeScript Library](/libraries/typescript)
 - **Issues**: [GitHub](https://github.com/signinwithethereum/siwe)
-- **Integrations**: [NextAuth.js, Auth0, Discourse](../integrations/index.md)
+- **Integrations**: [Auth0, Discourse](../integrations/index.md)
