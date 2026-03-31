@@ -1,17 +1,45 @@
-# Quickstart Guide
+# Quickstart
 
-Build a complete Sign in with Ethereum (SIWE) authentication flow in a single Next.js app — wallet connection, message signing, server-side verification, and session management.
+Clone the [siwe-quickstart](https://github.com/signinwithethereum/siwe-quickstart) repo and run it locally to see Sign in with Ethereum in action — wallet connection, message signing, server-side verification, and session management in a single Next.js app.
 
-## What You'll Build
+## Get Started
 
-A Next.js application where users can:
+```bash
+git clone https://github.com/signinwithethereum/siwe-quickstart
+cd siwe-quickstart
+cp .env.local.example .env.local
+npm install
+npm run dev
+```
 
-- **Connect their wallet** via browser extension (MetaMask, etc.) or WalletConnect
-- **Sign a SIWE message** to prove they own an Ethereum address
-- **Authenticate** via server-side signature verification
-- **Maintain a session** across requests using iron-session
-- **See their ENS identity** — name and avatar resolved automatically
-- **Access a protected dashboard** guarded by server-side session checks
+Open [http://localhost:3000](http://localhost:3000), connect a wallet, and sign in.
+
+### Environment Variables
+
+The only required variable is `SESSION_SECRET` (at least 32 characters). The defaults work out of the box for local development:
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `SESSION_SECRET` | Yes | Encrypts session cookies |
+| `NEXT_PUBLIC_WC_PROJECT_ID` | No | Enables WalletConnect (get one free at [cloud.walletconnect.com](https://cloud.walletconnect.com)) |
+| `ETH_RPC_URL` | No | Server-side RPC for signature verification and ENS resolution (defaults to a public RPC) |
+| `NEXT_PUBLIC_DOMAIN` | No | Explicit domain for SIWE verification when behind a reverse proxy |
+
+## How It Works
+
+The app follows a standard SIWE authentication flow:
+
+1. User connects their wallet (MetaMask, WalletConnect, etc.)
+2. Frontend requests a **nonce** from the server
+3. Frontend constructs a [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) message and asks the wallet to sign it
+4. Frontend sends the message + signature to the server
+5. Server **verifies** the signature, checks the nonce, and creates an encrypted session
+6. User is authenticated — their Ethereum address is the identity
+
+The next two pages walk through how this is implemented:
+
+- **[Frontend](frontend)** — wagmi setup, the authentication context, and the sign-in flow
+- **[Backend](backend)** — API routes for nonce, verification, sessions, and how `verify()` works under the hood
 
 ## Stack
 
@@ -22,34 +50,6 @@ A Next.js application where users can:
 | Wallet hooks | [wagmi](https://wagmi.sh) + [viem](https://viem.sh) |
 | Wallet connectors | Injected (MetaMask, etc.) + [WalletConnect](https://walletconnect.com) |
 | Sessions | [iron-session](https://github.com/vvo/iron-session) |
-
-## Prerequisites
-
-- **Node.js** 18+
-- **Browser wallet** — MetaMask or any Ethereum wallet extension
-- **TypeScript** — basic familiarity
-
-## Tutorial
-
-### 1. [Frontend](frontend)
-
-Set up the Next.js project with wagmi. Build a wallet connector UI, an authentication context with auto sign-in, ENS identity resolution, and a protected dashboard.
-
-### 2. [Backend](backend)
-
-Add Next.js API route handlers for nonce generation, signature verification, and session management — all in the same project.
-
-## Code Repository
-
-The complete working app is available on GitHub:
-
-```bash
-git clone https://github.com/signinwithethereum/siwe-quickstart
-cd siwe-quickstart
-cp .env.local.example .env.local   # then fill in your values
-npm install
-npm run dev
-```
 
 ## Getting Help
 
