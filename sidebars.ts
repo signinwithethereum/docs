@@ -39,6 +39,11 @@ const sidebars: SidebarsConfig = {
 					id: 'libraries/rust',
 					label: 'Rust',
 				},
+				{
+					type: 'doc',
+					id: 'libraries/python',
+					label: 'Python',
+				},
 			],
 		},
 		{

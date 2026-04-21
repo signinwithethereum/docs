@@ -1,0 +1,390 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
+# Python
+
+The Python implementation of Sign in with Ethereum can be found here:
+
+<FullWidthLink
+	href='https://github.com/signinwithethereum/siwe-py'
+	logo='/img/github.svg'
+	text='signinwithethereum/siwe-py'
+	themeAware={true}
+/>
+
+## Getting Started
+
+The `signinwithethereum` package provides full [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) support with EIP-191 signature verification, and — with a configured Web3 provider — EIP-1271 and EIP-6492 smart contract wallet signatures.
+
+### Installation
+
+```bash
+pip install signinwithethereum
+```
+
+The distribution is published as `signinwithethereum`, but the import name remains `siwe`:
+
+```python
+from siwe import SiweMessage
+```
+
+Requires Python 3.10+.
+
+### Dependencies
+
+The library depends on:
+
+- [`web3`](https://pypi.org/project/web3/) — Ethereum RPC and contract calls (used for EIP-1271 / EIP-6492)
+- [`eth-account`](https://pypi.org/project/eth-account/) — EIP-191 signing and recovery
+- [`pydantic`](https://pypi.org/project/pydantic/) — message validation
+- [`abnf`](https://pypi.org/project/abnf/) — EIP-4361 grammar parsing
+
+## API Reference
+
+### `SiweMessage` Class
+
+A `pydantic.BaseModel` representing an [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) message. Construct one directly from fields, or parse from an EIP-4361 string via [`from_message`](#from_messagemessage-str-abnf-bool--true---siwemessage).
+
+#### Fields
+
+| Field             | Type              | Required | Description                                                                          |
+| ----------------- | ----------------- | -------- | ------------------------------------------------------------------------------------ |
+| `domain`          | `str`             | ✅       | RFC 4501 DNS authority requesting the signing                                        |
+| `address`         | `str`             | ✅       | Ethereum address (EIP-55 checksum format)                                            |
+| `uri`             | `str`             | ✅       | RFC 3986 URI referring to the resource                                               |
+| `version`         | `VersionEnum`     | ✅       | Must be `"1"` for [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) compliance     |
+| `chain_id`        | `int`             | ✅       | EIP-155 Chain ID (non-negative)                                                      |
+| `nonce`           | `str`             | ✅       | Alphanumeric token, minimum 8 characters                                             |
+| `issued_at`       | `ISO8601Datetime` | ✅       | ISO 8601 datetime string                                                             |
+| `scheme`          | `Optional[str]`   | ❌       | RFC 3986 URI scheme for the authority                                                |
+| `statement`       | `Optional[str]`   | ❌       | Human-readable ASCII assertion                                                       |
+| `expiration_time` | `Optional[ISO8601Datetime]` | ❌ | When the message expires                                                         |
+| `not_before`      | `Optional[ISO8601Datetime]` | ❌ | When the message becomes valid                                                   |
+| `request_id`      | `Optional[str]`   | ❌       | System-specific identifier                                                           |
+| `resources`       | `Optional[List[str]]` | ❌   | List of RFC 3986 URI references                                                      |
+| `warnings`        | `List[str]`       | —        | Non-fatal validation warnings (e.g. unchecksummed address). Excluded from serialization. |
+
+:::note
+Field names use `snake_case` (Python convention), not the `camelCase` used in the EIP-4361 text format. Parsing and serialization handle the conversion automatically.
+:::
+
+#### Construction
+
+Build a message directly from fields:
+
+```python
+from datetime import datetime, timezone
+from siwe import SiweMessage, generate_nonce
+
+message = SiweMessage(
+    domain="example.com",
+    address="0x742d35Cc6634C0532925a3b844Bc9e7595f2bD95",
+    uri="https://example.com",
+    version="1",
+    chain_id=1,
+    nonce=generate_nonce(),
+    issued_at=datetime.now(tz=timezone.utc).isoformat().replace("+00:00", "Z"),
+    statement="Sign in with Ethereum.",
+)
+```
+
+#### `from_message(message: str, abnf: bool = True) -> SiweMessage`
+
+Parse an EIP-4361 formatted string:
+
+```python
+from siwe import SiweMessage
+
+eip_4361_string = """example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6634C0532925a3b844Bc9e7595f2bD95
+
+Sign in with Ethereum.
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: 32891756abcdefgh
+Issued At: 2024-01-01T00:00:00Z"""
+
+message = SiweMessage.from_message(eip_4361_string)
+```
+
+Pass `abnf=False` to use the (less strict) regex-based parser instead of the ABNF grammar parser.
+
+The parser validates:
+
+- EIP-55 checksummed address (mixed-case addresses must pass checksum; all-lowercase / all-uppercase are accepted with a warning)
+- Alphanumeric nonce (minimum 8 characters)
+- ISO 8601 timestamps via the EIP-4361 `issued-at` grammar rule
+- RFC 3986 URIs for `uri` and each entry of `resources`
+- Printable ASCII statement (no newlines or control characters)
+- Optional `scheme://` prefix per EIP-4361
+
+#### `prepare_message() -> str`
+
+Serialize to the EIP-4361 string representation, ready for EIP-191 signing:
+
+```python
+message_string = message.prepare_message()
+```
+
+#### `verify(signature, *, scheme=None, domain=None, nonce=None, uri=None, chain_id=None, request_id=None, timestamp=None, provider=None, strict=False) -> None`
+
+Verifies the message against a signature and checks time-based validity and any field constraints you supply. Returns `None` on success; raises a [`VerificationError`](#verificationerror) subclass on failure.
+
+```python
+from siwe import SiweMessage, VerificationError
+
+try:
+    message.verify(
+        signature="0x...",
+        domain="example.com",
+        nonce=stored_nonce,
+    )
+    # authenticated
+except VerificationError as err:
+    # handle the specific subclass (DomainMismatch, NonceMismatch, InvalidSignature, ...)
+    ...
+```
+
+**Parameters:**
+
+| Parameter    | Type                     | Description                                                                                  |
+| ------------ | ------------------------ | -------------------------------------------------------------------------------------------- |
+| `signature`  | `Optional[str]`          | 0x-prefixed EIP-191 signature to verify against the message                                  |
+| `scheme`     | `Optional[str]`          | Expected scheme — raises `SchemeMismatch` if different                                       |
+| `domain`     | `Optional[str]`          | Expected domain — raises `DomainMismatch` if different                                       |
+| `nonce`      | `Optional[str]`          | Expected nonce — raises `NonceMismatch` if different                                         |
+| `uri`        | `Optional[str]`          | Expected URI — raises `UriMismatch` if different                                             |
+| `chain_id`   | `Optional[int]`          | Expected chain ID — raises `ChainIdMismatch` if different                                    |
+| `request_id` | `Optional[str]`          | Expected request ID — raises `RequestIdMismatch` if different                                |
+| `timestamp`  | `Optional[datetime]`     | Time to check `expiration_time` / `not_before` against (defaults to now, UTC)                |
+| `provider`   | `Optional[HTTPProvider]` | Web3 provider for EIP-1271 / EIP-6492 contract wallet verification                           |
+| `strict`     | `bool`                   | When `True`, `domain`, `uri`, and `chain_id` are required                                    |
+
+Verification order:
+
+1. Field-binding checks (scheme, domain, nonce, uri, chain_id, request_id)
+2. Time checks (`expiration_time`, `not_before`)
+3. **EOA** — `ecrecover` via `eth-account`
+4. **EIP-6492** — if the signature has the magic suffix and a `provider` is supplied, verify via the universal off-chain validator
+5. **EIP-1271** — otherwise, fall back to on-chain `isValidSignature` if a `provider` is supplied
+
+### `generate_nonce() -> str`
+
+Generates a cryptographically secure nonce (17 alphanumeric characters, via `secrets.choice`).
+
+```python
+from siwe import generate_nonce
+
+nonce = generate_nonce()
+```
+
+### `is_eip6492_signature(signature: str) -> bool`
+
+Returns `True` if a hex signature ends with the [EIP-6492](https://eips.ethereum.org/EIPS/eip-6492) magic suffix, indicating a signature from an undeployed smart contract wallet.
+
+```python
+from siwe import is_eip6492_signature
+
+if is_eip6492_signature(signature):
+    # signature comes from a counterfactual contract wallet
+    ...
+```
+
+### Exceptions
+
+All verification failures raise a subclass of `VerificationError`:
+
+| Exception             | Raised when                                                        |
+| --------------------- | ------------------------------------------------------------------ |
+| `VerificationError`   | Base class for all verification failures                           |
+| `InvalidSignature`    | Signature does not match the message address (EOA or EIP-1271/6492) |
+| `ExpiredMessage`      | Current time is past `expiration_time`                             |
+| `NotYetValidMessage`  | Current time is before `not_before`                                |
+| `SchemeMismatch`      | `scheme` does not match expected                                   |
+| `DomainMismatch`      | `domain` does not match expected                                   |
+| `NonceMismatch`       | `nonce` does not match expected                                    |
+| `UriMismatch`         | `uri` does not match expected                                      |
+| `ChainIdMismatch`     | `chain_id` does not match expected (or provider chain ID mismatch) |
+| `RequestIdMismatch`   | `request_id` does not match expected                               |
+| `MalformedSession`    | Required message fields are missing                                |
+
+Message construction errors raise `pydantic.ValidationError` (field validation) or `ValueError` (grammar / format).
+
+## Smart Contract Wallets (EIP-1271 / EIP-6492)
+
+Pass a `web3` provider to `verify()` to enable on-chain signature validation for smart contract wallets:
+
+```python
+from siwe import SiweMessage
+from web3 import HTTPProvider
+
+provider = HTTPProvider("https://eth.llamarpc.com")
+
+message = SiweMessage.from_message(message_string)
+message.verify(
+    signature,
+    domain="example.com",
+    nonce=stored_nonce,
+    provider=provider,
+)
+```
+
+With a provider configured, the library will:
+
+- detect [EIP-6492](https://eips.ethereum.org/EIPS/eip-6492) signatures by their magic suffix and validate them via the universal off-chain validator bytecode (no deployment required)
+- fall back to [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) `isValidSignature` for deployed contract wallets (Safe, Argent, etc.)
+
+The provider's chain ID must match the message's `chain_id`, otherwise `ChainIdMismatch` is raised.
+
+## Backend Integration
+
+### FastAPI Example
+
+```python
+from datetime import datetime, timezone
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from siwe import (
+    SiweMessage,
+    VerificationError,
+    generate_nonce,
+)
+
+app = FastAPI()
+
+# Use Redis or your session store in production.
+nonces: set[str] = set()
+
+
+class VerifyBody(BaseModel):
+    message: str
+    signature: str
+
+
+@app.get("/api/nonce")
+def get_nonce():
+    nonce = generate_nonce()
+    nonces.add(nonce)
+    return {"nonce": nonce}
+
+
+@app.post("/api/verify")
+def verify(body: VerifyBody):
+    try:
+        message = SiweMessage.from_message(body.message)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Malformed message")
+
+    if message.nonce not in nonces:
+        raise HTTPException(status_code=400, detail="Unknown nonce")
+    nonces.discard(message.nonce)
+
+    try:
+        message.verify(
+            signature=body.signature,
+            domain="example.com",
+            nonce=message.nonce,
+            timestamp=datetime.now(tz=timezone.utc),
+        )
+    except VerificationError as err:
+        raise HTTPException(status_code=401, detail=type(err).__name__)
+
+    return {"address": message.address, "chain_id": message.chain_id}
+```
+
+### Flask Example
+
+```python
+from flask import Flask, jsonify, request
+from siwe import SiweMessage, VerificationError, generate_nonce
+
+app = Flask(__name__)
+nonces: set[str] = set()
+
+
+@app.get("/api/nonce")
+def nonce():
+    n = generate_nonce()
+    nonces.add(n)
+    return jsonify({"nonce": n})
+
+
+@app.post("/api/verify")
+def verify():
+    body = request.get_json()
+    try:
+        message = SiweMessage.from_message(body["message"])
+    except ValueError:
+        return jsonify({"error": "Malformed message"}), 400
+
+    if message.nonce not in nonces:
+        return jsonify({"error": "Unknown nonce"}), 400
+    nonces.discard(message.nonce)
+
+    try:
+        message.verify(
+            signature=body["signature"],
+            domain="example.com",
+            nonce=message.nonce,
+        )
+    except VerificationError as err:
+        return jsonify({"error": type(err).__name__}), 401
+
+    return jsonify({"address": message.address})
+```
+
+## Advanced
+
+### Strict Mode
+
+`strict=True` requires `domain`, `uri`, and `chain_id` to be provided as verification parameters, for full contextual binding:
+
+```python
+message.verify(
+    signature=signature,
+    domain="example.com",
+    nonce=stored_nonce,
+    uri="https://example.com",
+    chain_id=1,
+    strict=True,
+)
+```
+
+### Time-based Validation
+
+Verify against a specific point in time instead of `now`:
+
+```python
+from datetime import datetime, timezone
+
+message.verify(
+    signature=signature,
+    domain="example.com",
+    nonce=stored_nonce,
+    timestamp=datetime(2024, 10, 31, 16, 30, tzinfo=timezone.utc),
+)
+```
+
+Naive `datetime` values are assumed to be UTC.
+
+### Working with `ISO8601Datetime`
+
+`issued_at`, `expiration_time`, and `not_before` are `ISO8601Datetime` instances — a `str` subclass with an attached datetime. Build one from a `datetime`:
+
+```python
+from datetime import datetime, timezone
+from siwe import ISO8601Datetime
+
+issued_at = ISO8601Datetime.from_datetime(datetime.now(tz=timezone.utc))
+```
+
+## Resources
+
+-   **GitHub**: [signinwithethereum/siwe-py](https://github.com/signinwithethereum/siwe-py)
+-   **PyPI**: [signinwithethereum](https://pypi.org/project/signinwithethereum/)
+-   **EIP-4361**: [Sign in with Ethereum specification](https://eips.ethereum.org/EIPS/eip-4361)
+
+---
+
+_Need help with integration? Check out our [Quickstart Guide](../quickstart/index.md) or [Integration Examples](../integrations/index.md)._

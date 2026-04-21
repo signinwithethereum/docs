@@ -22,18 +22,27 @@ High-performance, pure Rust implementation.
 -   **Features**: Zero-copy parsing, EIP-6492 support via alloy, serde serialization
 -   **Best for**: High-performance backends, blockchain infrastructure, CLI tools
 
+### [Python](python)
+
+Idiomatic Python implementation built on pydantic and web3.py.
+
+-   **Package**: [`signinwithethereum`](https://pypi.org/project/signinwithethereum/) on PyPI (imports as `siwe`)
+-   **Platforms**: Python 3.10+ backends, scripts, data pipelines
+-   **Features**: Pydantic-validated messages, EIP-1271 and EIP-6492 support via web3.py
+-   **Best for**: Django / FastAPI / Flask backends, Python services and tooling
+
 ## Quick Comparison
 
-| Feature | TypeScript | Rust |
-| --- | --- | --- |
-| Message Parsing | ✅ | ✅ |
-| Signature Verification (EIP-191) | ✅ | ✅ |
-| Contract Wallets (EIP-1271) | ✅ | ✅ (with `alloy` feature) |
-| Counterfactual Wallets (EIP-6492) | ✅ | ✅ (with `alloy` feature) |
-| Nonce Generation | ✅ | ✅ |
-| Serde Serialization | N/A | ✅ (with `serde` feature) |
-| Browser Support | ✅ | ❌ |
-| Async Verification | ✅ | ✅ |
+| Feature | TypeScript | Rust | Python |
+| --- | --- | --- | --- |
+| Message Parsing | ✅ | ✅ | ✅ |
+| Signature Verification (EIP-191) | ✅ | ✅ | ✅ |
+| Contract Wallets (EIP-1271) | ✅ | ✅ (with `alloy` feature) | ✅ (with web3 provider) |
+| Counterfactual Wallets (EIP-6492) | ✅ | ✅ (with `alloy` feature) | ✅ (with web3 provider) |
+| Nonce Generation | ✅ | ✅ | ✅ |
+| Serde Serialization | N/A | ✅ (with `serde` feature) | N/A (pydantic) |
+| Browser Support | ✅ | ❌ | ❌ |
+| Async Verification | ✅ | ✅ | ❌ (sync) |
 
 ## Specification Compliance
 
@@ -46,4 +55,4 @@ Both libraries implement:
 - RFC 3986 (URI Specification)
 - RFC 3339 (Timestamp Format)
 
-All libraries generate identical EIP-4361 compliant messages — signatures created in one language can be verified in the other.
+All libraries generate identical EIP-4361 compliant messages — signatures created in one language can be verified in any other.
