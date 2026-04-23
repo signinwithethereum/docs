@@ -243,6 +243,10 @@ With a provider configured, the library will:
 
 The provider's chain ID must match the message's `chain_id`, otherwise `ChainIdMismatch` is raised.
 
+:::note
+This is verification only. EIP-6492 allows a verifier to optionally submit the factory transaction after a successful check to finalize on-chain deployment ("side-effectful" verification). This library does not do that — if you need the wallet actually deployed, submit the factory call yourself.
+:::
+
 ## Backend Integration
 
 ### FastAPI Example
