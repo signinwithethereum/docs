@@ -44,6 +44,11 @@ const sidebars: SidebarsConfig = {
 					id: 'libraries/python',
 					label: 'Python',
 				},
+				{
+					type: 'doc',
+					id: 'libraries/go',
+					label: 'Go',
+				},
 			],
 		},
 		{

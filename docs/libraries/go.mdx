@@ -1,0 +1,589 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
+# Go
+
+The Go implementation of Sign in with Ethereum can be found here:
+
+<FullWidthLink
+	href='https://github.com/signinwithethereum/siwe-go'
+	logo='/img/github.svg'
+	text='signinwithethereum/siwe-go'
+	themeAware={true}
+/>
+
+## Getting Started
+
+The `siwe-go` package is a pure-Go port of the canonical TypeScript library. It provides full [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) support with EIP-191 signature verification, and — with a go-ethereum–compatible RPC client — EIP-1271 and EIP-6492 smart contract wallet signatures.
+
+All official SIWE libraries share the same [test vectors](https://github.com/signinwithethereum/test-vectors), ensuring byte-for-byte parity across languages.
+
+### Installation
+
+```bash
+go get github.com/signinwithethereum/siwe-go
+```
+
+Import it as:
+
+```go
+import "github.com/signinwithethereum/siwe-go"
+```
+
+### Dependencies
+
+The library depends on:
+
+- [`github.com/ethereum/go-ethereum`](https://pkg.go.dev/github.com/ethereum/go-ethereum) — EIP-191 signing/recovery, EIP-55 address helpers, and the `EthCaller` interface satisfied by `*ethclient.Client`
+
+## API Reference
+
+### `Message` Struct
+
+Represents a parsed or constructed [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) message. Build one directly from fields, via [`NewMessage`](#newmessagedomain-address-uri-nonce-options), or parse from an EIP-4361 string via [`ParseMessage`](#parsemessages-string-message-error).
+
+#### Fields
+
+| Field             | Type             | Required | Description                                                                          |
+| ----------------- | ---------------- | -------- | ------------------------------------------------------------------------------------ |
+| `Domain`          | `string`         | ✅       | RFC 3986 authority requesting the signing                                            |
+| `Address`         | `common.Address` | ✅       | Ethereum address (20 raw bytes, rendered as EIP-55 checksum)                         |
+| `URI`             | `string`         | ✅       | RFC 3986 URI referring to the resource                                               |
+| `Version`         | `string`         | ✅       | Must be `"1"` for [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) compliance     |
+| `ChainID`         | `int`            | ✅       | EIP-155 Chain ID (non-negative)                                                      |
+| `Nonce`           | `string`         | ✅       | Alphanumeric token, minimum 8 characters                                             |
+| `IssuedAt`        | `string`         | ✅       | ISO 8601 / RFC 3339 datetime string                                                  |
+| `Scheme`          | `*string`        | ❌       | RFC 3986 URI scheme for the authority                                                |
+| `Statement`       | `*string`        | ❌       | Human-readable ASCII assertion                                                       |
+| `ExpirationTime`  | `*string`        | ❌       | When the message expires (ISO 8601)                                                  |
+| `NotBefore`       | `*string`        | ❌       | When the message becomes valid (ISO 8601)                                            |
+| `RequestID`       | `*string`        | ❌       | System-specific identifier                                                           |
+| `Resources`       | `[]string`       | ❌       | List of RFC 3986 URI references                                                      |
+| `Warnings`        | `[]string`       | —        | Non-fatal validation warnings (e.g. unchecksummed address) surfaced during parsing   |
+
+:::note
+Field names use `PascalCase` (Go convention). Pointer fields (`*string`) distinguish "absent" (`nil`) from "empty value present". `Resources` uses a nil vs non-nil slice distinction — use `SetResources` and `ClearResources` to control whether the section is rendered.
+:::
+
+#### `ParseMessage(s string) (*Message, error)`
+
+Parse an EIP-4361 formatted string:
+
+```go
+import "github.com/signinwithethereum/siwe-go"
+
+const eip4361 = `example.com wants you to sign in with your Ethereum account:
+0x742d35Cc6634C0532925a3b844Bc9e7595f2bD95
+
+Sign in with Ethereum.
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: 32891756abcdefgh
+Issued At: 2024-01-01T00:00:00Z`
+
+m, err := siwe.ParseMessage(eip4361)
+if err != nil {
+    // structured *siwe.Error — see Error Handling below
+}
+```
+
+The parser validates:
+
+- EIP-55 checksummed address (mixed-case addresses must pass checksum; all-lowercase / all-uppercase are accepted with a warning on `m.Warnings`)
+- Alphanumeric nonce (minimum 8 characters)
+- ISO 8601 timestamps via the EIP-4361 `issued-at` grammar rule
+- RFC 3986 URIs for `URI` and each entry of `Resources`
+- Printable ASCII statement (no newlines or control characters)
+- Optional `scheme://` prefix per EIP-4361
+
+When the parsed address is not EIP-55 checksummed, `AddressRaw` preserves the original hex so that serializing the message back via `String()` is byte-identical to the signed input.
+
+#### `NewMessage(domain, address, uri, nonce, options)`
+
+Construct a message programmatically. Optional fields are passed via an options map with the same keys as the TypeScript / Python APIs — `scheme`, `statement`, `chainId`, `issuedAt`, `expirationTime`, `notBefore`, `requestId`, `resources`:
+
+```go
+import (
+    "time"
+
+    "github.com/signinwithethereum/siwe-go"
+)
+
+m, err := siwe.NewMessage(
+    "example.com",                                 // domain
+    "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",  // address (EIP-55)
+    "https://example.com",                         // uri
+    siwe.GenerateNonce(),                          // nonce
+    map[string]interface{}{
+        "statement":      "Sign in with Ethereum.",
+        "chainId":        1,
+        "expirationTime": time.Now().Add(24 * time.Hour),
+        "requestId":      "req-1234",
+        "resources":      []string{"https://example.com/resources/1"},
+    },
+)
+```
+
+Option values may be typed (`int`, `string`, `*string`, `[]string`, `time.Time`) or come from JSON decoding (`float64` for numbers, `[]interface{}` for arrays). `InitMessage` is retained as an alias for backward compatibility.
+
+#### `(*Message).String() string`
+
+Serialize to the EIP-4361 string representation, ready for EIP-191 signing:
+
+```go
+messageString := m.String()
+```
+
+`PrepareMessage()` is an alias kept for parity with the TypeScript / Python / Rust APIs.
+
+#### `(*Message).EIP191Hash() common.Hash`
+
+Return the keccak-256 EIP-191 personal-message pre-hash:
+
+```go
+hash := m.EIP191Hash()
+```
+
+#### `(*Message).Validate() error`
+
+Re-run all field-level invariant checks. Called automatically by `ParseMessage` and `NewMessage`; invoke it directly if you mutate fields after construction.
+
+#### `(*Message).VerifyEIP191(signature string) (*ecdsa.PublicKey, error)`
+
+Verify a 65-byte EOA signature (hex, with or without `0x` prefix) against the message's address. Returns the recovered public key on success.
+
+```go
+pub, err := m.VerifyEIP191("0x6228b3ec...1c")
+if err != nil {
+    // *siwe.Error with Type ErrInvalidSignature
+}
+```
+
+Accepts recovery bytes encoded as either `{0, 1}` or `{27, 28}`.
+
+#### `(*Message).VerifyWith(ctx, signature, params, opts)`
+
+Full verification: field binding, time window, and signature authentication. Returns a `*VerifyResult`; on failure, returns a `*siwe.Error` whose `Type` identifies the specific failure mode.
+
+```go
+ctx := context.Background()
+domain, nonce := "example.com", storedNonce
+
+res, err := m.VerifyWith(ctx, signature, siwe.VerifyParams{
+    Domain: &domain,
+    Nonce:  &nonce,
+}, siwe.VerifyOptions{})
+if err != nil {
+    var e *siwe.Error
+    if errors.As(err, &e) {
+        // e.Type — DomainMismatch, NonceMismatch, InvalidSignature, ...
+    }
+}
+```
+
+Verification order:
+
+1. Binding checks (`Scheme`, `Domain`, `Nonce`, `URI`, `ChainID`, `RequestID`)
+2. Time checks (`ExpirationTime`, `NotBefore`)
+3. **EOA** — `ecrecover` via go-ethereum's `crypto.SigToPub`
+4. **EIP-6492** — if the signature carries the magic suffix and a `ContractVerifier` is supplied, the universal off-chain validator bytecode is executed via `eth_call`
+5. **EIP-1271** — otherwise fall back to on-chain `isValidSignature` via the supplied `ContractVerifier`
+
+### `VerifyParams`
+
+Optional binding checks performed during `VerifyWith`.
+
+| Field       | Type        | Description                                                                   |
+| ----------- | ----------- | ----------------------------------------------------------------------------- |
+| `Scheme`    | `*string`   | Expected scheme — raises `ErrSchemeMismatch` if different                     |
+| `Domain`    | `*string`   | Expected domain — **required** (raises `ErrMissingDomain` if nil)             |
+| `Nonce`     | `*string`   | Expected nonce — **required** (raises `ErrMissingNonce` if nil)               |
+| `URI`       | `*string`   | Expected URI — required in strict mode                                        |
+| `ChainID`   | `*int`      | Expected chain ID — required in strict mode                                   |
+| `RequestID` | `*string`   | Expected request ID                                                           |
+| `Time`      | `*time.Time`| Time to check `ExpirationTime` / `NotBefore` against (defaults to now, UTC)   |
+
+### `VerifyOptions`
+
+| Field              | Type                         | Description                                                           |
+| ------------------ | ---------------------------- | --------------------------------------------------------------------- |
+| `ContractVerifier` | `ContractSignatureVerifier`  | Backend for EIP-1271 / EIP-6492 (see below). `nil` disables fallback. |
+| `Strict`           | `bool`                       | When `true`, `URI` and `ChainID` are required in `VerifyParams`       |
+
+### `VerifyResult`
+
+Returned on success from `VerifyWith`:
+
+| Field              | Type                | Populated when                                        |
+| ------------------ | ------------------- | ----------------------------------------------------- |
+| `ECDSAPublicKey`   | `*ecdsa.PublicKey`  | EOA recovery succeeded                                |
+| `ContractVerified` | `bool`              | EIP-1271 / EIP-6492 contract-wallet check succeeded   |
+
+### `(*Message).ValidNow() / ValidAt(when time.Time)`
+
+Check time-window validity. `ValidNow` uses the current UTC time; `ValidAt` checks against a specific point.
+
+```go
+ok, err := m.ValidNow()
+ok, err  = m.ValidAt(time.Date(2024, 10, 31, 16, 30, 0, 0, time.UTC))
+```
+
+### `GenerateNonce() string`
+
+Generates a cryptographically secure 17-character alphanumeric nonce (≈101 bits of entropy). Uses `crypto/rand`; panics if the OS RNG fails.
+
+```go
+nonce := siwe.GenerateNonce()
+```
+
+### `IsEIP6492Signature(sigHex string) bool`
+
+Reports whether a hex signature ends with the [EIP-6492](https://eips.ethereum.org/EIPS/eip-6492) magic suffix, indicating a signature from a (possibly undeployed) smart contract wallet.
+
+```go
+if siwe.IsEIP6492Signature(sig) {
+    // counterfactual contract wallet signature
+}
+```
+
+### Error Handling
+
+All errors returned by the package are `*siwe.Error` with a machine-readable `Type` field. Match with `errors.As`:
+
+```go
+var e *siwe.Error
+if errors.As(err, &e) {
+    switch e.Type {
+    case siwe.ErrExpiredMessage:
+    case siwe.ErrNonceMismatch:
+    case siwe.ErrInvalidSignature:
+        // ...
+    }
+}
+```
+
+The `Type` codes match the identifiers used by the canonical TypeScript library:
+
+| Error Type                 | Raised when                                                          |
+| -------------------------- | -------------------------------------------------------------------- |
+| `ErrUnableToParseMessage`  | Message could not be parsed (malformed or missing fields)            |
+| `ErrInvalidDomain`         | `Domain` is not a valid RFC 3986 authority                           |
+| `ErrInvalidAddress`        | Address is not `0x` + 40 hex, or fails EIP-55 checksum               |
+| `ErrInvalidURI`            | `URI` / resource is not a valid RFC 3986 URI                         |
+| `ErrInvalidNonce`          | Nonce is under 8 characters or not alphanumeric                      |
+| `ErrInvalidTimeFormat`     | Timestamp is not a valid ISO 8601 / RFC 3339 string                  |
+| `ErrInvalidMessageVersion` | `Version` is not `"1"`                                               |
+| `ErrInvalidStatement`      | Statement contains invalid characters (non-printable / LF / etc.)    |
+| `ErrInvalidRequestID`      | Request ID contains characters outside RFC 3986 `*pchar`             |
+| `ErrExpiredMessage`        | Current time is past `ExpirationTime`                                |
+| `ErrNotYetValidMessage`    | Current time is before `NotBefore`                                   |
+| `ErrSchemeMismatch`        | Scheme does not match expected                                       |
+| `ErrDomainMismatch`        | Domain does not match expected                                       |
+| `ErrNonceMismatch`         | Nonce does not match expected                                        |
+| `ErrURIMismatch`           | URI does not match expected                                          |
+| `ErrChainIDMismatch`       | Chain ID does not match expected                                     |
+| `ErrRequestIDMismatch`     | Request ID does not match expected                                   |
+| `ErrInvalidSignature`      | Signature does not match the message's address                       |
+| `ErrInvalidSignatureChain` | Contract verifier provider chain does not match `ChainID`            |
+| `ErrMissingDomain`         | `Domain` binding is required for verification                        |
+| `ErrMissingNonce`          | `Nonce` binding is required for verification                         |
+| `ErrMissingURI`            | `URI` binding is required in strict mode                             |
+| `ErrMissingChainID`        | `ChainID` binding is required in strict mode                         |
+| `ErrInvalidParams`         | Invalid parameter type passed to construction                        |
+
+## Smart Contract Wallets (EIP-1271 / EIP-6492)
+
+Wire any go-ethereum–compatible RPC client into `VerifyOptions.ContractVerifier`. `*ethclient.Client` already satisfies the `EthCaller` interface:
+
+```go
+import (
+    "context"
+
+    "github.com/ethereum/go-ethereum/ethclient"
+    "github.com/signinwithethereum/siwe-go"
+)
+
+cl, err := ethclient.Dial("https://eth.llamarpc.com")
+if err != nil { /* ... */ }
+
+verifier := siwe.NewEthCallerVerifier(cl)
+
+domain, nonce := "example.com", storedNonce
+res, err := m.VerifyWith(ctx, signature, siwe.VerifyParams{
+    Domain: &domain,
+    Nonce:  &nonce,
+}, siwe.VerifyOptions{
+    ContractVerifier: verifier,
+})
+```
+
+With a verifier configured:
+
+- EOA recovery is attempted first.
+- If the signature carries the [EIP-6492](https://eips.ethereum.org/EIPS/eip-6492) magic suffix, the universal off-chain validator bytecode is executed via `eth_call` (no `to` address) — this covers both counterfactual (undeployed) wallets and already-deployed wallets.
+- Otherwise the verifier falls back to [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) `isValidSignature(bytes32,bytes)` against the deployed contract.
+
+The RPC provider's chain ID must match the message's `ChainID`, otherwise `ErrInvalidSignatureChain` is returned.
+
+### `EthCaller` Interface
+
+The minimal interface needed to perform read-only EVM calls. Satisfied by `*ethclient.Client` and by any custom backend you wire up:
+
+```go
+type EthCaller interface {
+    CallContract(ctx context.Context, call ethereum.CallMsg, blockNumber *big.Int) ([]byte, error)
+    ChainID(ctx context.Context) (*big.Int, error)
+}
+```
+
+### `ContractSignatureVerifier` Interface
+
+The pluggable backend for smart-contract wallet signature verification. Implement this directly if you need a non-RPC backend (e.g. Safe SDK, custom cache, mock for tests):
+
+```go
+type ContractSignatureVerifier interface {
+    VerifyContractSignature(
+        ctx context.Context,
+        address common.Address,
+        hash common.Hash,
+        sig []byte,
+        chainID int,
+    ) (bool, error)
+}
+```
+
+:::note
+This is verification only. EIP-6492 allows a verifier to optionally submit the factory transaction after a successful check to finalize on-chain deployment ("side-effectful" verification). This library does not do that — if you need the wallet actually deployed, submit the factory call yourself.
+:::
+
+## Backend Integration
+
+### net/http Example
+
+```go
+package main
+
+import (
+    "encoding/json"
+    "errors"
+    "log"
+    "net/http"
+    "sync"
+
+    "github.com/signinwithethereum/siwe-go"
+)
+
+// Use Redis or your session store in production.
+var (
+    nonceMu sync.Mutex
+    nonces  = map[string]struct{}{}
+)
+
+type verifyBody struct {
+    Message   string `json:"message"`
+    Signature string `json:"signature"`
+}
+
+func main() {
+    http.HandleFunc("/api/nonce", func(w http.ResponseWriter, r *http.Request) {
+        n := siwe.GenerateNonce()
+        nonceMu.Lock()
+        nonces[n] = struct{}{}
+        nonceMu.Unlock()
+        json.NewEncoder(w).Encode(map[string]string{"nonce": n})
+    })
+
+    http.HandleFunc("/api/verify", func(w http.ResponseWriter, r *http.Request) {
+        var body verifyBody
+        if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+            http.Error(w, "bad request", http.StatusBadRequest)
+            return
+        }
+
+        m, err := siwe.ParseMessage(body.Message)
+        if err != nil {
+            http.Error(w, "malformed message", http.StatusBadRequest)
+            return
+        }
+
+        nonceMu.Lock()
+        _, ok := nonces[m.Nonce]
+        delete(nonces, m.Nonce)
+        nonceMu.Unlock()
+        if !ok {
+            http.Error(w, "unknown nonce", http.StatusBadRequest)
+            return
+        }
+
+        domain := "example.com"
+        res, err := m.VerifyWith(r.Context(), body.Signature, siwe.VerifyParams{
+            Domain: &domain,
+            Nonce:  &m.Nonce,
+        }, siwe.VerifyOptions{})
+        if err != nil {
+            var e *siwe.Error
+            if errors.As(err, &e) {
+                http.Error(w, string(e.Type), http.StatusUnauthorized)
+                return
+            }
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "address":          m.Address.Hex(),
+            "chainId":          m.ChainID,
+            "contractVerified": res.ContractVerified,
+        })
+    })
+
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}
+```
+
+### Gin Example
+
+```go
+package main
+
+import (
+    "errors"
+    "sync"
+
+    "github.com/gin-gonic/gin"
+    "github.com/signinwithethereum/siwe-go"
+)
+
+var (
+    nonceMu sync.Mutex
+    nonces  = map[string]struct{}{}
+)
+
+func main() {
+    r := gin.Default()
+
+    r.GET("/api/nonce", func(c *gin.Context) {
+        n := siwe.GenerateNonce()
+        nonceMu.Lock()
+        nonces[n] = struct{}{}
+        nonceMu.Unlock()
+        c.JSON(200, gin.H{"nonce": n})
+    })
+
+    r.POST("/api/verify", func(c *gin.Context) {
+        var body struct {
+            Message   string `json:"message"`
+            Signature string `json:"signature"`
+        }
+        if err := c.BindJSON(&body); err != nil {
+            c.JSON(400, gin.H{"error": "bad request"})
+            return
+        }
+
+        m, err := siwe.ParseMessage(body.Message)
+        if err != nil {
+            c.JSON(400, gin.H{"error": "malformed message"})
+            return
+        }
+
+        nonceMu.Lock()
+        _, ok := nonces[m.Nonce]
+        delete(nonces, m.Nonce)
+        nonceMu.Unlock()
+        if !ok {
+            c.JSON(400, gin.H{"error": "unknown nonce"})
+            return
+        }
+
+        domain := "example.com"
+        if _, err := m.VerifyWith(c.Request.Context(), body.Signature, siwe.VerifyParams{
+            Domain: &domain,
+            Nonce:  &m.Nonce,
+        }, siwe.VerifyOptions{}); err != nil {
+            var e *siwe.Error
+            if errors.As(err, &e) {
+                c.JSON(401, gin.H{"error": string(e.Type)})
+                return
+            }
+            c.JSON(500, gin.H{"error": err.Error()})
+            return
+        }
+
+        c.JSON(200, gin.H{"address": m.Address.Hex()})
+    })
+
+    r.Run(":8080")
+}
+```
+
+## Advanced
+
+### Strict Mode
+
+Pass `Strict: true` to require `URI` and `ChainID` bindings, for full contextual binding:
+
+```go
+domain, nonce, uri := "example.com", storedNonce, "https://example.com"
+chainID := 1
+
+res, err := m.VerifyWith(ctx, signature, siwe.VerifyParams{
+    Domain:  &domain,
+    Nonce:   &nonce,
+    URI:     &uri,
+    ChainID: &chainID,
+}, siwe.VerifyOptions{
+    Strict: true,
+})
+```
+
+### Time-based Validation
+
+Verify against a specific point in time instead of `now`:
+
+```go
+when := time.Date(2024, 10, 31, 16, 30, 0, 0, time.UTC)
+
+_, err := m.VerifyWith(ctx, signature, siwe.VerifyParams{
+    Domain: &domain,
+    Nonce:  &nonce,
+    Time:   &when,
+}, siwe.VerifyOptions{})
+```
+
+### Signing from Go
+
+To sign a message with a local private key (e.g. for tests), hash it via `EIP191Hash` and use go-ethereum's `crypto.Sign`:
+
+```go
+import (
+    "github.com/ethereum/go-ethereum/common/hexutil"
+    "github.com/ethereum/go-ethereum/crypto"
+)
+
+hash := m.EIP191Hash()
+sig, err := crypto.Sign(hash.Bytes(), privateKey)
+if err != nil { /* ... */ }
+sig[64] += 27 // normalize recovery byte for Ethereum wallets
+hexSig := hexutil.Encode(sig)
+```
+
+### Working with Resources
+
+`Resources` distinguishes "absent" (nil) from "empty list" (non-nil, len 0). Use `SetResources` and `ClearResources` to render an explicit empty `Resources:` section, which is only reachable via programmatic construction:
+
+```go
+m.SetResources([]string{"https://example.com/a", "https://example.com/b"})
+m.SetResources([]string{}) // renders "Resources:" with no items
+m.ClearResources()         // omits the section entirely
+```
+
+## Resources
+
+-   **GitHub**: [signinwithethereum/siwe-go](https://github.com/signinwithethereum/siwe-go)
+-   **pkg.go.dev**: [github.com/signinwithethereum/siwe-go](https://pkg.go.dev/github.com/signinwithethereum/siwe-go)
+-   **EIP-4361**: [Sign in with Ethereum specification](https://eips.ethereum.org/EIPS/eip-4361)
+
+---
+
+_Need help with integration? Check out our [Quickstart Guide](../quickstart/index.md) or [Integration Examples](../integrations/index.md)._

@@ -31,18 +31,27 @@ Idiomatic Python implementation built on pydantic and web3.py.
 -   **Features**: Pydantic-validated messages, EIP-1271 and EIP-6492 support via web3.py
 -   **Best for**: Django / FastAPI / Flask backends, Python services and tooling
 
+### [Go](go)
+
+Pure-Go implementation, a port of the canonical TypeScript library.
+
+-   **Module**: [`github.com/signinwithethereum/siwe-go`](https://pkg.go.dev/github.com/signinwithethereum/siwe-go)
+-   **Platforms**: Go 1.21+ services, CLIs, blockchain infrastructure
+-   **Features**: Structured error types with machine-readable codes, EIP-1271 and EIP-6492 support via any go-ethereum–compatible RPC client
+-   **Best for**: Go backends (net/http, Gin, Echo, gRPC), indexers, bots
+
 ## Quick Comparison
 
-| Feature | TypeScript | Rust | Python |
-| --- | --- | --- | --- |
-| Message Parsing | ✅ | ✅ | ✅ |
-| Signature Verification (EIP-191) | ✅ | ✅ | ✅ |
-| Contract Wallets (EIP-1271) | ✅ | ✅ (with `alloy` feature) | ✅ (with web3 provider) |
-| Counterfactual Wallets (EIP-6492) | ✅ | ✅ (with `alloy` feature) | ✅ (with web3 provider) |
-| Nonce Generation | ✅ | ✅ | ✅ |
-| Serde Serialization | N/A | ✅ (with `serde` feature) | N/A (pydantic) |
-| Browser Support | ✅ | ❌ | ❌ |
-| Async Verification | ✅ | ✅ | ❌ (sync) |
+| Feature | TypeScript | Rust | Python | Go |
+| --- | --- | --- | --- | --- |
+| Message Parsing | ✅ | ✅ | ✅ | ✅ |
+| Signature Verification (EIP-191) | ✅ | ✅ | ✅ | ✅ |
+| Contract Wallets (EIP-1271) | ✅ | ✅ (with `alloy` feature) | ✅ (with web3 provider) | ✅ (with `EthCaller`) |
+| Counterfactual Wallets (EIP-6492) | ✅ | ✅ (with `alloy` feature) | ✅ (with web3 provider) | ✅ (with `EthCaller`) |
+| Nonce Generation | ✅ | ✅ | ✅ | ✅ |
+| Serde Serialization | N/A | ✅ (with `serde` feature) | N/A (pydantic) | N/A (stdlib JSON tags) |
+| Browser Support | ✅ | ❌ | ❌ | ❌ |
+| Async Verification | ✅ | ✅ | ❌ (sync) | ✅ (ctx-based) |
 
 ## Specification Compliance
 
