@@ -94,7 +94,9 @@ The parser validates:
 - Alphanumeric nonce (minimum 8 characters)
 - ISO 8601 timestamps via the EIP-4361 `issued-at` grammar rule
 - RFC 3986 URIs for `URI` and each entry of `Resources`
-- Printable ASCII statement (no newlines or control characters)
+- Statement characters per the [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) ABNF — RFC 3986 reserved + unreserved characters plus space (no newlines, control chars, `` ` ``, `<>`, `{}`, `|`, `%`, `"`, `\`, `^`)
+- Canonical chain ID (no leading zeros — `01` is rejected)
+- Canonical serialization — the parsed message must round-trip byte-for-byte, so only one on-wire form per message is accepted
 - Optional `scheme://` prefix per EIP-4361
 
 When the parsed address is not EIP-55 checksummed, `AddressRaw` preserves the original hex so that serializing the message back via `String()` is byte-identical to the signed input.
@@ -278,7 +280,7 @@ The `Type` codes match the identifiers used by the canonical TypeScript library:
 | `ErrInvalidNonce`          | Nonce is under 8 characters or not alphanumeric                      |
 | `ErrInvalidTimeFormat`     | Timestamp is not a valid ISO 8601 / RFC 3339 string                  |
 | `ErrInvalidMessageVersion` | `Version` is not `"1"`                                               |
-| `ErrInvalidStatement`      | Statement contains invalid characters (non-printable / LF / etc.)    |
+| `ErrInvalidStatement`      | Statement contains characters outside the EIP-4361 ABNF (RFC 3986 reserved + unreserved + space) |
 | `ErrInvalidRequestID`      | Request ID contains characters outside RFC 3986 `*pchar`             |
 | `ErrExpiredMessage`        | Current time is past `ExpirationTime`                                |
 | `ErrNotYetValidMessage`    | Current time is before `NotBefore`                                   |
@@ -332,6 +334,8 @@ With a verifier configured:
 - Otherwise the verifier falls back to [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) `isValidSignature(bytes32,bytes)` against the deployed contract.
 
 The RPC provider's chain ID must match the message's `ChainID`, otherwise `ErrInvalidSignatureChain` is returned.
+
+Transport and RPC failures are surfaced as errors. Only genuine EVM reverts (JSON-RPC error code `3`) are treated as "signature not valid", matching EIP-1271's advisory semantics.
 
 ### `EthCaller` Interface
 
