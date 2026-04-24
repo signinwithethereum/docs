@@ -166,13 +166,18 @@ Accepts recovery bytes encoded as either `{0, 1}` or `{27, 28}`.
 
 Full verification: field binding, time window, and signature authentication. Returns a `*VerifyResult`; on failure, returns a `*siwe.Error` whose `Type` identifies the specific failure mode.
 
+The high-level API **fails closed**: `Domain`, `Nonce`, `URI`, and `ChainID` bindings are all required and must match the message exactly. Per [ERC-4361 § Verifying a signed Message](https://eips.ethereum.org/EIPS/eip-4361#verifying-a-signed-message), the relying party MUST check the parsed message against expected values. If you need signature-only checks, use [`VerifyEIP191`](#messageverifyeip191signature-string-ecdsapublickey-error) or a [`ContractSignatureVerifier`](#contractsignatureverifier-interface) directly.
+
 ```go
 ctx := context.Background()
 domain, nonce := "example.com", storedNonce
+uri, chainID := "https://example.com", 1
 
 res, err := m.VerifyWith(ctx, signature, siwe.VerifyParams{
-    Domain: &domain,
-    Nonce:  &nonce,
+    Domain:  &domain,
+    Nonce:   &nonce,
+    URI:     &uri,
+    ChainID: &chainID,
 }, siwe.VerifyOptions{})
 if err != nil {
     var e *siwe.Error
@@ -192,15 +197,15 @@ Verification order:
 
 ### `VerifyParams`
 
-Optional binding checks performed during `VerifyWith`.
+Binding checks performed during `VerifyWith`. `Domain`, `Nonce`, `URI`, and `ChainID` are mandatory; the rest are optional.
 
 | Field       | Type        | Description                                                                   |
 | ----------- | ----------- | ----------------------------------------------------------------------------- |
-| `Scheme`    | `*string`   | Expected scheme — raises `ErrSchemeMismatch` if different                     |
 | `Domain`    | `*string`   | Expected domain — **required** (raises `ErrMissingDomain` if nil)             |
 | `Nonce`     | `*string`   | Expected nonce — **required** (raises `ErrMissingNonce` if nil)               |
-| `URI`       | `*string`   | Expected URI — required in strict mode                                        |
-| `ChainID`   | `*int`      | Expected chain ID — required in strict mode                                   |
+| `URI`       | `*string`   | Expected URI — **required** (raises `ErrMissingURI` if nil)                   |
+| `ChainID`   | `*int`      | Expected chain ID — **required** (raises `ErrMissingChainID` if nil)          |
+| `Scheme`    | `*string`   | Expected scheme — raises `ErrSchemeMismatch` if different                     |
 | `RequestID` | `*string`   | Expected request ID                                                           |
 | `Time`      | `*time.Time`| Time to check `ExpirationTime` / `NotBefore` against (defaults to now, UTC)   |
 
@@ -209,7 +214,6 @@ Optional binding checks performed during `VerifyWith`.
 | Field              | Type                         | Description                                                           |
 | ------------------ | ---------------------------- | --------------------------------------------------------------------- |
 | `ContractVerifier` | `ContractSignatureVerifier`  | Backend for EIP-1271 / EIP-6492 (see below). `nil` disables fallback. |
-| `Strict`           | `bool`                       | When `true`, `URI` and `ChainID` are required in `VerifyParams`       |
 
 ### `VerifyResult`
 
@@ -288,8 +292,8 @@ The `Type` codes match the identifiers used by the canonical TypeScript library:
 | `ErrInvalidSignatureChain` | Contract verifier provider chain does not match `ChainID`            |
 | `ErrMissingDomain`         | `Domain` binding is required for verification                        |
 | `ErrMissingNonce`          | `Nonce` binding is required for verification                         |
-| `ErrMissingURI`            | `URI` binding is required in strict mode                             |
-| `ErrMissingChainID`        | `ChainID` binding is required in strict mode                         |
+| `ErrMissingURI`            | `URI` binding is required for verification                           |
+| `ErrMissingChainID`        | `ChainID` binding is required for verification                       |
 | `ErrInvalidParams`         | Invalid parameter type passed to construction                        |
 
 ## Smart Contract Wallets (EIP-1271 / EIP-6492)
@@ -310,9 +314,12 @@ if err != nil { /* ... */ }
 verifier := siwe.NewEthCallerVerifier(cl)
 
 domain, nonce := "example.com", storedNonce
+uri, chainID := "https://example.com", 1
 res, err := m.VerifyWith(ctx, signature, siwe.VerifyParams{
-    Domain: &domain,
-    Nonce:  &nonce,
+    Domain:  &domain,
+    Nonce:   &nonce,
+    URI:     &uri,
+    ChainID: &chainID,
 }, siwe.VerifyOptions{
     ContractVerifier: verifier,
 })
@@ -417,9 +424,13 @@ func main() {
         }
 
         domain := "example.com"
+        uri := "https://example.com"
+        chainID := 1
         res, err := m.VerifyWith(r.Context(), body.Signature, siwe.VerifyParams{
-            Domain: &domain,
-            Nonce:  &m.Nonce,
+            Domain:  &domain,
+            Nonce:   &m.Nonce,
+            URI:     &uri,
+            ChainID: &chainID,
         }, siwe.VerifyOptions{})
         if err != nil {
             var e *siwe.Error
@@ -497,9 +508,13 @@ func main() {
         }
 
         domain := "example.com"
+        uri := "https://example.com"
+        chainID := 1
         if _, err := m.VerifyWith(c.Request.Context(), body.Signature, siwe.VerifyParams{
-            Domain: &domain,
-            Nonce:  &m.Nonce,
+            Domain:  &domain,
+            Nonce:   &m.Nonce,
+            URI:     &uri,
+            ChainID: &chainID,
         }, siwe.VerifyOptions{}); err != nil {
             var e *siwe.Error
             if errors.As(err, &e) {
@@ -519,24 +534,6 @@ func main() {
 
 ## Advanced
 
-### Strict Mode
-
-Pass `Strict: true` to require `URI` and `ChainID` bindings, for full contextual binding:
-
-```go
-domain, nonce, uri := "example.com", storedNonce, "https://example.com"
-chainID := 1
-
-res, err := m.VerifyWith(ctx, signature, siwe.VerifyParams{
-    Domain:  &domain,
-    Nonce:   &nonce,
-    URI:     &uri,
-    ChainID: &chainID,
-}, siwe.VerifyOptions{
-    Strict: true,
-})
-```
-
 ### Time-based Validation
 
 Verify against a specific point in time instead of `now`:
@@ -545,9 +542,11 @@ Verify against a specific point in time instead of `now`:
 when := time.Date(2024, 10, 31, 16, 30, 0, 0, time.UTC)
 
 _, err := m.VerifyWith(ctx, signature, siwe.VerifyParams{
-    Domain: &domain,
-    Nonce:  &nonce,
-    Time:   &when,
+    Domain:  &domain,
+    Nonce:   &nonce,
+    URI:     &uri,
+    ChainID: &chainID,
+    Time:    &when,
 }, siwe.VerifyOptions{})
 ```
 

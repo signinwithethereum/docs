@@ -27,7 +27,7 @@ Or with [uv](https://docs.astral.sh/uv/):
 uv add signinwithethereum
 ```
 
-The distribution is published as `signinwithethereum`, but the import name remains `siwe`:
+The distribution is published as `signinwithethereum`; the import name is `siwe`:
 
 ```python
 from siwe import SiweMessage
@@ -165,7 +165,7 @@ except VerificationError as err:
 | `request_id` | `Optional[str]`          | Expected request ID — raises `RequestIdMismatch` if different                                |
 | `timestamp`  | `Optional[datetime]`     | Time to check `expiration_time` / `not_before` against (defaults to now, UTC)                |
 | `provider`   | `Optional[HTTPProvider]` | Web3 provider for EIP-1271 / EIP-6492 contract wallet verification                           |
-| `strict`     | `bool`                   | When `True`, `domain`, `uri`, and `chain_id` are required                                    |
+| `strict`     | `bool`                   | When `True`, `domain`, `uri`, `chain_id`, and `nonce` are required                           |
 
 Verification order:
 
@@ -219,7 +219,7 @@ Message construction errors raise `pydantic.ValidationError` (field validation) 
 
 ## Smart Contract Wallets (EIP-1271 / EIP-6492)
 
-Pass a `web3` provider to `verify()` to enable on-chain signature validation for smart contract wallets:
+Pass a `web3` provider to `verify()` to enable on-chain signature validation for smart contract wallets. The authentication arguments (`strict`, `domain`, `nonce`, `uri`, `chain_id`) still apply — the provider only changes how the signature itself is verified:
 
 ```python
 from siwe import SiweMessage
@@ -232,6 +232,9 @@ message.verify(
     signature,
     domain="example.com",
     nonce=stored_nonce,
+    uri="https://example.com",
+    chain_id=1,
+    strict=True,
     provider=provider,
 )
 ```
@@ -348,7 +351,7 @@ def verify():
 
 ### Strict Mode
 
-`strict=True` requires `domain`, `uri`, and `chain_id` to be provided as verification parameters, for full contextual binding:
+`strict=True` requires `domain`, `uri`, `chain_id`, and `nonce` to be provided as verification parameters, for full contextual binding. The `nonce` must be a single-use value your server issued for this session — invalidate it on success so it cannot be replayed.
 
 ```python
 message.verify(
