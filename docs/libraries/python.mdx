@@ -347,7 +347,7 @@ def verify():
     return jsonify({"address": message.address})
 ```
 
-## Django (`signinwithethereum/siwe-django`)
+### Django (`siwe-django`)
 
 `siwe-django` is a reusable Django app built on `signinwithethereum`. It exposes nonce / verify / session endpoints, plugs into `django.contrib.auth` via a `SiweBackend`, and adds models for linking wallets to existing users — with an optional Django REST Framework variant.
 
@@ -358,7 +358,7 @@ def verify():
 	themeAware={true}
 />
 
-### Installation
+#### Installation
 
 ```bash
 pip install siwe-django
@@ -371,7 +371,7 @@ Optional extras:
 - `siwe-django[redis]` — Redis-backed nonce store
 - `siwe-django[cli]` — interactive setup wizard
 
-### Setup
+#### Setup
 
 Add the app and the `SiweBackend` to your settings:
 
@@ -429,7 +429,7 @@ urlpatterns += [
 ]
 ```
 
-### Endpoints
+#### Endpoints
 
 `siwe_django.urls` exposes:
 
@@ -445,13 +445,13 @@ urlpatterns += [
 | `POST`   | `/reauth/`                   | Re-verifies a signature for step-up authentication.                                |
 | `GET`    | `/profile/<address-or-ens>/` | Proxies Ethereum Identity Kit profile data.                                        |
 
-### User model
+#### User model
 
 By default, `siwe-django` links wallets to your existing `AUTH_USER_MODEL` through the `SiweWallet` model — the verify endpoint finds or creates a Django user and attaches the verified wallet.
 
 For wallet-native projects, set `AUTH_USER_MODEL = "siwe_django.EthereumUser"` **before your first migration** to use the bundled user model that keys identity by Ethereum address.
 
-### Configuration
+#### Configuration
 
 Notable keys under `SIWE_DJANGO`:
 
