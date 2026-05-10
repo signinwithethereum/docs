@@ -414,13 +414,19 @@ from django.urls import include, path
 
 urlpatterns = [
     path("auth/siwe/", include("siwe_django.urls")),
-    # Optional: DRF-flavored routes
-    path("api/auth/siwe/", include("siwe_django.drf.urls")),
 ]
 ```
 
 ```bash
 python manage.py migrate
+```
+
+If you installed the `[drf]` extra, mount the DRF routes alongside them:
+
+```python
+urlpatterns += [
+    path("api/auth/siwe/", include("siwe_django.drf.urls")),
+]
 ```
 
 ### Endpoints
