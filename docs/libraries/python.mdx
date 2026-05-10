@@ -462,7 +462,7 @@ Notable keys under `SIWE_DJANGO`:
 | `AUTO_CREATE_USERS`  | `True`  | Create a Django user the first time a new wallet signs in.                |
 | `RATE_LIMITS`        | `{}`    | Per-view rate limits, e.g. `{"verify": "5/m"}`.                           |
 | `AUDIT_ENABLED`      | `True`  | Persist sign-in events to the `SiweAuthEvent` model.                      |
-| `NONCE_STORE`        | `"db"`  | Switch to `"redis"` with the `redis` extra.                               |
+| `NONCE_STORE`        | `"siwe_django.nonce_store.DjangoOrmNonceStore"` | Dotted import path for the nonce-store class. Switch to `"siwe_django.nonce_store.RedisNonceStore"` with the `redis` extra. |
 | `TOKEN_GATES`        | —       | Sync Django groups from on-chain holdings (ERC-721 / ERC-20 / EFP / ENS). |
 
 See the [project README](https://github.com/signinwithethereum/siwe-django) for the full configuration reference, DRF integration details, and frontend wiring examples.
