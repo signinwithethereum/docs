@@ -347,6 +347,126 @@ def verify():
     return jsonify({"address": message.address})
 ```
 
+### Django (`siwe-django`)
+
+`siwe-django` is a reusable Django app built on `signinwithethereum`. It exposes nonce / verify / session endpoints, plugs into `django.contrib.auth` via a `SiweBackend`, and adds models for linking wallets to existing users — with an optional Django REST Framework variant.
+
+<FullWidthLink
+	href='https://github.com/signinwithethereum/siwe-django'
+	logo='/img/github.svg'
+	text='signinwithethereum/siwe-django'
+	themeAware={true}
+/>
+
+#### Installation
+
+```bash
+pip install siwe-django
+```
+
+Optional extras:
+
+- `siwe-django[drf]` — Django REST Framework views and serializers
+- `siwe-django[drf,openapi]` — auto-generated OpenAPI schemas for the DRF views
+- `siwe-django[redis]` — Redis-backed nonce store
+- `siwe-django[cli]` — interactive setup wizard
+
+#### Setup
+
+Add the app and the `SiweBackend` to your settings:
+
+```python
+INSTALLED_APPS = [
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "siwe_django",
+]
+
+AUTHENTICATION_BACKENDS = [
+    "siwe_django.backend.SiweBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+```
+
+Configure the message under `SIWE_DJANGO`:
+
+```python
+SIWE_DJANGO = {
+    "DOMAIN": "example.com",
+    "URI": "https://example.com/",
+    "STATEMENT": "Sign in with Ethereum.",
+    "ALLOWED_CHAIN_IDS": [1, 11155111],
+    "RPC_URLS": {
+        1: "https://mainnet.infura.io/v3/...",
+        11155111: "https://sepolia.infura.io/v3/...",
+    },
+}
+```
+
+`RPC_URLS` enables EIP-1271 / EIP-6492 verification for smart contract wallets on the listed chains.
+
+Mount the URLs and run the migrations:
+
+```python
+# urls.py
+from django.urls import include, path
+
+urlpatterns = [
+    path("auth/siwe/", include("siwe_django.urls")),
+]
+```
+
+```bash
+python manage.py migrate
+```
+
+If you installed the `[drf]` extra, mount the DRF routes alongside them:
+
+```python
+urlpatterns += [
+    path("api/auth/siwe/", include("siwe_django.drf.urls")),
+]
+```
+
+#### Endpoints
+
+`siwe_django.urls` exposes:
+
+| Method   | Path                         | Description                                                                        |
+| -------- | ---------------------------- | ---------------------------------------------------------------------------------- |
+| `GET`    | `/nonce/`                    | Issues a single-use nonce alongside the message metadata (domain, URI, statement). |
+| `POST`   | `/verify/`                   | Verifies a `{ message, signature }` body and starts a Django session.              |
+| `GET`    | `/me/`                       | Returns the currently authenticated SIWE identity.                                 |
+| `POST`   | `/logout/`                   | Destroys the Django session.                                                       |
+| `POST`   | `/link/`                     | Links another verified wallet to the current user.                                 |
+| `GET`    | `/wallets/`                  | Lists the wallets linked to the current user.                                      |
+| `DELETE` | `/wallets/<id>/`             | Unlinks a wallet from the current user.                                            |
+| `POST`   | `/reauth/`                   | Re-verifies a signature for step-up authentication.                                |
+| `GET`    | `/profile/<address-or-ens>/` | Proxies Ethereum Identity Kit profile data.                                        |
+
+#### User model
+
+By default, `siwe-django` links wallets to your existing `AUTH_USER_MODEL` through the `SiweWallet` model — the verify endpoint finds or creates a Django user and attaches the verified wallet.
+
+For wallet-native projects, set `AUTH_USER_MODEL = "siwe_django.EthereumUser"` **before your first migration** to use the bundled user model that keys identity by Ethereum address.
+
+#### Configuration
+
+Notable keys under `SIWE_DJANGO`:
+
+| Key                  | Default | Description                                                               |
+| -------------------- | ------- | ------------------------------------------------------------------------- |
+| `NONCE_TTL_SECONDS`  | `300`   | How long an issued nonce remains valid.                                   |
+| `CLOCK_SKEW_SECONDS` | `60`    | Tolerance for `expiration_time` and `not_before` checks.                  |
+| `AUTO_CREATE_USERS`  | `True`  | Create a Django user the first time a new wallet signs in.                |
+| `RATE_LIMITS`        | `{}`    | Per-view rate limits, e.g. `{"verify": "5/m"}`.                           |
+| `AUDIT_ENABLED`      | `True`  | Persist sign-in events to the `SiweAuthEvent` model.                      |
+| `NONCE_STORE`        | `siwe_django.nonce_store.DjangoOrmNonceStore` | Dotted import path for the nonce-store class. Switch to `siwe_django.nonce_store.RedisNonceStore` with the `[redis]` extra. |
+| `TOKEN_GATES`        | —       | Sync Django groups from on-chain holdings (ERC-721 / ERC-20 / EFP / ENS). |
+
+See the [project README](https://github.com/signinwithethereum/siwe-django) for the full configuration reference, DRF integration details, and frontend wiring examples.
+
 ## Advanced
 
 ### Strict Mode
@@ -396,6 +516,7 @@ issued_at = ISO8601Datetime.from_datetime(datetime.now(tz=timezone.utc))
 
 -   **GitHub**: [signinwithethereum/siwe-py](https://github.com/signinwithethereum/siwe-py)
 -   **PyPI**: [signinwithethereum](https://pypi.org/project/signinwithethereum/)
+-   **Django**: [signinwithethereum/siwe-django](https://github.com/signinwithethereum/siwe-django)
 -   **EIP-4361**: [Sign in with Ethereum specification](https://eips.ethereum.org/EIPS/eip-4361)
 
 ---
