@@ -1,0 +1,519 @@
+import FullWidthLink from '@site/src/components/full-width-link'
+
+# Ruby
+
+The Ruby implementation of Sign in with Ethereum can be found here:
+
+<FullWidthLink
+	href='https://github.com/signinwithethereum/siwe-rb'
+	logo='/img/github.svg'
+	text='signinwithethereum/siwe-rb'
+	themeAware={true}
+/>
+
+## Getting Started
+
+The `siwe-rb` gem provides full [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) support with EIP-191 signature verification, and — with an Ethereum RPC URL configured — built-in EIP-1271 and EIP-6492 smart contract wallet signatures.
+
+All official SIWE libraries share the same [test vectors](https://github.com/signinwithethereum/test-vectors), ensuring byte-for-byte parity across languages.
+
+### Installation
+
+Add the gem to your `Gemfile`:
+
+```ruby
+gem "siwe-rb", "~> 0.2"
+```
+
+Then run `bundle install`, or install it directly:
+
+```bash
+gem install siwe-rb
+```
+
+The distribution is published as `siwe-rb`; the require / module name is `siwe`:
+
+```ruby
+require "siwe"
+```
+
+Requires Ruby ≥ 3.3.
+
+### Dependencies
+
+The library depends on:
+
+- [`eth`](https://rubygems.org/gems/eth) (`>= 0.5.11, < 1.0`) — EIP-191 signing and recovery, EIP-55 checksums, keccak-256 hashing, and ABI encoding for the smart-wallet path
+
+Smart-wallet verification uses a built-in JSON-RPC client backed by the standard library's `net/http` — no additional Ethereum RPC gem is required (though you can plug in your own; see [Smart Contract Wallets](#smart-contract-wallets-eip-1271--eip-6492)).
+
+## API Reference
+
+### `Siwe::Message` Class
+
+Represents a parsed or constructed [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) message. Build one directly via [`Siwe::Message.new`](#construction), or parse from an EIP-4361 string via [`Siwe::Message.parse`](#siwemessageparsestr---message). Instances are **frozen** (immutable) once constructed.
+
+#### Fields
+
+All fields are exposed as read-only attributes (`message.domain`, `message.address`, …).
+
+| Field             | Type             | Required | Description                                                                          |
+| ----------------- | ---------------- | -------- | ------------------------------------------------------------------------------------ |
+| `domain`          | `String`         | ✅       | RFC 3986 authority requesting the signing                                            |
+| `address`         | `String`         | ✅       | Ethereum address, rendered as EIP-55 checksum                                        |
+| `uri`             | `String`         | ✅       | RFC 3986 URI referring to the resource                                               |
+| `version`         | `String`         | ✅       | Must be `"1"` for [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) compliance (defaults to `"1"`) |
+| `chain_id`        | `Integer`        | ✅       | EIP-155 Chain ID (accepts an `Integer` or a numeric `String`)                        |
+| `nonce`           | `String`         | ✅       | Alphanumeric token, minimum 8 characters (defaults to `Siwe.generate_nonce`)         |
+| `issued_at`       | `String`         | ✅       | ISO 8601 datetime string (defaults to `Time.now.utc.iso8601`)                        |
+| `scheme`          | `String`         | ❌       | RFC 3986 URI scheme for the authority                                                |
+| `statement`       | `String`         | ❌       | Human-readable ASCII assertion                                                       |
+| `expiration_time` | `String`         | ❌       | When the message expires (ISO 8601)                                                  |
+| `not_before`      | `String`         | ❌       | When the message becomes valid (ISO 8601)                                            |
+| `request_id`      | `String`         | ❌       | System-specific identifier                                                           |
+| `resources`       | `Array<String>`  | ❌       | List of RFC 3986 URI references                                                      |
+| `warnings`        | `Array<String>`  | —        | Non-fatal validation warnings (e.g. unchecksummed address) surfaced during parsing/construction |
+
+:::note
+Field names use `snake_case` (Ruby convention), not the `camelCase` used in the EIP-4361 text format. Parsing and serialization handle the conversion automatically. Of the four required constructor keywords (`domain`, `address`, `uri`, `chain_id`), `nonce`, `version`, and `issued_at` are filled in with sensible defaults when omitted.
+:::
+
+#### Construction
+
+Build a message directly from fields with `Siwe::Message.new`. Only `domain`, `address`, `uri`, and `chain_id` are mandatory:
+
+```ruby
+require "siwe"
+
+message = Siwe::Message.new(
+  domain:    "example.com",
+  address:   "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+  uri:       "https://example.com",
+  chain_id:  1,
+  statement: "Sign in with Ethereum.",
+  # nonce:, version:, and issued_at: are auto-filled when omitted
+)
+```
+
+A lowercase or uppercase address is accepted and auto-converted to its EIP-55 checksum form, with a note appended to `message.warnings`. Construction round-trips the message through the parser, so an invalid combination of fields raises a [`Siwe::Error`](#error-handling) immediately rather than at signing time.
+
+#### `Siwe::Message.parse(str) -> Message`
+
+Parse an EIP-4361 formatted string. Raises a [`Siwe::Error`](#error-handling) on malformed input. `Siwe.parse(str)` is a top-level alias.
+
+```ruby
+require "siwe"
+
+eip_4361_string = <<~MSG.chomp
+  example.com wants you to sign in with your Ethereum account:
+  0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+
+  Sign in with Ethereum.
+
+  URI: https://example.com
+  Version: 1
+  Chain ID: 1
+  Nonce: 32891756abcdefgh
+  Issued At: 2024-01-01T00:00:00Z
+MSG
+
+message = Siwe::Message.parse(eip_4361_string)
+message.domain    # => "example.com"
+message.address   # => "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+message.warnings  # => []  (e.g. ["address is not EIP-55 checksummed - 0x…"])
+```
+
+The parser validates:
+
+- EIP-55 checksummed address (mixed-case addresses must pass checksum; all-lowercase / all-uppercase are accepted with a warning on `message.warnings`)
+- Alphanumeric nonce (minimum 8 characters)
+- ISO 8601 timestamps via the EIP-4361 `issued-at` grammar rule
+- RFC 3986 URIs for `uri` and each entry of `resources`
+- Statement characters per the [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) ABNF — RFC 3986 reserved + unreserved characters plus space (no newlines, control chars, `` ` ``, `%`, `"`, etc.)
+- `request_id` restricted to RFC 3986 `*pchar` (no `/` or `?`)
+- Strict line structure — trailing content after the last recognised field is rejected
+- Optional `scheme://` prefix per EIP-4361
+
+When the parsed address is not EIP-55 checksummed, the original casing is preserved so that re-serializing via `prepare_message` is byte-identical to the signed input.
+
+#### `Siwe::Message.from_json(json_str) -> Message`
+
+Reconstruct a message from the JSON produced by [`#to_json`](#to_h---hash--to_json---string):
+
+```ruby
+message = Siwe::Message.from_json(json_string)
+```
+
+#### `#prepare_message -> String`
+
+Serialize to the EIP-4361 string representation, ready for EIP-191 signing. `#to_eip4361` and `#to_s` are aliases:
+
+```ruby
+message_string = message.prepare_message
+```
+
+#### `#verify(...) -> Siwe::Response`
+
+Verifies the message against a signature and checks time-based validity plus any field constraints you supply. **Never raises on verification failure** — it returns a [`Siwe::Response`](#siweresponse) whose `#error` carries the failure. Use [`#verify!`](#verify---self) when you'd rather rescue an exception.
+
+```ruby
+response = message.verify(
+  signature: "0x...",
+  domain:    "example.com",
+  nonce:     stored_nonce
+)
+
+if response.success?
+  # authenticated — response.data is the verified message
+else
+  Rails.logger.warn("siwe failed: #{response.error.type}")
+end
+```
+
+**Parameters** (keyword arguments):
+
+| Parameter    | Type            | Description                                                                                  |
+| ------------ | --------------- | -------------------------------------------------------------------------------------------- |
+| `signature:` | `String`        | EIP-191 signature (0x-prefixed hex) to verify against the message — **required**             |
+| `domain:`    | `String`        | Expected domain — **required** (raises `:missing_domain` if nil/empty, `:domain_mismatch` if different) |
+| `nonce:`     | `String`        | Expected nonce — **required** (raises `:missing_nonce` if nil/empty, `:nonce_mismatch` if different) |
+| `scheme:`    | `String`        | Expected scheme — raises `:scheme_mismatch` if different                                      |
+| `uri:`       | `String`        | Expected URI — raises `:uri_mismatch` if different (required when `strict:`)                  |
+| `chain_id:`  | `Integer`       | Expected chain ID — raises `:chain_id_mismatch` if different (required when `strict:`)        |
+| `request_id:`| `String`        | Expected request ID — raises `:request_id_mismatch` if different                              |
+| `time:`      | `String`        | ISO 8601 instant to check `expiration_time` / `not_before` against (defaults to now, UTC)    |
+| `config:`    | `Siwe::Config`  | Verification config (crypto adapter + RPC for the smart-wallet path); defaults to `Siwe.config` |
+| `strict:`    | `Boolean`       | When `true`, `uri` and `chain_id` become required as well                                     |
+
+Verification order:
+
+1. Field-binding checks (`domain`, `nonce`, `scheme`, `uri`, `chain_id`, `request_id`)
+2. Time checks (`expiration_time`, `not_before`)
+3. **EOA** — `ecrecover` via the `eth` gem
+4. **EIP-6492** / **EIP-1271** — if EOA recovery fails and an RPC is configured, a single deploy-and-call against the EIP-6492 universal validator covers both counterfactual (undeployed) and deployed contract wallets
+5. Otherwise, `:invalid_signature`
+
+An empty or `nil` signature raises `:invalid_params` rather than `:invalid_signature`.
+
+#### `#verify!(...) -> self`
+
+Same arguments and verification as [`#verify`](#verify---siweresponse), but raises the [`Siwe::Error`](#error-handling) on failure and returns `self` on success — the idiomatic path for a Rails / Sinatra controller:
+
+```ruby
+begin
+  message.verify!(signature: sig, domain: "example.com", nonce: stored_nonce)
+  # authenticated
+rescue Siwe::Error => e
+  # e.type — :domain_mismatch, :nonce_mismatch, :invalid_signature, ...
+end
+```
+
+#### `#to_h -> Hash` / `#to_json -> String`
+
+Serialize the message fields to a plain hash or JSON string. Messages also implement `==`, `eql?`, and `hash`, so two messages with identical fields compare equal and can be used as hash keys.
+
+```ruby
+message.to_h    # => { scheme: nil, domain: "example.com", address: "0x…", … }
+message.to_json # => "{\"scheme\":null,\"domain\":\"example.com\",…}"
+```
+
+### `Siwe::Response`
+
+The value object returned by [`#verify`](#verify---siweresponse). A `Data` type with three readers:
+
+| Member     | Type                  | Description                                          |
+| ---------- | --------------------- | --------------------------------------------------- |
+| `success`  | `Boolean`             | Whether verification passed                          |
+| `error`    | `Siwe::Error` / `nil` | The failure on an unsuccessful verification          |
+| `data`     | `Siwe::Message`       | The message that was verified                         |
+
+Plus `#success?` and `#failure?` predicates:
+
+```ruby
+response = message.verify(signature: sig, domain: "example.com", nonce: nonce)
+response.success?   # => true / false
+response.failure?   # => false / true
+response.error&.type
+```
+
+### `Siwe.generate_nonce -> String`
+
+Generates a cryptographically secure 17-character alphanumeric nonce (via `SecureRandom.alphanumeric`), matching the TypeScript reference.
+
+```ruby
+nonce = Siwe.generate_nonce  # => "kEWepMt9knR6lWJ6A"
+```
+
+### `Siwe.eip6492_signature?(hex) -> Boolean`
+
+Returns `true` if a hex signature ends with the [EIP-6492](https://eips.ethereum.org/EIPS/eip-6492) magic suffix, indicating a signature from a (possibly undeployed) smart contract wallet. `Siwe::Eip6492.signature?(hex)` is the underlying method.
+
+```ruby
+if Siwe.eip6492_signature?(signature)
+  # signature comes from a counterfactual contract wallet
+end
+```
+
+### Error Handling
+
+All failures surface as a single [`Siwe::Error`](https://github.com/signinwithethereum/siwe-rb/blob/main/lib/siwe/error_type.rb) (a `StandardError`) carrying a machine-readable `type` symbol from `Siwe::ErrorType`, plus optional `expected` / `received` context. `verify!` raises it; `verify` exposes it as `response.error`.
+
+```ruby
+begin
+  message.verify!(signature: sig, domain: domain, nonce: nonce)
+rescue Siwe::Error => e
+  case e.type
+  when :expired_message   then render_expired
+  when :nonce_mismatch    then render_replay
+  when :invalid_signature then render_unauthorized
+  when :rpc_error         then retry_or_fail
+  else                         render_generic_error
+  end
+end
+```
+
+`e.to_h` yields `{ type:, expected:, received:, message: }` for structured logging. The full set of 27 codes mirrors `SiweErrorType` in the TypeScript reference (with the Ruby-specific `:rpc_error`):
+
+| Error Type                   | Raised when                                                              |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| `:unable_to_parse`           | Message could not be parsed (malformed structure or missing fields)     |
+| `:invalid_domain`            | `domain` is empty or not a valid RFC 3986 authority                     |
+| `:invalid_address`           | Address is not `0x` + 40 hex, or fails EIP-55 checksum                   |
+| `:invalid_uri`               | `uri` / resource is not a valid RFC 3986 URI                            |
+| `:invalid_nonce`             | Nonce is under 8 characters or not alphanumeric                         |
+| `:invalid_time_format`       | Timestamp is not a valid ISO 8601 string                                |
+| `:invalid_message_version`   | `version` is not `"1"`                                                   |
+| `:malformed_message`         | Message could not be prepared for signing                               |
+| `:invalid_params`            | Invalid parameters passed to `verify` (e.g. an empty signature)         |
+| `:scheme_mismatch`           | Scheme does not match expected                                          |
+| `:domain_mismatch`           | Domain does not match expected                                         |
+| `:nonce_mismatch`            | Nonce does not match expected                                          |
+| `:uri_mismatch`              | URI does not match expected                                            |
+| `:chain_id_mismatch`         | Chain ID does not match expected                                       |
+| `:request_id_mismatch`       | Request ID does not match expected                                     |
+| `:missing_domain`            | `domain` binding is required for verification                          |
+| `:missing_nonce`             | `nonce` binding is required for verification                           |
+| `:missing_uri`               | `uri` binding is required in strict mode                               |
+| `:missing_chain_id`          | `chain_id` binding is required in strict mode                          |
+| `:missing_config`            | No verification configuration found                                    |
+| `:missing_provider_library`  | A required provider library is not installed                           |
+| `:expired_message`           | Current time is at or past `expiration_time`                           |
+| `:not_yet_valid_message`     | Current time is before `not_before`                                   |
+| `:invalid_signature`         | Signature does not match the message's address (EOA or ERC-1271/6492)  |
+| `:invalid_signature_chain_id`| The RPC provider's chain does not match the message's `chain_id`       |
+| `:rpc_error`                 | An RPC call failed (transport, HTTP, or JSON-RPC error)               |
+| `:nonce_generation_failed`   | Nonce generation failed                                                |
+
+Message construction with malformed fields raises the same `Siwe::Error` (e.g. `:invalid_address`, `:invalid_nonce`).
+
+## Smart Contract Wallets (EIP-1271 / EIP-6492)
+
+Configure an Ethereum RPC URL once at boot, and `verify` automatically falls through to a single deploy-and-call against the [EIP-6492](https://eips.ethereum.org/EIPS/eip-6492) universal validator whenever EOA recovery fails. One call handles both deployed [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) wallets (e.g. Safe) and counterfactual EIP-6492-wrapped signatures (e.g. Coinbase Smart Wallet):
+
+```ruby
+Siwe.configure do |c|
+  c.rpc_url = ENV["ETH_RPC_URL"]   # e.g. https://ethereum-rpc.publicnode.com
+end
+
+message.verify!(signature: sig, domain: "example.com", nonce: message.nonce)
+```
+
+With an RPC configured:
+
+- EOA recovery is attempted first; the RPC is never touched when it succeeds.
+- If recovery fails, the universal off-chain validator bytecode is executed via a single `eth_call` (no `to` address), covering both undeployed and already-deployed wallets.
+
+The RPC provider's chain ID must match the message's `chain_id`, otherwise `:invalid_signature_chain_id` is raised — this binding is enforced, never skipped.
+
+:::note
+This is verification only. EIP-6492 allows a verifier to optionally submit the factory transaction after a successful check to finalize on-chain deployment ("side-effectful" verification). This library does not do that — if you need the wallet actually deployed, submit the factory call yourself.
+:::
+
+### Per-call configuration
+
+Instead of (or alongside) the global `Siwe.configure`, pass a `Siwe::Config` for a single verification:
+
+```ruby
+rpc    = Siwe::Rpc::HttpClient.new("https://eth.llamarpc.com")
+config = Siwe::Config.new(rpc: rpc)
+
+message.verify!(signature: sig, domain: "example.com", nonce: nonce, config: config)
+```
+
+`Siwe::Config.new` accepts:
+
+| Keyword    | Description                                                                         |
+| ---------- | ---------------------------------------------------------------------------------- |
+| `rpc_url:` | URL for the built-in `Siwe::Rpc::HttpClient` (smart-wallet path)                    |
+| `rpc:`     | A pre-built RPC client (takes precedence over `rpc_url`)                            |
+| `adapter:` | Crypto adapter for signature recovery (defaults to the `eth`-gem-backed adapter)   |
+
+### Custom RPC client
+
+The built-in `Siwe::Rpc::HttpClient` (a `net/http` JSON-RPC client) is a sensible default, but anything that responds to `eth_call(to:, data:, block:)` and `chain_id` can be dropped in — e.g. `web3.rb`, `eth-rpc`, a cached client, or a test double:
+
+```ruby
+config = Siwe::Config.new(rpc: MyOwnRpcClient.new(...))
+message.verify!(signature: sig, domain: domain, nonce: nonce, config: config)
+```
+
+The `chain_id` method is required: ERC-4361 mandates that contract-wallet verification happen on the chain matching the message's `Chain ID`, and the library refuses to fall back to the smart-wallet path unless the RPC reports a matching chain id.
+
+### Pluggable crypto adapter
+
+Signature recovery goes through a `Siwe::Adapter`, defaulting to one backed by the [`eth`](https://rubygems.org/gems/eth) gem. To swap in a different crypto backend, provide any object implementing `#verify_message(message, signature)` that returns the recovered EIP-55 address:
+
+```ruby
+config = Siwe::Config.new(adapter: MyAdapter.new)
+```
+
+## Backend Integration
+
+### Rails Example
+
+```ruby
+# config/initializers/siwe.rb
+Siwe.configure do |c|
+  # Optional — enables ERC-1271 / EIP-6492 smart-wallet verification.
+  c.rpc_url = ENV["ETH_RPC_URL"]
+end
+```
+
+```ruby
+# app/controllers/siwe_controller.rb
+class SiweController < ApplicationController
+  # GET /siwe/nonce
+  def nonce
+    session[:siwe_nonce] = Siwe.generate_nonce
+    render plain: session[:siwe_nonce]
+  end
+
+  # POST /siwe/verify  { message:, signature: }
+  def verify
+    message = Siwe::Message.parse(params.require(:message))
+
+    # Single-use nonce: it must match the one we issued for this session.
+    if message.nonce != session[:siwe_nonce]
+      return render json: { error: "unknown nonce" }, status: :bad_request
+    end
+
+    message.verify!(
+      signature: params.require(:signature),
+      domain:    "example.com",
+      nonce:     session.delete(:siwe_nonce) # invalidate so it can't be replayed
+    )
+
+    session[:address] = message.address
+    render json: { address: message.address, chain_id: message.chain_id }
+  rescue Siwe::Error => e
+    render json: { error: e.type }, status: :unauthorized
+  end
+end
+```
+
+### Sinatra Example
+
+```ruby
+require "sinatra"
+require "siwe"
+require "json"
+
+enable :sessions
+
+get "/api/nonce" do
+  session[:nonce] = Siwe.generate_nonce
+  content_type :json
+  { nonce: session[:nonce] }.to_json
+end
+
+post "/api/verify" do
+  content_type :json
+  body = JSON.parse(request.body.read)
+
+  message =
+    begin
+      Siwe::Message.parse(body["message"])
+    rescue Siwe::Error
+      halt 400, { error: "malformed message" }.to_json
+    end
+
+  halt 400, { error: "unknown nonce" }.to_json unless message.nonce == session[:nonce]
+
+  begin
+    message.verify!(
+      signature: body["signature"],
+      domain:    "example.com",
+      nonce:     session.delete(:nonce)
+    )
+  rescue Siwe::Error => e
+    halt 401, { error: e.type }.to_json
+  end
+
+  { address: message.address, chain_id: message.chain_id }.to_json
+end
+```
+
+## Advanced
+
+### Constructing and Signing a Message
+
+To produce a signature locally (e.g. for tests), render the message with `prepare_message` and sign it with the `eth` gem's `personal_sign` (EIP-191):
+
+```ruby
+require "siwe"
+require "eth"
+
+key = Eth::Key.new
+
+message = Siwe::Message.new(
+  domain:    "example.com",
+  address:   key.address.to_s,
+  uri:       "https://example.com/login",
+  chain_id:  1,
+  statement: "Sign in to example.com"
+  # nonce: and issued_at: default automatically
+)
+
+text      = message.prepare_message  # → EIP-4361 message string
+signature = key.personal_sign(text)  # → EIP-191 signature
+```
+
+### Strict Mode
+
+`strict: true` additionally requires `uri` and `chain_id` to be supplied as verification parameters (`domain` and `nonce` are always required), giving full contextual binding. The `nonce` must be a single-use value your server issued for this session — invalidate it on success so it cannot be replayed.
+
+```ruby
+message.verify!(
+  signature: signature,
+  domain:    "example.com",
+  nonce:     stored_nonce,
+  uri:       "https://example.com",
+  chain_id:  1,
+  strict:    true
+)
+```
+
+### Time-based Validation
+
+Verify against a specific point in time instead of `now` by passing an ISO 8601 string as `time:`:
+
+```ruby
+message.verify!(
+  signature: signature,
+  domain:    "example.com",
+  nonce:     stored_nonce,
+  time:      "2024-10-31T16:30:00Z"
+)
+```
+
+A message is rejected at the exact `Expiration Time` instant (not one moment after), matching the TypeScript / Python / Rust implementations.
+
+## Resources
+
+-   **GitHub**: [signinwithethereum/siwe-rb](https://github.com/signinwithethereum/siwe-rb)
+-   **RubyGems**: [siwe-rb](https://rubygems.org/gems/siwe-rb)
+-   **EIP-4361**: [Sign in with Ethereum specification](https://eips.ethereum.org/EIPS/eip-4361)
+
+---
+
+_Need help with integration? Check out our [Quickstart Guide](../quickstart/index.md) or [Integration Examples](../integrations/index.md)._

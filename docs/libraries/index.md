@@ -40,22 +40,31 @@ Pure-Go implementation, a port of the canonical TypeScript library.
 -   **Features**: Structured error types with machine-readable codes, EIP-1271 and EIP-6492 support via any go-ethereum–compatible RPC client
 -   **Best for**: Go backends (net/http, Gin, Echo, gRPC), indexers, bots
 
+### [Ruby](ruby)
+
+Idiomatic Ruby implementation with built-in smart-wallet support.
+
+-   **Gem**: [`siwe-rb`](https://rubygems.org/gems/siwe-rb) on RubyGems (`require "siwe"`)
+-   **Platforms**: Ruby 3.3+ backends, scripts, and tooling
+-   **Features**: Frozen value-object messages, structured `Siwe::Error`, built-in EIP-1271 and EIP-6492 support via a duck-typed RPC client
+-   **Best for**: Rails / Sinatra / Hanami backends, Ruby services and tooling
+
 ## Quick Comparison
 
-| Feature | TypeScript | Rust | Python | Go |
-| --- | --- | --- | --- | --- |
-| Message Parsing | ✅ | ✅ | ✅ | ✅ |
-| Signature Verification (EIP-191) | ✅ | ✅ | ✅ | ✅ |
-| Contract Wallets (EIP-1271) | ✅ | ✅ (with `alloy` feature) | ✅ (with web3 provider) | ✅ (with `EthCaller`) |
-| Counterfactual Wallets (EIP-6492) | ✅ | ✅ (with `alloy` feature) | ✅ (with web3 provider) | ✅ (with `EthCaller`) |
-| Nonce Generation | ✅ | ✅ | ✅ | ✅ |
-| Serde Serialization | N/A | ✅ (with `serde` feature) | N/A (pydantic) | N/A (stdlib JSON tags) |
-| Browser Support | ✅ | ❌ | ❌ | ❌ |
-| Async Verification | ✅ | ✅ | ❌ (sync) | ✅ (ctx-based) |
+| Feature | TypeScript | Rust | Python | Go | Ruby |
+| --- | --- | --- | --- | --- | --- |
+| Message Parsing | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Signature Verification (EIP-191) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Contract Wallets (EIP-1271) | ✅ | ✅ (with `alloy` feature) | ✅ (with web3 provider) | ✅ (with `EthCaller`) | ✅ (with RPC client) |
+| Counterfactual Wallets (EIP-6492) | ✅ | ✅ (with `alloy` feature) | ✅ (with web3 provider) | ✅ (with `EthCaller`) | ✅ (with RPC client) |
+| Nonce Generation | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Serde Serialization | N/A | ✅ (with `serde` feature) | N/A (pydantic) | N/A (stdlib JSON tags) | N/A (`to_h` / `to_json`) |
+| Browser Support | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Async Verification | ✅ | ✅ | ❌ (sync) | ✅ (ctx-based) | ❌ (sync) |
 
 ## Specification Compliance
 
-Both libraries implement:
+All libraries implement:
 
 - [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361) (Sign In with Ethereum)
 - [EIP-191](https://eips.ethereum.org/EIPS/eip-191) (Signed Data Standard)
