@@ -1,0 +1,8 @@
+node_modules
+build
+.docusaurus
+.cache-loader
+.git
+.env*
+config
+.kamal

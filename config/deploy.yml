@@ -1,0 +1,29 @@
+service: siwe-docs
+
+image: <%= ENV["DOCKER_REGISTRY_USERNAME"] %>/siwe-docs
+
+servers:
+  web:
+    hosts:
+      - <%= ENV["DEPLOY_HOST"] %>
+
+proxy:
+  ssl: true
+  hosts:
+    - <%= ENV["APP_HOST"] %>
+  app_port: 80
+  healthcheck:
+    path: /
+    interval: 5
+    timeout: 30
+
+registry:
+  username: <%= ENV["DOCKER_REGISTRY_USERNAME"] %>
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+
+ssh:
+  user: root
